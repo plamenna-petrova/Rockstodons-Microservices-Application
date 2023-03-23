@@ -63,14 +63,6 @@ namespace Catalog.API.Controllers
             return await this.catalogContext.AlbumTypes.ToListAsync();
         }
 
-        [HttpGet]
-        [Route("genres")]
-        [ProducesResponseType(typeof(List<Genre>), (int)HttpStatusCode.OK)] 
-        public async Task<ActionResult<List<Genre>>> GetGenres()
-        {
-            return await this.catalogContext.Genres.ToListAsync();  
-        }
-
         private async Task<List<Album>> GetAlbumsByIds(string ids)
         {
             var idsNumbers = ids.Split(',').Select(id => id);

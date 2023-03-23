@@ -1,8 +1,16 @@
 
 using Catalog.API;
+using Catalog.API.Data.Data.Common;
+using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Infrastructure;
+using Catalog.API.Infrastructure.Repositories;
+using Catalog.API.Services.Mapping;
+using Catalog.API.Services.Services.Data.Implementation;
+using Catalog.API.Services.Services.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +42,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddDatabaseDeveloperPageExceptionFilter();
 
     services.AddSingleton(configuration);
+
+    services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(BaseDeletableEntityRepository<>));
+    services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+    services.AddScoped<IDbQueryRunner, DbQueryRunner>();
+
+    services.AddTransient<IGenresService, GenresService>();
 }
 
 // Configure the HTTP request pipeline.
@@ -55,6 +69,8 @@ if (app.Environment.IsDevelopment())
         new CatalogContextSeeder().SeedAsync(catalogContext, webHostEnvironment, settings, logger).GetAwaiter().GetResult();
     }
 }
+
+AutomapperConfig.RegisterMappings(Assembly.GetExecutingAssembly());
 
 //app.UseHttpsRedirection();
 
