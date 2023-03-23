@@ -1,0 +1,23 @@
+version: "3.4"
+
+services:
+
+    catalog-api:
+      image: ${REGISTRY:-rockstodons}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
+      build:
+        context: .
+        dockerfile: Rockstodons-Backend/Services/Catalog.API/Dockerfile
+      ports:
+          - "8080:80"
+      depends_on:
+          - sqldata
+
+    sqldata:
+       image: mcr.microsoft.com/mssql/server:2019-latest 
+       ports:
+          - "1433:1433"
+
+
+       environment:
+            SA_PASSWORD: "S3cur3P@ssW0rd!"
+            ACCEPT_EULA: "Y"
