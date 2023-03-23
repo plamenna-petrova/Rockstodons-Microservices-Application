@@ -1,9 +1,11 @@
-﻿namespace Catalog.API.DataModels
-{
-    public class Album
-    {
-        public int Id { get; set; }
+﻿using Catalog.API.Data.Data.Common.Models.Abstraction;
+using Catalog.API.Data.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
+namespace Catalog.API.Data.Models
+{
+    public class Album : BaseDeletableModel<string>
+    {
         public string Name { get; set; } = default!;
 
         public string Description { get; set; } = default!;
@@ -14,13 +16,17 @@
 
         public string PictureUrl { get; set; } = default!;
 
-        public int AlbumTypeId { get; set; }
+        public string AlbumTypeId { get; set; }
 
-        public AlbumType AlbumType { get; set; } = default!;
+        public AlbumType AlbumType { get; set; }
 
-        public int GenreId { get; set; }
+        public string GenreId { get; set; }
 
-        public Genre Genre { get; set; } = default!;
+        public Genre Genre { get; set; }
+
+        public string PerformerId { get; set; }
+
+        public Performer Performer { get; set; }
 
         public int AvailableStock { get; set; }
 

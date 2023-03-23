@@ -1,4 +1,4 @@
-﻿using Catalog.API.DataModels;
+﻿using Catalog.API.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,10 +9,6 @@ namespace Catalog.API.Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<Album> albumEntityTypeBuilder)
         {
             albumEntityTypeBuilder.ToTable("Albums");
-
-            albumEntityTypeBuilder.Property(a => a.Id)
-                .UseHiLo("catalog_album_hilo")
-                .IsRequired();
 
             albumEntityTypeBuilder.Property(a => a.Name)
                 .IsRequired(true)

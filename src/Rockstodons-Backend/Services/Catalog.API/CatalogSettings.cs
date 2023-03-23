@@ -4,7 +4,7 @@
     {
         public string PictureBaseUrl { get; set; } = default!;
 
-        public string EventBusConnection { get; set; } = default!;  
+        public string EventBusConnection { get; set; } = default!;   
 
         public bool UseCustomizationData { get; set; }
 

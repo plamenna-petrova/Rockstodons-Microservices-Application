@@ -8,7 +8,7 @@ namespace Catalog.API.Infrastructure.Repositories
     {
         public BaseRepository(CatalogDbContext catalogDbContext)
         {
-            DbContext = catalogDbContext ?? throw new ArgumentNullException(nameof(catalogContext));
+            DbContext = catalogDbContext ?? throw new ArgumentNullException(nameof(catalogDbContext));
             DbSet = this.DbContext.Set<TEntity>();
         }
 

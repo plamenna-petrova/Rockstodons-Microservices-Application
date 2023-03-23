@@ -28,7 +28,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
     // local database
 
-    //services.AddDbContext<CatalogContext>(options =>
+    //services.AddDbContext<CatalogDbContext>(options =>
     //    options.UseSqlServer("Server=LENOVOLEGION\\SQLEXPRESS;Initial Catalog=Rockstodons.CatalogDb;Integrated Security=true"));
 
     services.AddDatabaseDeveloperPageExceptionFilter();

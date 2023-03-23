@@ -1,4 +1,4 @@
-﻿using Catalog.API.DataModels;
+﻿using Catalog.API.Data.Models;
 
 namespace Catalog.API.Controllers
 {

@@ -1,4 +1,4 @@
-﻿using Catalog.API.DataModels;
+﻿using Catalog.API.Data.Models;
 using Catalog.API.DTOs;
 using Catalog.API.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -73,14 +73,14 @@ namespace Catalog.API.Controllers
 
         private async Task<List<Album>> GetAlbumsByIds(string ids)
         {
-            var idsNumbers = ids.Split(',').Select(id => (Ok: int.TryParse(id, out int x), Value: x));
+            var idsNumbers = ids.Split(',').Select(id => id);
 
-            if (idsNumbers.All(idnum => idnum.Ok))
+            if (idsNumbers.Count() > 0)
             {
                 return new List<Album>();
             }
 
-            var idsToSelect = idsNumbers.Select(id => id.Value);
+            var idsToSelect = idsNumbers.Select(id => id);
             var albums = await catalogContext.Albums.Where(a => idsToSelect.Contains(a.Id)).ToListAsync();
 
             return albums;

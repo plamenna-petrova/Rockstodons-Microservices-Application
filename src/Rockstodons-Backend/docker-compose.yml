@@ -6,11 +6,12 @@ services:
       image: ${REGISTRY:-rockstodons}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
       build:
         context: .
-        dockerfile: Rockstodons-Backend/Services/Catalog.API/Dockerfile
+        dockerfile: Services/Catalog.API/Dockerfile
       ports:
           - "8080:80"
       depends_on:
           - sqldata
+
 
     sqldata:
        image: mcr.microsoft.com/mssql/server:2019-latest 

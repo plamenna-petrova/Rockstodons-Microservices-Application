@@ -1,4 +1,4 @@
-﻿using Catalog.API.DataModels;
+﻿using Catalog.API.Data.Models;
 using Catalog.API.Extensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
@@ -45,14 +45,14 @@ namespace Catalog.API.Infrastructure
                     await catalogContext.SaveChangesAsync();
                 }
 
-                if (!catalogContext.Albums.Any())
-                {
-                    await catalogContext.Albums.AddRangeAsync(useCustomizationData
-                        ? GetAlbumsFromCSVFile(contentRootPath, catalogContext, logger)
-                        : GetPreconfiguredAlbums());
+                //if (!catalogContext.Albums.Any())
+                //{
+                //    await catalogContext.Albums.AddRangeAsync(useCustomizationData
+                //        ? GetAlbumsFromCSVFile(contentRootPath, catalogContext, logger)
+                //        : GetPreconfiguredAlbums());
 
-                    await catalogContext.SaveChangesAsync();
-                }
+                //    await catalogContext.SaveChangesAsync();
+                //}
 
                 return Task.CompletedTask;
             });
@@ -231,8 +231,8 @@ namespace Catalog.API.Infrastructure
         private Album CreateAlbum(
             string[] columns, 
             string[] headers, 
-            Dictionary<string, int> albumTypeIdLookup, 
-            Dictionary<string, int> genreIdLookup
+            Dictionary<string, string> albumTypeIdLookup, 
+            Dictionary<string, string> genreIdLookup
         )
         {
             if (columns.Length != headers.Length)
@@ -362,8 +362,8 @@ namespace Catalog.API.Infrastructure
             {
                 new() 
                 { 
-                    AlbumTypeId = 2, 
-                    GenreId = 2, 
+                    AlbumTypeId = "2", 
+                    GenreId = "2", 
                     AvailableStock = 100, 
                     Description = "Crusader", 
                     Name = "Crusader", 
@@ -372,8 +372,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 1, 
-                    GenreId = 2, 
+                    AlbumTypeId = "1", 
+                    GenreId = "2", 
                     AvailableStock = 100, 
                     Description = "Forever Free", 
                     Name = "Forever Free", 
@@ -382,8 +382,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 2, 
-                    GenreId = 5, 
+                    AlbumTypeId = "2", 
+                    GenreId = "5", 
                     AvailableStock = 100, 
                     Description = "Ride The Lightning", 
                     Name = "Ride The Lightning", 
@@ -392,8 +392,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 2, 
-                    GenreId = 2, 
+                    AlbumTypeId = "2", 
+                    GenreId = "2", 
                     AvailableStock = 100, 
                     Description = "Magma", 
                     Name = "Magma", 
@@ -402,8 +402,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 3,
-                    GenreId = 5, 
+                    AlbumTypeId = "3",
+                    GenreId = "5", 
                     AvailableStock = 100, 
                     Description = "Fortitude", 
                     Name = "Fortitude", 
@@ -412,8 +412,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 2, 
-                    GenreId = 2, 
+                    AlbumTypeId = "2", 
+                    GenreId = "2", 
                     AvailableStock = 100, 
                     Description = "The Way Of All Flesh", 
                     Name = "The Way Of All Flesh", 
@@ -422,8 +422,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 2, 
-                    GenreId = 5, 
+                    AlbumTypeId = "2", 
+                    GenreId = "5", 
                     AvailableStock = 100, 
                     Description = "Lateralus", 
                     Name = "Lateralus", 
@@ -432,8 +432,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 2, 
-                    GenreId = 5, 
+                    AlbumTypeId = "2", 
+                    GenreId = "5", 
                     AvailableStock = 100, 
                     Description = "Leviathan", 
                     Name = "Leviathan", 
@@ -442,8 +442,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 1, 
-                    GenreId = 5, 
+                    AlbumTypeId = "1", 
+                    GenreId = "5", 
                     AvailableStock = 100, 
                     Description = "Blood Mountain", 
                     Name = "Bloo Mountain", 
@@ -452,8 +452,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 3, 
-                    GenreId = 2, 
+                    AlbumTypeId = "3", 
+                    GenreId = "2", 
                     AvailableStock = 100, 
                     Description = "The Hunter", 
                     Name = "The Hunter", 
@@ -462,8 +462,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 3, 
-                    GenreId = 2, 
+                    AlbumTypeId = "3", 
+                    GenreId = "2", 
                     AvailableStock = 100, 
                     Description = "Sounds of a Playground Fading", 
                     Name = "Sounds of a Playground Fading", 
@@ -472,8 +472,8 @@ namespace Catalog.API.Infrastructure
                 },
                 new() 
                 { 
-                    AlbumTypeId = 2, 
-                    GenreId = 5, 
+                    AlbumTypeId = "2", 
+                    GenreId = "5", 
                     AvailableStock = 100, 
                     Description = "A Sense Of Purpose", 
                     Name = "A Sense Of Purpose", 

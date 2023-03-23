@@ -6,11 +6,11 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["Rockstodons-Backend/Services/Catalog.API/Catalog.API.csproj", "Rockstodons-Backend/Services/Catalog.API/"]
-RUN dotnet restore "Rockstodons-Backend/Services/Catalog.API/Catalog.API.csproj"
+WORKDIR /src/Rockstodons-Backend
+COPY ["Services/Catalog.API/Catalog.API.csproj", "Services/Catalog.API/"]
+RUN dotnet restore "Services/Catalog.API/Catalog.API.csproj"
 COPY . .
-WORKDIR "/src/Rockstodons-Backend/Services/Catalog.API"
+WORKDIR "Services/Catalog.API"
 RUN dotnet build "Catalog.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
