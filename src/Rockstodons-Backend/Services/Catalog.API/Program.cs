@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Encodings.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddDatabaseDeveloperPageExceptionFilter();
 
     services.AddSingleton(configuration);
+
+    services.AddAutoMapper(typeof(Program));
 
     services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(BaseDeletableEntityRepository<>));
     services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
