@@ -236,6 +236,9 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                     b.Property<int>("RestockThreshold")
                         .HasColumnType("int");
 
+                    b.Property<int?>("YearOfRelease")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AlbumTypeId");

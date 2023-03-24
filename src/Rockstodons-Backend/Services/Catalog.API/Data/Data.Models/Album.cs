@@ -13,6 +13,8 @@ namespace Catalog.API.Data.Models
 
         public decimal Price { get; set; }
 
+        public int? YearOfRelease { get; set; }
+
         public string PictureFileName { get; set; } = default!;
 
         public string PictureUrl { get; set; } = default!;

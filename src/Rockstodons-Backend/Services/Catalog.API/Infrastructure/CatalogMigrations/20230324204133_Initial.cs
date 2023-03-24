@@ -73,11 +73,13 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Genres",
+                name: "Performers",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    History = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -85,7 +87,7 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genres", x => x.Id);
+                    table.PrimaryKey("PK_Performers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,6 +197,28 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Genres",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PerformerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genres", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Genres_Performers_PerformerId",
+                        column: x => x.PerformerId,
+                        principalTable: "Performers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Albums",
                 columns: table => new
                 {
@@ -202,9 +226,11 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    YearOfRelease = table.Column<int>(type: "int", nullable: true),
                     PictureFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AlbumTypeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     GenreId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PerformerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AvailableStock = table.Column<int>(type: "int", nullable: false),
                     RestockThreshold = table.Column<int>(type: "int", nullable: false),
                     MaxStockThreshold = table.Column<int>(type: "int", nullable: false),
@@ -229,6 +255,12 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                         principalTable: "Genres",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Albums_Performers_PerformerId",
+                        column: x => x.PerformerId,
+                        principalTable: "Performers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -245,6 +277,11 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                 name: "IX_Albums_IsDeleted",
                 table: "Albums",
                 column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Albums_PerformerId",
+                table: "Albums",
+                column: "PerformerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AlbumTypes_IsDeleted",
@@ -304,6 +341,16 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                 name: "IX_Genres_IsDeleted",
                 table: "Genres",
                 column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Genres_PerformerId",
+                table: "Genres",
+                column: "PerformerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Performers_IsDeleted",
+                table: "Performers",
+                column: "IsDeleted");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -337,6 +384,9 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Performers");
         }
     }
 }

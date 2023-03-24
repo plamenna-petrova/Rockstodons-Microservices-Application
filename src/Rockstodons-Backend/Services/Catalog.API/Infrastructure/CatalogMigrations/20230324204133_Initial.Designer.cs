@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Catalog.API.Infrastructure.CatalogMigrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20230323165638_PerformerInitialSchema")]
-    partial class PerformerInitialSchema
+    [Migration("20230324204133_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -178,7 +178,7 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.ToTable("Performer");
+                    b.ToTable("Performers", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.API.Data.Models.Album", b =>
@@ -236,6 +236,9 @@ namespace Catalog.API.Infrastructure.CatalogMigrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("RestockThreshold")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("YearOfRelease")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

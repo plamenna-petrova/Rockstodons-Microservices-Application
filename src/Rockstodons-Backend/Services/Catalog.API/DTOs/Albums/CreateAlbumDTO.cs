@@ -1,6 +1,7 @@
 ﻿using Catalog.API.Data.Data.Models;
 using Catalog.API.Data.Models;
 using Catalog.API.Services.Mapping;
+using Catalog.API.Utils.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace Catalog.API.DTOs.Albums
@@ -14,6 +15,8 @@ namespace Catalog.API.DTOs.Albums
         public string? Description { get; set; }
 
         public decimal? Price { get; set; }
+
+        public int? YearOfRelease { get; set; }
 
         [Required]
         public string AlbumTypeId { get; set; }
