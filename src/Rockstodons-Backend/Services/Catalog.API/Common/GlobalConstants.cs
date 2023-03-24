@@ -25,6 +25,8 @@
 
         public const string InvalidObjectForEntityUpdate = "The {0} object for update, sent from the client, is null";
 
+        public const string InvalidObjectForEntityPatch = "The {0} object for patch, sent from the client, is null";
+
         public const string EntityCreationExceptionMessage = "Something went wrong when trying to create a {0} \n {1}";
 
         public const string EntityUpdateExceptionMessage = "Something went wrong when trying to update a {0} \n {1}";

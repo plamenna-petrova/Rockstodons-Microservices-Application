@@ -1,5 +1,6 @@
 ﻿using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Catalog.API.Services.Services.Data.Interfaces
 {

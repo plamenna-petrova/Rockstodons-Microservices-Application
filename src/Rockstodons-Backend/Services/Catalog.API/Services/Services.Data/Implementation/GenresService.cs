@@ -4,6 +4,7 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.Services.Mapping;
 using Catalog.API.Services.Services.Data.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Services.Services.Data.Implementation

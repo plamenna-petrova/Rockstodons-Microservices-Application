@@ -13,13 +13,11 @@ namespace Catalog.API.Controllers
     public class CatalogController : Controller
     {
         private readonly CatalogDbContext catalogContext;
-        private readonly IOptionsSnapshot<CatalogSettings> catalogSettings;
 
         public CatalogController(CatalogDbContext catalogContext, IOptionsSnapshot<CatalogSettings> catalogSettings)
         {
             this.catalogContext = catalogContext ?? 
                 throw new ArgumentNullException(nameof(catalogContext));
-            this.catalogSettings = catalogSettings;
             this.catalogContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
@@ -53,14 +51,6 @@ namespace Catalog.API.Controllers
             var paginatedAlbumsListDTO = new PaginatedItemDTO<Album>(pageIndex, pageSize, totalAlbums, albumsOnPage);
 
             return Ok(paginatedAlbumsListDTO);
-        }
-
-        [HttpGet]
-        [Route("album-types")]
-        [ProducesResponseType(typeof(List<AlbumType>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<List<AlbumType>>> GetAlbumTypes()
-        {
-            return await this.catalogContext.AlbumTypes.ToListAsync();
         }
 
         private async Task<List<Album>> GetAlbumsByIds(string ids)

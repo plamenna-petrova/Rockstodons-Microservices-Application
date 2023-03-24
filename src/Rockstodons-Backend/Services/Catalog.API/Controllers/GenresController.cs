@@ -4,6 +4,7 @@ using Catalog.API.DTOs.Genres;
 using Catalog.API.Infrastructure.ActionResults;
 using Catalog.API.Services.Services.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Net;
@@ -26,7 +27,6 @@ namespace Catalog.API.Controllers
         {
             _genresService = genresService;
             _logger = logger;
-
         }
 
         [HttpGet]
@@ -123,7 +123,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Route("/details/{id}", Name = GenreDetailsRouteName)]
+        [Route("details/{id}", Name = GenreDetailsRouteName)]
         [ProducesResponseType(typeof(GenreDetailsDTO), (int) HttpStatusCode.OK)]
         public async Task<ActionResult<GenreDetailsDTO>> GetGenreDetails(string id)
         {
