@@ -1,5 +1,7 @@
 ﻿using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
+using Catalog.API.DTOs.Genres;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Catalog.API.Services.Services.Data.Interfaces
 {
@@ -16,6 +18,8 @@ namespace Catalog.API.Services.Services.Data.Interfaces
         Task<AlbumTypeDTO> CreateAlbumType(CreateAlbumTypeDTO createAlbumTypeDTO);
 
         Task UpdateAlbumType(AlbumType AlbumTypeToUpdate, UpdateAlbumTypeDTO updateAlbumTypeDTO);
+
+        Task PartiallyUpdateAlbumType(AlbumType albumTypeToPartiallyUpdate, JsonPatchDocument<UpdateAlbumTypeDTO> albumTypeJsonPatchDocument);
 
         Task DeleteAlbumType(AlbumType AlbumTypeToDelete);
 

@@ -208,6 +208,40 @@ namespace Catalog.API.Controllers
             }
         }
 
+        [HttpPatch]
+        [Route("patch/{id}")]
+        public async Task<ActionResult> PartiallyUpdateGenre(string id, [FromBody] JsonPatchDocument<UpdateGenreDTO> genreJsonPatchDocument)
+        {
+            try
+            {
+                if (genreJsonPatchDocument == null)
+                {
+                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleGenreName));
+
+                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleGenreName, "patch"));
+                }
+
+                var genreToPartiallyUpdate = await _genresService.GetGenreById(id);
+
+                if (genreToPartiallyUpdate == null)
+                {
+                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName));
+                }
+
+                await _genresService.PartiallyUpdateGenre(genreToPartiallyUpdate, genreJsonPatchDocument);
+
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(string.Format(
+                    GlobalConstants.EntityUpdateExceptionMessage, SingleGenreName, exception.Message)
+                );
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteGenre(string id)

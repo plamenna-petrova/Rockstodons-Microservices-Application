@@ -1,8 +1,11 @@
 ﻿using Catalog.API.Common;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
+using Catalog.API.DTOs.Genres;
+using Catalog.API.Services.Services.Data.Implementation;
 using Catalog.API.Services.Services.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Encodings.Web;
@@ -193,6 +196,40 @@ namespace Catalog.API.Controllers
                 }
 
                 await _albumTypesService.UpdateAlbumType(albumTypeToUpdate, updateAlbumTypeDTO);
+
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(string.Format(
+                    GlobalConstants.EntityUpdateExceptionMessage, SingleAlbumTypeName, exception.Message)
+                );
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+
+        [HttpPatch]
+        [Route("patch/{id}")]
+        public async Task<ActionResult> PartiallyUpdateGenre(string id, [FromBody] JsonPatchDocument<UpdateAlbumTypeDTO> albumTypeJsonPatchDocument)
+        {
+            try
+            {
+                if (albumTypeJsonPatchDocument == null)
+                {
+                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleAlbumTypeName));
+
+                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumTypeName, "patch"));
+                }
+
+                var albumTypeToPartiallyUpdate = await _albumTypesService.GetAlbumTypeById(id);
+
+                if (albumTypeToPartiallyUpdate == null)
+                {
+                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumTypesName));
+                }
+
+                await _albumTypesService.PartiallyUpdateAlbumType(albumTypeToPartiallyUpdate, albumTypeJsonPatchDocument);
 
                 return NoContent();
             }

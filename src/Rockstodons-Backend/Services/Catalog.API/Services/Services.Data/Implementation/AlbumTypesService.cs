@@ -3,8 +3,10 @@ using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.DTOs.AlbumTypes;
+using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Services.Mapping;
 using Catalog.API.Services.Services.Data.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Services.Services.Data.Implementation
@@ -57,6 +59,17 @@ namespace Catalog.API.Services.Services.Data.Implementation
             _mapper.Map(updateAlbumTypeDTO, AlbumTypeToUpdate);
 
             _albumTypesRepository.Update(AlbumTypeToUpdate);
+            await _albumTypesRepository.SaveChangesAsync();
+        }
+
+        public async Task PartiallyUpdateAlbumType(AlbumType albumTypeToPartiallyUpdate, JsonPatchDocument<UpdateAlbumTypeDTO> albumTypeJsonPatchDocument)
+        {
+            var mappedAlbumTypeForPatch = _mapper.Map<UpdateAlbumTypeDTO>(albumTypeToPartiallyUpdate);
+
+            albumTypeJsonPatchDocument.ApplyTo(mappedAlbumTypeForPatch);
+
+            _mapper.Map(mappedAlbumTypeForPatch, albumTypeToPartiallyUpdate);
+
             await _albumTypesRepository.SaveChangesAsync();
         }
 

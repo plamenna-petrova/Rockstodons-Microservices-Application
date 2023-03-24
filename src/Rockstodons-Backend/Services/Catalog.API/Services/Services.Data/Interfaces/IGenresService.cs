@@ -18,6 +18,8 @@ namespace Catalog.API.Services.Services.Data.Interfaces
 
         Task UpdateGenre(Genre genreToUpdate, UpdateGenreDTO updateGenreDTO);
 
+        Task PartiallyUpdateGenre(Genre genreToPartiallyUpdate, JsonPatchDocument<UpdateGenreDTO> genreJsonPatchDocument);
+
         Task DeleteGenre(Genre genreToDelete);
 
         Task HardDeleteGenre(Genre genreToHardDelete);

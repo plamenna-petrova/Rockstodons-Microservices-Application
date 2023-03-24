@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Catalog.API.Services.Mapping.Profiles
 {
@@ -10,7 +11,7 @@ namespace Catalog.API.Services.Mapping.Profiles
         {
             CreateMap<CreateGenreDTO, Genre>();
             CreateMap<Genre, GenreDTO>();
-            CreateMap<UpdateGenreDTO, Genre>();
+            CreateMap<UpdateGenreDTO, Genre>().ReverseMap();
         }
     }
 }

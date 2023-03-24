@@ -60,6 +60,17 @@ namespace Catalog.API.Services.Services.Data.Implementation
             await _genresRepository.SaveChangesAsync();
         }
 
+        public async Task PartiallyUpdateGenre(Genre genreToPartiallyUpdate, JsonPatchDocument<UpdateGenreDTO> genreJsonPatchDocument)
+        {
+            var mappedGenreForPatch = _mapper.Map<UpdateGenreDTO>(genreToPartiallyUpdate);
+
+            genreJsonPatchDocument.ApplyTo(mappedGenreForPatch);
+
+            _mapper.Map(mappedGenreForPatch, genreToPartiallyUpdate);
+
+            await _genresRepository.SaveChangesAsync();
+        }
+
         public async Task DeleteGenre(Genre genreToDelete)
         {
             _genresRepository.Delete(genreToDelete);
