@@ -56,6 +56,7 @@ internal class Program
 
             services.AddTransient<IGenresService, GenresService>();
             services.AddTransient<IAlbumTypesService, AlbumTypesService>();
+            services.AddTransient<IPerformersService, PerformersService>();
         }
 
         // Configure the HTTP request pipeline.
