@@ -1,5 +1,7 @@
 ﻿using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
+using Catalog.API.Utils;
+using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace Catalog.API.Services.Services.Data.Interfaces
@@ -9,6 +11,12 @@ namespace Catalog.API.Services.Services.Data.Interfaces
         Task<List<GenreDTO>> GetAllGenres();
 
         Task<List<Genre>> GetAllGenresWithDeletedRecords();
+
+        Task<PagedList<Genre>> GetPaginatedGenres(GenreParameters genreParameters);
+
+        Task<List<GenreDetailsDTO>> SearchForGenres(string genreSearchTerm);
+
+        Task<PagedList<GenreDetailsDTO>> PaginateSearchedGenres(GenreParameters genreParameters);
 
         Task<Genre> GetGenreById(string id);
 

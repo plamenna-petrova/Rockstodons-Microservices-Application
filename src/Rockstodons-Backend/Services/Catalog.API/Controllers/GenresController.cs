@@ -3,10 +3,12 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.Infrastructure.ActionResults;
 using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Newtonsoft.Json;
 using System.Net;
 using System.Text.Encodings.Web;
 
@@ -99,6 +101,141 @@ namespace Catalog.API.Controllers
             }
         }
 
+        [HttpGet("paginate")]
+        public async Task<ActionResult<List<Genre>>> GetPaginatedGenres([FromQuery] GenreParameters genreParameters)
+        {
+            try
+            {
+                var paginatedGenres = await _genresService.GetPaginatedGenres(genreParameters);
+
+                if (paginatedGenres != null)
+                {
+                    paginatedGenres.ForEach(g =>
+                    {
+                        if (g != null)
+                        {
+                            string encodedGenreName = HtmlEncoder.Default.Encode(g.Name);
+                            g.Name = encodedGenreName;
+                        }
+                    });
+
+                    var paginatedGenresMetaData = new
+                    {
+                        paginatedGenres.TotalItemsCount,
+                        paginatedGenres.PageSize,
+                        paginatedGenres.CurrentPage,
+                        paginatedGenres.TotalPages,
+                        paginatedGenres.HasNextPage,
+                        paginatedGenres.HasPreviousPage
+                    };
+
+                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedGenresMetaData));
+
+                    _logger.LogInformation($"Returned {paginatedGenres.TotalItemsCount} {GenresName} from database");
+
+                    return Ok(paginatedGenres);
+                }
+
+                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
+
+                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(string.Format(
+                  GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, GenresName, exception.Message)
+                );
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+
+        [HttpGet]
+        [Route("search/{term}")]
+        public async Task<ActionResult<GenreDetailsDTO>> SearchForGenres(string term)
+        {
+            try
+            {
+                var foundGenres = await _genresService.SearchForGenres(term);
+
+                if (foundGenres != null)
+                {
+                    foundGenres.ForEach(g =>
+                    {
+                        if (g != null)
+                        {
+                            string encodedGenreName = HtmlEncoder.Default.Encode(g.Name);
+                            g.Name = encodedGenreName;
+                        }
+                    });
+
+                    return Ok(foundGenres);
+                }
+
+                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
+
+                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
+            }
+            catch (Exception exception) 
+            {
+                _logger.LogError(string.Format(
+                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, GenresName, exception.Message)
+                );
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<ActionResult<GenreDetailsDTO>> PaginateSearchedGenres([FromQuery] GenreParameters genreParameters)
+        {
+            try
+            {
+                var paginatedSearchedGenres = await _genresService.PaginateSearchedGenres(genreParameters);
+
+                if (paginatedSearchedGenres != null)
+                {
+                    paginatedSearchedGenres.ForEach(g =>
+                    {
+                        if (g != null)
+                        {
+                            string encodedGenreName = HtmlEncoder.Default.Encode(g.Name);
+                            g.Name = encodedGenreName;
+                        }
+                    });
+
+                    var paginatedGenresMetaData = new
+                    {
+                        paginatedSearchedGenres.TotalItemsCount,
+                        paginatedSearchedGenres.PageSize,
+                        paginatedSearchedGenres.CurrentPage,
+                        paginatedSearchedGenres.TotalPages,
+                        paginatedSearchedGenres.HasNextPage,
+                        paginatedSearchedGenres.HasPreviousPage
+                    };
+
+                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedGenresMetaData));
+
+                    _logger.LogInformation($"Returned {paginatedSearchedGenres.TotalItemsCount} {GenresName} from database");
+
+                    return Ok(paginatedSearchedGenres);
+                }
+
+                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
+
+                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(string.Format(
+                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, GenresName, exception.Message)
+                );
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+ 
         [HttpGet("{id}")]
         public async Task<ActionResult<Genre>> GetGenreById(string id)
         {

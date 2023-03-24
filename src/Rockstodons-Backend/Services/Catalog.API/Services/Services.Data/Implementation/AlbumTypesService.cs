@@ -6,8 +6,11 @@ using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Services.Mapping;
 using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Utils.Parameters;
+using Catalog.API.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
+using Catalog.API.DTOs.Genres;
 
 namespace Catalog.API.Services.Services.Data.Implementation
 {
@@ -30,6 +33,31 @@ namespace Catalog.API.Services.Services.Data.Implementation
         public async Task<List<AlbumType>> GetAllAlbumTypesWithDeletedRecords()
         {
             return await _albumTypesRepository.GetAllWithDeletedRecords().ToListAsync();
+        }
+
+        public async Task<PagedList<AlbumType>> GetPaginatedAlbumTypes(AlbumTypeParameters albumTypeParameters)
+        {
+            var albumTypesToPaginate = _albumTypesRepository.GetAllWithDeletedRecords().OrderBy(g => g.Name);
+            return PagedList<AlbumType>.ToPagedList(albumTypesToPaginate, albumTypeParameters.PageNumber, albumTypeParameters.PageSize);
+        }
+
+        public async Task<List<AlbumTypeDetailsDTO>> SearchForAlbumTypes(string albumTypesSearchTerm)
+        {
+            return await _albumTypesRepository.GetAllAsNoTrackingWithDeletedRecords()
+                .MapTo<AlbumTypeDetailsDTO>()
+                .Where(g => g.Name.ToLower().Contains(albumTypesSearchTerm.Trim().ToLower()))
+                .OrderBy(g => g.Name)
+                .ToListAsync();
+        }
+
+        public async Task<PagedList<AlbumTypeDetailsDTO>> PaginateSearchedAlbumTypes(AlbumTypeParameters albumTypeParameters)
+        {
+            var albumTypesToPaginate = _albumTypesRepository.GetAllWithDeletedRecords().MapTo<AlbumTypeDetailsDTO>();
+
+            SearchByAlbumTypeName(ref albumTypesToPaginate, albumTypeParameters.Name);
+
+            return PagedList<AlbumTypeDetailsDTO>.ToPagedList(albumTypesToPaginate.OrderBy(g => g.Name),
+                albumTypeParameters.PageNumber, albumTypeParameters.PageSize);
         }
 
         public async Task<AlbumType> GetAlbumTypeById(string id)
@@ -89,6 +117,16 @@ namespace Catalog.API.Services.Services.Data.Implementation
         {
             _albumTypesRepository.Restore(AlbumTypeToRestore);
             await _albumTypesRepository.SaveChangesAsync();
+        }
+
+        private void SearchByAlbumTypeName(ref IQueryable<AlbumTypeDetailsDTO> albumTypes, string albumTypeName)
+        {
+            if (!albumTypes.Any() || string.IsNullOrWhiteSpace(albumTypeName))
+            {
+                return;
+            }
+
+            albumTypes = albumTypes.Where(g => g.Name.ToLower().Contains(albumTypeName.Trim().ToLower()));
         }
     }
 }

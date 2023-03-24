@@ -4,6 +4,8 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.Services.Mapping;
 using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Utils;
+using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +30,31 @@ namespace Catalog.API.Services.Services.Data.Implementation
         public async Task<List<Genre>> GetAllGenresWithDeletedRecords()
         {
             return await _genresRepository.GetAllWithDeletedRecords().ToListAsync();
+        }
+
+        public async Task<PagedList<Genre>> GetPaginatedGenres(GenreParameters genreParameters)
+        {
+            var genresToPaginate = _genresRepository.GetAllWithDeletedRecords().OrderBy(g => g.Name);
+            return PagedList<Genre>.ToPagedList(genresToPaginate, genreParameters.PageNumber, genreParameters.PageSize);
+        }
+
+        public async Task<List<GenreDetailsDTO>> SearchForGenres(string genresSearchTerm)
+        {
+            return await _genresRepository.GetAllAsNoTrackingWithDeletedRecords()
+                .MapTo<GenreDetailsDTO>()
+                .Where(g => g.Name.ToLower().Contains(genresSearchTerm.Trim().ToLower()))
+                .OrderBy(g => g.Name)
+                .ToListAsync();
+        }
+
+        public async Task<PagedList<GenreDetailsDTO>> PaginateSearchedGenres(GenreParameters genreParameters)
+        {
+            var genresToPaginate = _genresRepository.GetAllWithDeletedRecords().MapTo<GenreDetailsDTO>();
+
+            SearchByGenreName(ref genresToPaginate, genreParameters.Name);
+
+            return PagedList<GenreDetailsDTO>.ToPagedList(genresToPaginate.OrderBy(g => g.Name),
+                genreParameters.PageNumber, genreParameters.PageSize);
         }
 
         public async Task<Genre> GetGenreById(string id)
@@ -87,6 +114,16 @@ namespace Catalog.API.Services.Services.Data.Implementation
         {
             _genresRepository.Restore(genreToRestore);
             await _genresRepository.SaveChangesAsync();
+        }
+
+        private void SearchByGenreName(ref IQueryable<GenreDetailsDTO> genres, string genreName)
+        {
+            if (!genres.Any() || string.IsNullOrWhiteSpace(genreName))
+            {
+                return;
+            }
+
+            genres = genres.Where(g => g.Name.ToLower().Contains(genreName.Trim().ToLower()));
         }
     }
 }

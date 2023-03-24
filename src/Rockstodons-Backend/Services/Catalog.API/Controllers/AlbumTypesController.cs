@@ -4,9 +4,11 @@ using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.Services.Services.Data.Implementation;
 using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net;
 using System.Text.Encodings.Web;
 
@@ -83,6 +85,130 @@ namespace Catalog.API.Controllers
                     });
 
                     return Ok(allAlbumTypesWithDeletedRecords);
+                }
+
+                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumTypesName));
+
+                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumTypesName));
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(string.Format(
+                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, AlbumTypesName, exception.Message)
+                );
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+
+        [HttpGet("paginate")]
+        public async Task<ActionResult<List<Genre>>> GetPaginatedGenres([FromQuery] AlbumTypeParameters albumTypeParameters)
+        {
+            var paginatedAlbumTypes = await _albumTypesService.GetPaginatedAlbumTypes(albumTypeParameters);
+
+            if (paginatedAlbumTypes != null)
+            {
+                paginatedAlbumTypes.ForEach(at =>
+                {
+                    if (at != null)
+                    {
+                        string encodedAlbumTypeName = HtmlEncoder.Default.Encode(at.Name);
+                        at.Name = encodedAlbumTypeName;
+                    }
+                });
+
+                var paginatedAlbumTypesMetaData = new
+                {
+                    paginatedAlbumTypes.TotalItemsCount,
+                    paginatedAlbumTypes.PageSize,
+                    paginatedAlbumTypes.CurrentPage,
+                    paginatedAlbumTypes.TotalPages,
+                    paginatedAlbumTypes.HasNextPage,
+                    paginatedAlbumTypes.HasPreviousPage
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedAlbumTypesMetaData));
+
+                _logger.LogInformation($"Returned {paginatedAlbumTypes.TotalItemsCount} {AlbumTypesName} from database");
+
+                return Ok(paginatedAlbumTypes);
+            }
+
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumTypesName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumTypesName));
+        }
+
+        [HttpGet]
+        [Route("search/{term}")]
+        public async Task<ActionResult<AlbumTypeDetailsDTO>> SearchForAlbumTypes(string term)
+        {
+            try
+            {
+                var foundAlbumTypes = await _albumTypesService.SearchForAlbumTypes(term);
+
+                if (foundAlbumTypes != null)
+                {
+                    foundAlbumTypes.ForEach(at =>
+                    {
+                        if (at != null)
+                        {
+                            string encodedAlbumTypeName = HtmlEncoder.Default.Encode(at.Name);
+                            at.Name = encodedAlbumTypeName;
+                        }
+                    });
+
+                    return Ok(foundAlbumTypes);
+                }
+
+                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumTypesName));
+
+                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumTypesName));
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(string.Format(
+                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, AlbumTypesName, exception.Message)
+                );
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<ActionResult<AlbumTypeDetailsDTO>> PaginateSearchedAlbumTypes([FromQuery] AlbumTypeParameters albumTypeParameters)
+        {
+            try
+            {
+                var paginatedSearchedAlbumTypes = await _albumTypesService.PaginateSearchedAlbumTypes(albumTypeParameters);
+
+                if (paginatedSearchedAlbumTypes != null)
+                {
+                    paginatedSearchedAlbumTypes.ForEach(at =>
+                    {
+                        if (at != null)
+                        {
+                            string encodedAlbumTypeName = HtmlEncoder.Default.Encode(at.Name);
+                            at.Name = encodedAlbumTypeName;
+                        }
+                    });
+
+                    var paginatedAlbumTypesMetaData = new
+                    {
+                        paginatedSearchedAlbumTypes.TotalItemsCount,
+                        paginatedSearchedAlbumTypes.PageSize,
+                        paginatedSearchedAlbumTypes.CurrentPage,
+                        paginatedSearchedAlbumTypes.TotalPages,
+                        paginatedSearchedAlbumTypes.HasNextPage,
+                        paginatedSearchedAlbumTypes.HasPreviousPage
+                    };
+
+                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedAlbumTypesMetaData));
+
+                    _logger.LogInformation($"Returned {paginatedSearchedAlbumTypes.TotalItemsCount} {AlbumTypesName} from database");
+
+                    return Ok(paginatedSearchedAlbumTypes);
                 }
 
                 _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumTypesName));
