@@ -15,6 +15,7 @@ namespace Catalog.API.Services.Services.Data.Implementation
     public class PerformersService : IPerformersService
     {
         private readonly IDeletableEntityRepository<Performer> _performersRepository;
+
         private readonly IMapper _mapper;
 
         public PerformersService(IDeletableEntityRepository<Performer> PerformersRepository, IMapper mapper)
@@ -126,8 +127,8 @@ namespace Catalog.API.Services.Services.Data.Implementation
 
             string performerSearchTerm = performerName.Trim().ToLower();
 
-            performers = performers.Where(g => g.Name.ToLower().Contains(performerSearchTerm) || 
-            g.Country.ToLower().Contains(performerSearchTerm));
+            performers = performers.Where(p => p.Name.ToLower().Contains(performerSearchTerm) || 
+            p.Country.ToLower().Contains(performerSearchTerm));
         }
     }
 }

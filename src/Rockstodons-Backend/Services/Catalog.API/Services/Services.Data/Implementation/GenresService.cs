@@ -14,6 +14,7 @@ namespace Catalog.API.Services.Services.Data.Implementation
     public class GenresService : IGenresService
     {
         private readonly IDeletableEntityRepository<Genre> _genresRepository;
+
         private readonly IMapper _mapper;
 
         public GenresService(IDeletableEntityRepository<Genre> genresRepository, IMapper mapper)

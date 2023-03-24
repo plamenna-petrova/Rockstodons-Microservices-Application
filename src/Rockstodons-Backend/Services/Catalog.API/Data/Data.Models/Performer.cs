@@ -1,5 +1,6 @@
 ﻿using Catalog.API.Data.Data.Common.Models.Abstraction;
 using Catalog.API.Data.Models;
+using System.Text.Json.Serialization;
 
 namespace Catalog.API.Data.Data.Models
 {
@@ -17,8 +18,10 @@ namespace Catalog.API.Data.Data.Models
 
         public string History { get; set; } = default!;
 
-        public ICollection<Album> Albums { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Album> Albums { get; set; }
 
-        public ICollection<Genre> Genres { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Genre> Genres { get; set; }
     }
 }

@@ -16,13 +16,13 @@ namespace Catalog.API.Infrastructure
             
         }
 
-        public DbSet<Album> Albums { get; set; } = default!;
+        public virtual DbSet<Album> Albums { get; set; } = default!;
 
-        public DbSet<Genre> Genres { get; set; } = default!;
+        public virtual DbSet<Genre> Genres { get; set; } = default!;
 
-        public DbSet<AlbumType> AlbumTypes { get; set; } = default!;
+        public virtual DbSet<AlbumType> AlbumTypes { get; set; } = default!;
 
-        public DbSet<Performer> Performers { get; set; } = default!;    
+        public virtual DbSet<Performer> Performers { get; set; } = default!;    
 
         public override int SaveChanges() => base.SaveChanges();
 
@@ -35,7 +35,8 @@ namespace Catalog.API.Infrastructure
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => SaveChangesAsync(true, cancellationToken);
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, 
+            CancellationToken cancellationToken = default)
         {
             ApplyAuditInfoRules();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

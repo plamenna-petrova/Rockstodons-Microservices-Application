@@ -17,6 +17,7 @@ namespace Catalog.API.Services.Services.Data.Implementation
     public class AlbumTypesService : IAlbumTypesService
     {
         private readonly IDeletableEntityRepository<AlbumType> _albumTypesRepository;
+
         private readonly IMapper _mapper;
 
         public AlbumTypesService(IDeletableEntityRepository<AlbumType> albumTypesRepository, IMapper mapper)

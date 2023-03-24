@@ -61,6 +61,7 @@ namespace Catalog.API.Controllers
                 _logger.LogError(
                     string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, PerformersName, exception.Message)
                 );
+
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }

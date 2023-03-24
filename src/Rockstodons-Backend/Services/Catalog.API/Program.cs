@@ -10,8 +10,6 @@ using Catalog.API.Services.Services.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text.Encodings.Web;
 
 internal class Program
 {
@@ -36,8 +34,8 @@ internal class Program
         static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<CatalogDbContext>(
-                options => options.UseSqlServer(
-                    configuration.GetConnectionString("DefaultConnection")));
+                options => options.UseLazyLoadingProxies()
+                   .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // local database
 
@@ -57,6 +55,7 @@ internal class Program
             services.AddTransient<IGenresService, GenresService>();
             services.AddTransient<IAlbumTypesService, AlbumTypesService>();
             services.AddTransient<IPerformersService, PerformersService>();
+            services.AddTransient<IAlbumsService, AlbumsService>();
         }
 
         // Configure the HTTP request pipeline.

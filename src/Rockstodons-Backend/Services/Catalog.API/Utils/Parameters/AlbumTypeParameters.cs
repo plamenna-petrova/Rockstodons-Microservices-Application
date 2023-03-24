@@ -2,6 +2,6 @@
 {
     public class AlbumTypeParameters : QueryStringParameters
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }

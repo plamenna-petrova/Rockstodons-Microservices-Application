@@ -1,6 +1,7 @@
 ﻿using Catalog.API.Data.Data.Common.Models.Abstraction;
 using Catalog.API.Data.Data.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Catalog.API.Data.Models
 {
@@ -18,15 +19,18 @@ namespace Catalog.API.Data.Models
 
         public string AlbumTypeId { get; set; }
 
-        public AlbumType AlbumType { get; set; }
+        [JsonIgnore]
+        public virtual AlbumType AlbumType { get; set; }
 
         public string GenreId { get; set; }
 
-        public Genre Genre { get; set; }
+        [JsonIgnore]
+        public virtual Genre Genre { get; set; }
 
         public string PerformerId { get; set; }
 
-        public Performer Performer { get; set; }
+        [JsonIgnore]
+        public virtual Performer Performer { get; set; }
 
         public int AvailableStock { get; set; }
 
