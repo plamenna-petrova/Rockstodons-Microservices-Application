@@ -295,9 +295,9 @@ namespace Catalog.API.Controllers
                     return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumName, "creation"));
                 }
 
-                var createdalbum = await _albumService.CreateAlbum(createAlbumDTO);
+                var createdAlbum = await _albumService.CreateAlbum(createAlbumDTO);
 
-                return CreatedAtRoute(AlbumDetailsRouteName, new { createdalbum.Id }, createdalbum);
+                return CreatedAtRoute(AlbumDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
             }
             catch (Exception exception)
             {
