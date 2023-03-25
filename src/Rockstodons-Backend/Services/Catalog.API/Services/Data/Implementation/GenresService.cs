@@ -3,13 +3,13 @@ using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.Services.Mapping;
-using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils;
 using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog.API.Services.Services.Data.Implementation
+namespace Catalog.API.Services.Data.Implementation
 {
     public class GenresService : IGenresService
     {

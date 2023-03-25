@@ -2,6 +2,8 @@
 {
     public class GlobalConstants
     {
+        // API Messages
+
         public const string EntitiesNotFoundResult = "No {0} were found";
 
         public const string GetAllEntitiesExceptionMessage = "Something went wrong when retrieving the {0} \n {1}";
@@ -39,5 +41,11 @@
 
         public const string EntityRestoreExceptionMessage = "Something went wrong when trying to restore the " +
             "{0} with provided id {1} {2}";
+
+        // Roles
+
+        public const string AdministratorRoleName = "Administrator";
+
+        public const string NormalUserRoleName = "User";
     }
 }

@@ -5,7 +5,7 @@ using Catalog.API.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Catalog.API.Data.Data.Models;
 
-namespace Catalog.API.Services.Services.Data.Interfaces
+namespace Catalog.API.Services.Data.Interfaces
 {
     public interface IPerformersService
     {

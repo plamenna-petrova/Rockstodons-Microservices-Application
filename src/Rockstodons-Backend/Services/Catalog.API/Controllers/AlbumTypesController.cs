@@ -1,11 +1,8 @@
 ﻿using Catalog.API.Common;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
-using Catalog.API.DTOs.Genres;
-using Catalog.API.Services.Services.Data.Implementation;
-using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

@@ -9,25 +9,21 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 
-namespace Catalog.API.Infrastructure
+namespace Catalog.API.Infrastructure.Seeding
 {
-    public class CatalogContextSeeder
+    public class EntitiesSeeder : ISeeder
     {
+        private readonly ILogger<EntitiesSeeder> _logger;
+
         public async Task SeedAsync(
             CatalogDbContext catalogDbContext,
-            IWebHostEnvironment webHostEnvironment,
-            IOptions<CatalogSettings> catalogSettings,
-            ILogger<CatalogContextSeeder> logger
+            IServiceProvider serviceProvider
         )
         {
-            var policy = CreatePolicy(logger, nameof(CatalogContextSeeder));
+            var policy = CreatePolicy(_logger, nameof(EntitiesSeeder));
 
             await policy.ExecuteAsync(async () =>
             {
-                var useCustomizationData = catalogSettings.Value.UseCustomizationData;
-                var contentRootPath = webHostEnvironment.ContentRootPath;
-                var picturesPath = webHostEnvironment.WebRootPath;
-
                 if (!catalogDbContext.Genres.Any())
                 {
                     await catalogDbContext.Genres.AddRangeAsync(GetPreconfiguredGenres());
@@ -54,18 +50,6 @@ namespace Catalog.API.Infrastructure
 
                 return Task.CompletedTask;
             });
-        }
-
-        private Genre CreateGenre(string genreName)
-        {
-            genreName = genreName.Trim('"').Trim();
-
-            if (string.IsNullOrEmpty(genreName))
-            {
-                throw new Exception("Genre Name is empty");
-            }
-
-            return new Genre { Name = genreName };
         }
 
         public IEnumerable<Genre> GetPreconfiguredGenres()
@@ -172,132 +156,132 @@ namespace Catalog.API.Infrastructure
 
             var albumsToSeed = new List<Album>()
             {
-                new() 
-                {  
-                    AvailableStock = 100, 
-                    Description = "Crusader", 
-                    Name = "Crusader", 
-                    Price = 19.5M, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Crusader",
+                    Name = "Crusader",
+                    Price = 19.5M,
                     PictureFileName = "1.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[1],
                     PerformerId = existingPerformersIds[0]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Forever Free", 
-                    Name = "Forever Free", 
-                    Price= 8.50M, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Forever Free",
+                    Name = "Forever Free",
+                    Price= 8.50M,
                     PictureFileName = "2.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[1],
                     PerformerId = existingPerformersIds[0]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Ride The Lightning", 
-                    Name = "Ride The Lightning", 
-                    Price = 12, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Ride The Lightning",
+                    Name = "Ride The Lightning",
+                    Price = 12,
                     PictureFileName = "3.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[3],
                     PerformerId = existingPerformersIds[1]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Magma", 
-                    Name = "Magma", 
-                    Price = 12, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Magma",
+                    Name = "Magma",
+                    Price = 12,
                     PictureFileName = "4.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[2]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Fortitude", 
-                    Name = "Fortitude", 
-                    Price = 8.5M, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Fortitude",
+                    Name = "Fortitude",
+                    Price = 8.5M,
                     PictureFileName = "5.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[2]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "The Way Of All Flesh", 
-                    Name = "The Way Of All Flesh", 
-                    Price = 12, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "The Way Of All Flesh",
+                    Name = "The Way Of All Flesh",
+                    Price = 12,
                     PictureFileName = "6.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[2]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Lateralus", 
-                    Name = "Lateralus", 
-                    Price = 12, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Lateralus",
+                    Name = "Lateralus",
+                    Price = 12,
                     PictureFileName = "7.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[3]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Leviathan", 
-                    Name = "Leviathan", 
-                    Price = 8.5M, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Leviathan",
+                    Name = "Leviathan",
+                    Price = 8.5M,
                     PictureFileName = "8.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[4]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Blood Mountain", 
-                    Name = "Bloo Mountain", 
-                    Price = 12, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Blood Mountain",
+                    Name = "Bloo Mountain",
+                    Price = 12,
                     PictureFileName = "9.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[4]
                 },
-                new() 
-                {  
-                    AvailableStock = 100, 
-                    Description = "The Hunter", 
-                    Name = "The Hunter", 
-                    Price = 12, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "The Hunter",
+                    Name = "The Hunter",
+                    Price = 12,
                     PictureFileName = "10.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[4]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "Sounds of a Playground Fading", 
-                    Name = "Sounds of a Playground Fading", 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "Sounds of a Playground Fading",
+                    Name = "Sounds of a Playground Fading",
                     Price = 8.5M,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[5]
                 },
-                new() 
-                { 
-                    AvailableStock = 100, 
-                    Description = "A Sense Of Purpose", 
-                    Name = "A Sense Of Purpose", 
-                    Price = 12, 
+                new()
+                {
+                    AvailableStock = 100,
+                    Description = "A Sense Of Purpose",
+                    Name = "A Sense Of Purpose",
+                    Price = 12,
                     PictureFileName = "12.png",
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
@@ -324,7 +308,7 @@ namespace Catalog.API.Infrastructure
             }
         }
 
-        public AsyncRetryPolicy CreatePolicy(ILogger<CatalogContextSeeder> logger, string prefix, int retries = 3)
+        public AsyncRetryPolicy CreatePolicy(ILogger<EntitiesSeeder> logger, string prefix, int retries = 3)
         {
             return Policy.Handle<SqlException>().WaitAndRetryAsync(
                     retryCount: retries,

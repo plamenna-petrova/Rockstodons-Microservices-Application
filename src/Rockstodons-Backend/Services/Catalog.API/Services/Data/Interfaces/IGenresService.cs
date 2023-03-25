@@ -4,7 +4,7 @@ using Catalog.API.Utils;
 using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.JsonPatch;
 
-namespace Catalog.API.Services.Services.Data.Interfaces
+namespace Catalog.API.Services.Data.Interfaces
 {
     public interface IGenresService
     {

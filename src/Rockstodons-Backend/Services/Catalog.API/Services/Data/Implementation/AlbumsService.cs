@@ -2,7 +2,7 @@
 using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Data.Data.Models;
 using Catalog.API.DTOs.Albums;
-using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
 using Catalog.API.Utils;
 using Microsoft.AspNetCore.JsonPatch;
@@ -10,7 +10,7 @@ using Catalog.API.Services.Mapping;
 using Catalog.API.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog.API.Services.Services.Data.Implementation
+namespace Catalog.API.Services.Data.Implementation
 {
     public class AlbumsService : IAlbumsService
     {

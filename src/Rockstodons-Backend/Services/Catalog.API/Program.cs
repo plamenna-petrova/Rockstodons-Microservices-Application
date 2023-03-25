@@ -5,11 +5,13 @@ using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Infrastructure;
 using Catalog.API.Infrastructure.Repositories;
 using Catalog.API.Services.Mapping;
-using Catalog.API.Services.Services.Data.Implementation;
-using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Services.Data.Implementation;
+using Catalog.API.Services.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Reflection;
+using Catalog.API.Infrastructure.Seeding;
+using Catalog.API.Data.Data.Models;
 
 internal class Program
 {
@@ -37,6 +39,9 @@ internal class Program
                 options => options.UseLazyLoadingProxies()
                    .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
+                .AddRoles<ApplicationRole>().AddEntityFrameworkStores<CatalogDbContext>();
+
             // local database
 
             //services.AddDbContext<CatalogDbContext>(options =>
@@ -56,6 +61,7 @@ internal class Program
             services.AddTransient<IAlbumTypesService, AlbumTypesService>();
             services.AddTransient<IPerformersService, PerformersService>();
             services.AddTransient<IAlbumsService, AlbumsService>();
+            services.AddTransient<IRolesService, RolesService>();
         }
 
         // Configure the HTTP request pipeline.
@@ -63,18 +69,14 @@ internal class Program
         {
             using (var serviceScope = app.Services.CreateScope())
             {
-                var catalogContext = serviceScope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+                var catalogDbContext = serviceScope.ServiceProvider.GetRequiredService<CatalogDbContext>();
 
-                if (catalogContext.Database.GetPendingMigrations().Any())
+                if (catalogDbContext.Database.GetPendingMigrations().Any())
                 {
-                    catalogContext.Database.Migrate();
+                    catalogDbContext.Database.Migrate();
                 }
 
-                var webHostEnvironment = serviceScope.ServiceProvider.GetService<IWebHostEnvironment>();
-                var settings = serviceScope.ServiceProvider.GetService<IOptions<CatalogSettings>>();
-                var logger = serviceScope.ServiceProvider.GetService<ILogger<CatalogContextSeeder>>();
-
-                new CatalogContextSeeder().SeedAsync(catalogContext, webHostEnvironment, settings, logger).GetAwaiter().GetResult();
+                new CatalogDbContextSeeder().SeedAsync(catalogDbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
             }
         }
 

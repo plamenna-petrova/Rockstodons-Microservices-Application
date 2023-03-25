@@ -1,13 +1,10 @@
 ﻿using Catalog.API.Common;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
-using Catalog.API.Infrastructure.ActionResults;
-using Catalog.API.Services.Services.Data.Interfaces;
+using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text.Encodings.Web;
