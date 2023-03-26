@@ -46,8 +46,8 @@ namespace Catalog.API.Services.Data.Implementation
         {
             return await _albumsRepository.GetAllAsNoTrackingWithDeletedRecords()
                 .MapTo<AlbumDetailsDTO>()
-                .Where(g => g.Name.ToLower().Contains(albumsSearchTerm.Trim().ToLower()))
-                .OrderBy(g => g.Name)
+                .Where(a => a.Name.ToLower().Contains(albumsSearchTerm.Trim().ToLower()))
+                .OrderBy(a => a.Name)
                 .ToListAsync();
         }
 
@@ -57,19 +57,19 @@ namespace Catalog.API.Services.Data.Implementation
 
             SearchByAlbumName(ref albumsToPaginate, albumParameters.Name);
 
-            return PagedList<AlbumDetailsDTO>.ToPagedList(albumsToPaginate.OrderBy(g => g.Name),
+            return PagedList<AlbumDetailsDTO>.ToPagedList(albumsToPaginate.OrderBy(a => a.Name),
                 albumParameters.PageNumber, albumParameters.PageSize);
         }
 
         public async Task<Album> GetAlbumById(string id)
         {
             return await _albumsRepository.GetAllWithDeletedRecords()
-                .Where(g => g.Id == id).FirstOrDefaultAsync();
+                .Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<AlbumDetailsDTO> GetAlbumDetails(string id)
         {
-            return await _albumsRepository.GetAll().Where(g => g.Id == id)
+            return await _albumsRepository.GetAll().Where(a => a.Id == id)
                 .MapTo<AlbumDetailsDTO>().FirstOrDefaultAsync();
         }
 

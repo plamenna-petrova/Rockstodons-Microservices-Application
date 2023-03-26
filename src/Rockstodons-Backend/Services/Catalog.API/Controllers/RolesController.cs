@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Catalog.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/roles")]
     [ApiController]
     public class RolesController : ControllerBase
     {
@@ -19,9 +19,9 @@ namespace Catalog.API.Controllers
         private const string RoleDetailsRouteName = "RoleDetails";
 
         private readonly IRolesService _rolesService;
-        private ILogger<AlbumsController> _logger;
+        private ILogger<RolesController> _logger;
 
-        public RolesController(IRolesService rolesService, ILogger<AlbumsController> logger)
+        public RolesController(IRolesService rolesService, ILogger<RolesController> logger)
         {
             _rolesService = rolesService;
             _logger = logger;
@@ -29,7 +29,7 @@ namespace Catalog.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(List<ApplicationRole>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<List<AlbumDTO>>> GetAllAlbums()
+        public async Task<ActionResult<List<ApplicationRole>>> GetAllRoles()
         {
             try
             {
@@ -50,12 +50,12 @@ namespace Catalog.API.Controllers
                     string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, RolesName, exception.Message)
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
             }
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<List<ApplicationRole>>> GetAlbumsWithDeletedRecords()
+        public async Task<ActionResult<List<ApplicationRole>>> GetRolesWithDeletedRecords()
         {
             try
             {

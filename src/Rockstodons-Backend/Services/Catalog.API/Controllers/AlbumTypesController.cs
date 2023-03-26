@@ -59,7 +59,8 @@ namespace Catalog.API.Controllers
                 _logger.LogError(
                     string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, AlbumTypesName, exception.Message)
                 );
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
             }
         }
 

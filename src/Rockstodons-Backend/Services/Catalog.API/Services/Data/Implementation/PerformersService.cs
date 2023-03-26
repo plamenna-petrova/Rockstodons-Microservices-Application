@@ -36,7 +36,7 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task<PagedList<Performer>> GetPaginatedPerformers(PerformerParameters performerParameters)
         {
-            var performersToPaginate = _performersRepository.GetAllWithDeletedRecords().OrderBy(g => g.Name);
+            var performersToPaginate = _performersRepository.GetAllWithDeletedRecords().OrderBy(p => p.Name);
             return PagedList<Performer>.ToPagedList(performersToPaginate, performerParameters.PageNumber, performerParameters.PageSize);
         }
 
@@ -44,8 +44,8 @@ namespace Catalog.API.Services.Data.Implementation
         {
             return await _performersRepository.GetAllAsNoTrackingWithDeletedRecords()
                 .MapTo<PerformerDetailsDTO>()
-                .Where(g => g.Name.ToLower().Contains(performersSearchTerm.Trim().ToLower()))
-                .OrderBy(g => g.Name)
+                .Where(p => p.Name.ToLower().Contains(performersSearchTerm.Trim().ToLower()))
+                .OrderBy(p => p.Name)
                 .ToListAsync();
         }
 
@@ -55,19 +55,19 @@ namespace Catalog.API.Services.Data.Implementation
 
             SearchByPerformerName(ref performersToPaginate, performerParameters.Name);
 
-            return PagedList<PerformerDetailsDTO>.ToPagedList(performersToPaginate.OrderBy(g => g.Name),
+            return PagedList<PerformerDetailsDTO>.ToPagedList(performersToPaginate.OrderBy(p => p.Name),
                 performerParameters.PageNumber, performerParameters.PageSize);
         }
 
         public async Task<Performer> GetPerformerById(string id)
         {
             return await _performersRepository.GetAllWithDeletedRecords()
-                .Where(g => g.Id == id).FirstOrDefaultAsync();
+                .Where(p => p.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<PerformerDetailsDTO> GetPerformerDetails(string id)
         {
-            return await _performersRepository.GetAll().Where(g => g.Id == id)
+            return await _performersRepository.GetAll().Where(p => p.Id == id)
                 .MapTo<PerformerDetailsDTO>().FirstOrDefaultAsync();
         }
 

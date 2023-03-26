@@ -12,6 +12,12 @@ using Microsoft.Extensions.Options;
 using System.Reflection;
 using Catalog.API.Infrastructure.Seeding;
 using Catalog.API.Data.Data.Models;
+using Catalog.API.Utils;
+using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 internal class Program
 {
@@ -40,7 +46,30 @@ internal class Program
                    .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
-                .AddRoles<ApplicationRole>().AddEntityFrameworkStores<CatalogDbContext>();
+                .AddRoles<ApplicationRole>().AddEntityFrameworkStores<CatalogDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(authenticationOptions =>
+            {
+                authenticationOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authenticationOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                authenticationOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(jwtBearerOptions =>
+            {
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = configuration["JWTConfiguration:Issuer"],
+                    ValidAudience = configuration["JWTConfiguration:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                        .GetBytes(configuration["JWTConfiguration:Secret"])),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true
+                };
+            });
+
+            services.AddAuthorization();
 
             // local database
 
@@ -62,11 +91,15 @@ internal class Program
             services.AddTransient<IPerformersService, PerformersService>();
             services.AddTransient<IAlbumsService, AlbumsService>();
             services.AddTransient<IRolesService, RolesService>();
+            services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IUsersService, UsersService>();
         }
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
+            app.UseDeveloperExceptionPage();
+
             using (var serviceScope = app.Services.CreateScope())
             {
                 var catalogDbContext = serviceScope.ServiceProvider.GetRequiredService<CatalogDbContext>();
@@ -82,11 +115,18 @@ internal class Program
 
         AutomapperConfig.RegisterMappings(Assembly.GetExecutingAssembly());
 
-        //app.UseHttpsRedirection();
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
 
         app.UseAuthorization();
 
-        app.MapControllers();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers(); 
+        });
 
         app.Run();
     }

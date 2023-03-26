@@ -11,6 +11,8 @@ namespace Catalog.API.Infrastructure
             identityOptions.Password.RequireUppercase = false;
             identityOptions.Password.RequireNonAlphanumeric = false;
             identityOptions.Password.RequiredLength = 6;
+            identityOptions.User.RequireUniqueEmail = true;
+            identityOptions.SignIn.RequireConfirmedEmail = true;
         }
     }
 }

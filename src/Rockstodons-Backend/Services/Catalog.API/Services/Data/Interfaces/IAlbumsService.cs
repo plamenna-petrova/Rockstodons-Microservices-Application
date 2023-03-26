@@ -14,9 +14,9 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<PagedList<AlbumDTO>> GetPaginatedAlbums(AlbumParameters genreParameters);
 
-        Task<List<AlbumDetailsDTO>> SearchForAlbums(string AlbumsSearchTerm);
+        Task<List<AlbumDetailsDTO>> SearchForAlbums(string albumsSearchTerm);
 
-        Task<PagedList<AlbumDetailsDTO>> PaginateSearchedAlbums(AlbumParameters AlbumParameters);
+        Task<PagedList<AlbumDetailsDTO>> PaginateSearchedAlbums(AlbumParameters albumParameters);
 
         Task<Album> GetAlbumById(string id);
 
@@ -24,14 +24,14 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<AlbumDTO> CreateAlbum(CreateAlbumDTO createAlbumDTO);
 
-        Task UpdateAlbum(Album AlbumToUpdate, UpdateAlbumDTO updateAlbumDTO);
+        Task UpdateAlbum(Album albumToUpdate, UpdateAlbumDTO updateAlbumDTO);
 
-        Task PartiallyUpdateAlbum(Album AlbumToPartiallyUpdate, JsonPatchDocument<UpdateAlbumDTO> AlbumJsonPatchDocument);
+        Task PartiallyUpdateAlbum(Album albumToPartiallyUpdate, JsonPatchDocument<UpdateAlbumDTO> albumJsonPatchDocument);
 
-        Task DeleteAlbum(Album AlbumToDelete);
+        Task DeleteAlbum(Album albumToDelete);
 
-        Task HardDeleteAlbum(Album AlbumToHardDelete);
+        Task HardDeleteAlbum(Album albumToHardDelete);
 
-        Task RestoreAlbum(Album AlbumToRestore);
+        Task RestoreAlbum(Album albumToRestore);
     }
 }

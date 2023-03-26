@@ -4,6 +4,7 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Albums;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace Catalog.API.Controllers
 {
     [Route("api/v1/albums")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class AlbumsController : ControllerBase
     {
         private const string AlbumsName = "Albums";
@@ -62,7 +64,7 @@ namespace Catalog.API.Controllers
                     string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, AlbumsName, exception.Message)
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
             }
         }
 
