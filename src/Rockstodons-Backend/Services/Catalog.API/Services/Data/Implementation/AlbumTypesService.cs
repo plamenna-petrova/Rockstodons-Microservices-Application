@@ -122,7 +122,7 @@ namespace Catalog.API.Services.Data.Implementation
         {
             if (!albumTypes.Any() || string.IsNullOrWhiteSpace(albumTypeName))
             {
-                return;
+                return; 
             }
 
             albumTypes = albumTypes.Where(at => at.Name.ToLower().Contains(albumTypeName.Trim().ToLower()));
