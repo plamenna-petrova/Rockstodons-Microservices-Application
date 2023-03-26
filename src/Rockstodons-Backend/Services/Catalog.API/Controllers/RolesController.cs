@@ -61,7 +61,7 @@ namespace Catalog.API.Controllers
             {
                 var allRolesWithDeletedRecords = await _rolesService.GetAllRolesWithDeletedRecords();
 
-                if (allRolesWithDeletedRecords != null)
+                if (allRolesWithDeletedRecords != null) 
                 {
                     return Ok(allRolesWithDeletedRecords);
                 }
