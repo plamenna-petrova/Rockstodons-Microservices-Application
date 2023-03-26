@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 internal class Program
 {
@@ -25,75 +26,15 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers();
-
-        builder.Services.AddEndpointsApiExplorer();
-
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddSwaggerGen();
 
         ConfigureServices(builder.Services, builder.Configuration);
 
         var app = builder.Build();
 
         app.UseSwagger();
+
         app.UseSwaggerUI();
-
-        static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<CatalogDbContext>(
-                options => options.UseLazyLoadingProxies()
-                   .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
-                .AddRoles<ApplicationRole>().AddEntityFrameworkStores<CatalogDbContext>()
-                .AddDefaultTokenProviders();
-
-            services.AddAuthentication(authenticationOptions =>
-            {
-                authenticationOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                authenticationOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                authenticationOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(jwtBearerOptions =>
-            {
-                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidIssuer = configuration["JWTConfiguration:Issuer"],
-                    ValidAudience = configuration["JWTConfiguration:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                        .GetBytes(configuration["JWTConfiguration:Secret"])),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = true
-                };
-            });
-
-            services.AddAuthorization();
-
-            // local database
-
-            //services.AddDbContext<CatalogDbContext>(options =>
-            //    options.UseSqlServer("Server=LENOVOLEGION\\SQLEXPRESS;Initial Catalog=Rockstodons.CatalogDb;Integrated Security=true"));
-
-            services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddSingleton(configuration);
-
-            services.AddAutoMapper(typeof(Program));
-
-            services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(BaseDeletableEntityRepository<>));
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IDbQueryRunner, DbQueryRunner>();
-
-            services.AddTransient<IGenresService, GenresService>();
-            services.AddTransient<IAlbumTypesService, AlbumTypesService>();
-            services.AddTransient<IPerformersService, PerformersService>();
-            services.AddTransient<IAlbumsService, AlbumsService>();
-            services.AddTransient<IRolesService, RolesService>();
-            services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<IUsersService, UsersService>();
-        }
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -129,5 +70,110 @@ internal class Program
         });
 
         app.Run();
+    }
+
+    private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<CatalogDbContext>(
+            options => options.UseLazyLoadingProxies()
+               .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
+            .AddRoles<ApplicationRole>().AddEntityFrameworkStores<CatalogDbContext>()
+            .AddDefaultTokenProviders();
+
+        services.AddAuthentication(authenticationOptions =>
+        {
+            authenticationOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            authenticationOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            authenticationOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(jwtBearerOptions =>
+        {
+            jwtBearerOptions.RequireHttpsMetadata = true;
+            jwtBearerOptions.SaveToken = true;
+            jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = configuration["JWTConfiguration:Issuer"],
+                ValidAudience = configuration["JWTConfiguration:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                    .GetBytes(configuration["JWTConfiguration:Secret"])),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.FromMinutes(5)
+            };
+        });
+
+        services.AddAuthorization();
+
+        // local database
+
+        //services.AddDbContext<CatalogDbContext>(options =>
+        //    options.UseSqlServer("Server=LENOVOLEGION\\SQLEXPRESS;Initial Catalog=Rockstodons.CatalogDb;Integrated Security=true"));
+
+        services.AddDatabaseDeveloperPageExceptionFilter();
+
+        services.AddSingleton(configuration);
+
+        services.AddAutoMapper(typeof(Program));
+
+        services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(BaseDeletableEntityRepository<>));
+        services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+        services.AddScoped<IDbQueryRunner, DbQueryRunner>();
+
+        services.AddTransient<IGenresService, GenresService>();
+        services.AddTransient<IAlbumTypesService, AlbumTypesService>();
+        services.AddTransient<IPerformersService, PerformersService>();
+        services.AddTransient<IAlbumsService, AlbumsService>();
+        services.AddTransient<IRolesService, RolesService>();
+        services.AddSingleton<IIdentityService, IdentityService>();
+        services.AddTransient<IUsersService, UsersService>();
+
+        services.AddHostedService<JWTRefreshTokenCache>();
+
+        services.AddControllers();
+
+        services.AddEndpointsApiExplorer();
+
+        services.AddSwaggerGen(swaggerGenerationOptions =>
+        {
+            swaggerGenerationOptions.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Rockstodons Catalog API",
+                Version = "v1"
+            });
+            swaggerGenerationOptions.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "JWT Authorization header using the Bearer schemes"
+            });
+            swaggerGenerationOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+        });
+
+        services.AddCors(corsOptions =>
+        {
+            corsOptions.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
+        });
     }
 }

@@ -2,10 +2,14 @@
 using Catalog.API.Data.Data.Models;
 using Catalog.API.DTOs.Identity;
 using Catalog.API.Services.Data.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Catalog.API.Controllers
 {
@@ -104,23 +108,91 @@ namespace Catalog.API.Controllers
                 }
 
                 var userRoles = await _userManager.GetRolesAsync(userToAuthenticate);
-                var generatedToken = _identityService.GenerateJWTToken(userToAuthenticate, userRoles);
+
+                var tokenClaims = new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userToAuthenticate.Id.ToString()),
+                    new Claim(ClaimTypes.Email, userToAuthenticate.Email),
+                    new Claim(ClaimTypes.Name, userToAuthenticate.UserName),
+                    new Claim(ClaimTypes.Role, userRoles[0]),
+                    new Claim(JwtRegisteredClaimNames.Sub, userToAuthenticate.Id),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToUniversalTime().ToString())
+                };
+
+                var jwtAuthenticationResult = _identityService.GenerateJWTToken(
+                    userToAuthenticate.UserName, tokenClaims
+                );
 
                 return new AuthenticationResponseDTO
                 {
-                    Id = userToAuthenticate.Id,
                     UserName = userToAuthenticate.UserName,
                     Role = userRoles[0],
-                    Token = generatedToken
+                    AccessToken = jwtAuthenticationResult.AccessToken,
+                    RefreshToken = jwtAuthenticationResult.RefreshTokenDTO.TokenString
                 };
             }
-            catch (Exception exception )
+            catch (Exception exception)
             {
                 _logger.LogError(
                     string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, "Register", exception.Message)
                 );
 
                 return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+            }
+        }
+
+        [HttpGet("current-user")]
+        [Authorize]
+        public ActionResult GetCurrentUsser()
+        {
+            return Ok(new AuthenticationResponseDTO
+            {
+                UserName = User.Identity?.Name,
+                Role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty
+            });
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public ActionResult Logout()
+        {
+            var userName = User.Identity?.Name;
+            _identityService.RemoveRefreshTokensByUserName(userName);
+            _logger.LogInformation($"User [{userName}] logged out of the system.");
+            return Ok();
+        }
+
+        [HttpPost("refresh-token")]
+        [Authorize]
+        public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequestDTO refreshTokenRequestDTO)
+        {
+            try
+            {
+                var userName = User.Identity?.Name;
+                _logger.LogInformation($"User [{userName}] is trying to refresh the JWT token.");
+
+                if (string.IsNullOrWhiteSpace(refreshTokenRequestDTO.RefreshToken))
+                {
+                    return Unauthorized();
+                }
+
+                var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
+                var jwtAuthenticationResult = _identityService.Refresh(refreshTokenRequestDTO.RefreshToken, accessToken, DateTime.Now);
+
+                _logger.LogInformation($"User [{userName}] has refreshed the JWT token.");
+
+                return Ok(new AuthenticationResponseDTO
+                {
+                    UserName = userName,
+                    Role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty,
+                    AccessToken = jwtAuthenticationResult.AccessToken,
+                    RefreshToken = jwtAuthenticationResult.RefreshTokenDTO.TokenString
+                });
+            }
+            catch (SecurityTokenException securityTokenException)
+            {
+                return Unauthorized(securityTokenException.Message);
             }
         }
     }

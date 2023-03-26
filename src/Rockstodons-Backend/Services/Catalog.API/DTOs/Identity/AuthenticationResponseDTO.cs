@@ -1,15 +1,19 @@
-﻿namespace Catalog.API.DTOs.Identity
+﻿using Newtonsoft.Json;
+
+namespace Catalog.API.DTOs.Identity
 {
     public class AuthenticationResponseDTO
     {
-        public string Id { get; set; }
-
+        [JsonProperty("username")]
         public string UserName { get; set; }
 
-        public string Email { get; set; }
-
+        [JsonProperty("role")]
         public string Role { get; set; }
 
-        public string Token { get; set; }
+        [JsonProperty("accessToken")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("refreshToken")]
+        public string RefreshToken { get; set; }
     }
 }
