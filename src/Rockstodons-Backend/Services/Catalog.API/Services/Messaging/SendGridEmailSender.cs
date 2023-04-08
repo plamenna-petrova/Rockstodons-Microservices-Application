@@ -5,17 +5,19 @@ namespace Catalog.API.Services.Messaging
 {
     public class SendGridEmailSender : IEmailSender
     {
-        private readonly SendGridClient sendGridClient;
+        private readonly IConfiguration _configuration;
+        private readonly SendGridClient _sendGridClient;
 
-        public SendGridEmailSender(string apiKey)
+        public SendGridEmailSender(IConfiguration configuration)
         {
-            this.sendGridClient = new SendGridClient(apiKey);
+            _configuration = configuration;
+            _sendGridClient = new SendGridClient(apiKey: _configuration["SendGrid:APIKey"]);
         }
 
         public async Task SendEmailAsync(
-    string from, string fromName, string to, string subject,
-    string htmlContent, IEnumerable<EmailAttachment> emailAttachments = null!
-)
+            string from, string fromName, string to, string subject,
+            string htmlContent, IEnumerable<EmailAttachment> emailAttachments = null!
+        )
         {
             if (string.IsNullOrWhiteSpace(subject) && string.IsNullOrWhiteSpace(htmlContent))
             {
@@ -25,7 +27,8 @@ namespace Catalog.API.Services.Messaging
             var fromEmailAddress = new EmailAddress(from, fromName);
             var toEmailAddress = new EmailAddress(to);
 
-            var message = MailHelper.CreateSingleEmail(fromEmailAddress, toEmailAddress, subject, null, htmlContent);
+            var message = MailHelper.CreateSingleEmail(
+                fromEmailAddress, toEmailAddress, subject, null, htmlContent);
 
             if (emailAttachments?.Any() == true)
             {
@@ -41,7 +44,7 @@ namespace Catalog.API.Services.Messaging
 
             try
             {
-                var response = await this.sendGridClient.SendEmailAsync(message);
+                var response = await _sendGridClient.SendEmailAsync(message);
                 Console.WriteLine(response.StatusCode);
                 Console.WriteLine(await response.Body.ReadAsStringAsync());
             }

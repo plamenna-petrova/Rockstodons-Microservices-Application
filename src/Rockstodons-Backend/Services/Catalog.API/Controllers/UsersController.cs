@@ -4,6 +4,7 @@ using Catalog.API.DTOs.Albums;
 using Catalog.API.Services.Data.Implementation;
 using Catalog.API.Services.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -18,11 +19,16 @@ namespace Catalog.API.Controllers
         private const string UserDetailsRouteName = "UserDetails";
 
         private readonly IUsersService _usersService;
+        private readonly UserManager<ApplicationUser> _userManager;
         private ILogger<UsersController> _logger;
 
-        public UsersController(IUsersService usersService, ILogger<UsersController> logger)
+        public UsersController(
+            IUsersService usersService, 
+            UserManager<ApplicationUser> userManager, 
+            ILogger<UsersController> logger)
         {
             _usersService = usersService;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -49,7 +55,8 @@ namespace Catalog.API.Controllers
                     string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, UsersName, exception.Message)
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
             }
         }
 
@@ -68,6 +75,9 @@ namespace Catalog.API.Controllers
                     return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, UsersName));
                 }
 
+                var userRolesToRemove = await _userManager.GetRolesAsync(userToHardDelete);
+
+                await _userManager.RemoveFromRolesAsync(userToHardDelete, userRolesToRemove);
                 await _usersService.HardDeleteUser(userToHardDelete);
 
                 return NoContent();
@@ -75,10 +85,12 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                   string.Format(GlobalConstants.EntityHardDeletionExceptionMessage, SingleUserName, id, exception.Message)
+                   string.Format(
+                       GlobalConstants.EntityHardDeletionExceptionMessage, SingleUserName, id, exception.Message)
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
             }
         }
     }

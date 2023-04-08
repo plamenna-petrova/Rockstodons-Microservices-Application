@@ -18,16 +18,14 @@ namespace Catalog.API.Services.Data.Implementation
 {
     public class IdentityService : IIdentityService
     {
-        private readonly ILogger<IdentityService> _logger;
         private readonly IConfiguration _configuration;
         private readonly ConcurrentDictionary<string, RefreshTokenDTO> _usersRefreshTokens;
 
         public IImmutableDictionary<string, RefreshTokenDTO> UsersRefreshTokensReadOnlyDictionary =>
             _usersRefreshTokens.ToImmutableDictionary();
 
-        public IdentityService(ILogger<IdentityService> logger, IConfiguration configuration)
+        public IdentityService( IConfiguration configuration)
         {
-            _logger = logger;
             _configuration = configuration;
             _usersRefreshTokens = new ConcurrentDictionary<string, RefreshTokenDTO>();
         }

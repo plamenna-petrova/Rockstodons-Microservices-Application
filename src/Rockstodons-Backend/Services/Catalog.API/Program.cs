@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Catalog.API.Services.Messaging;
 
 internal class Program
 {
@@ -129,6 +130,7 @@ internal class Program
         services.AddTransient<IRolesService, RolesService>();
         services.AddSingleton<IIdentityService, IdentityService>();
         services.AddTransient<IUsersService, UsersService>();
+        services.AddTransient<IEmailSender, SendGridEmailSender>();
 
         services.AddHostedService<JWTRefreshTokenCache>();
 

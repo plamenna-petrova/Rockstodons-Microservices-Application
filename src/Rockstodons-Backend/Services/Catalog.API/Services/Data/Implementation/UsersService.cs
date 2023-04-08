@@ -3,6 +3,7 @@ using Catalog.API.Data.Data.Models;
 using Catalog.API.Data.Models;
 using Catalog.API.Services.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Catalog.API.Services.Data.Implementation
 {

@@ -2,11 +2,14 @@
 using Catalog.API.Data.Data.Models;
 using Catalog.API.DTOs.Identity;
 using Catalog.API.Services.Data.Interfaces;
+using Catalog.API.Services.Messaging;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,6 +23,7 @@ namespace Catalog.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IIdentityService _identityService;
         private readonly IUsersService _usersService;
+        private readonly IEmailSender _emailSender; 
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityController> _logger;
 
@@ -27,6 +31,7 @@ namespace Catalog.API.Controllers
             UserManager<ApplicationUser> userManager,
             IIdentityService identityService,
             IUsersService usersService,
+            IEmailSender emailSender,
             IConfiguration configuration,
             ILogger<IdentityController> logger
         )
@@ -34,6 +39,7 @@ namespace Catalog.API.Controllers
             _userManager = userManager;
             _identityService = identityService;
             _usersService = usersService;
+            _emailSender = emailSender;
             _configuration = configuration;
             _logger = logger;
         }
@@ -59,37 +65,92 @@ namespace Catalog.API.Controllers
                     throw new Exception($"The email is already taken: {registerRequestDTO.Email}");
                 }
 
-                var applicationUser = new ApplicationUser
+                var userToRegister = new ApplicationUser
                 {
                     UserName = registerRequestDTO.UserName,
                     Email = registerRequestDTO.Email
                 };
 
-                var userRegistrationResult = await _userManager.CreateAsync(applicationUser, registerRequestDTO.Password);
+                var userRegistrationResult = await _userManager
+                    .CreateAsync(userToRegister, registerRequestDTO.Password);
 
-                if (!userRegistrationResult.Succeeded)
+                if (userRegistrationResult.Succeeded)
                 {
-                    return BadRequest(userRegistrationResult.Errors);
+                    var emailConfirmationCode = await _userManager
+                        .GenerateEmailConfirmationTokenAsync(userToRegister);
+                    var callbackUrl = Url.Action(
+                        "ConfirmEmail", "Identity", 
+                        new { 
+                            userId = userToRegister.Id, 
+                            code = emailConfirmationCode 
+                        },
+                        protocol: HttpContext.Request.Scheme
+                    );
+
+                    await _emailSender.SendEmailAsync(
+                        _configuration["SendGrid:SenderEmail"], 
+                        "Plamenna Petrova", 
+                        userToRegister.Email,
+                        "Confirm Your Account",
+                        $"confirm email: <a href='{callbackUrl}'>link</a>"
+                    );
+
+                    await _userManager.AddToRoleAsync(userToRegister, GlobalConstants.NormalUserRoleName);
+
+                    return Ok();
                 }
 
-                await _userManager.AddToRoleAsync(applicationUser, GlobalConstants.NormalUserRoleName);
+                return BadRequest(userRegistrationResult.Errors);
+            }
+            catch (Exception exception)
+            { 
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage
+                );
+            }
+        }
 
-                return Ok();
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("confirm-email")]
+        public async Task<ActionResult> ConfirmEmail([FromQuery]string userId, [FromQuery] string code)
+        {
+            try
+            {
+                if (code == null)
+                {
+                    throw new ApplicationException("A code must be supplied for email confirmation");
+                }
+
+                var userToConfirmEmail = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (userToConfirmEmail == null)
+                {
+                    throw new ApplicationException($"Unabled to load user with ID '{userId}'.");
+                }
+
+                var emailConfirmationResult = await _userManager.ConfirmEmailAsync(userToConfirmEmail, code);
+
+                if (emailConfirmationResult.Succeeded)
+                {
+                    return Ok("Thank you for confirming your email.");
+                }
+
+                return BadRequest(emailConfirmationResult.Errors.Select(err => err.Description));
             }
             catch (Exception exception)
             {
-                _logger.LogError(
-                   string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, "Register", exception.Message)
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage
                 );
-
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
             }
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<ActionResult<AuthenticationResponseDTO>> Authenticate(AuthenticationRequestDTO authenticationRequestDTO)
+        public async Task<ActionResult<AuthenticationResponseDTO>> Authenticate(
+            AuthenticationRequestDTO authenticationRequestDTO)
         {
             try
             {
@@ -100,7 +161,8 @@ namespace Catalog.API.Controllers
                     return Unauthorized();
                 }
 
-                var isPasswordValid = await _userManager.CheckPasswordAsync(userToAuthenticate, authenticationRequestDTO.Password);
+                var isPasswordValid = await _userManager.CheckPasswordAsync(
+                    userToAuthenticate, authenticationRequestDTO.Password);
 
                 if (!isPasswordValid)
                 {
@@ -138,7 +200,9 @@ namespace Catalog.API.Controllers
                     string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, "Register", exception.Message)
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -178,7 +242,8 @@ namespace Catalog.API.Controllers
                 }
 
                 var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
-                var jwtAuthenticationResult = _identityService.Refresh(refreshTokenRequestDTO.RefreshToken, accessToken, DateTime.Now);
+                var jwtAuthenticationResult = _identityService.Refresh(
+                    refreshTokenRequestDTO.RefreshToken, accessToken, DateTime.Now);
 
                 _logger.LogInformation($"User [{userName}] has refreshed the JWT token.");
 
