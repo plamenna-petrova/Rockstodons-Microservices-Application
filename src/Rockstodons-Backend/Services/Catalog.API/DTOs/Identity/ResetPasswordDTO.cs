@@ -2,16 +2,14 @@
 
 namespace Catalog.API.DTOs.Identity
 {
-    public class RegisterRequestDTO
+    public class ResetPasswordDTO
     {
-        [Required(ErrorMessage = "The username is required")]
-        public string UserName { get; set; }
-
-        [Required(ErrorMessage = "The email is required")]
+        [Required(ErrorMessage = "The email is required.")]
         [EmailAddress]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "The password is required.")]
+        [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "The confirmation password is required.")]

@@ -79,7 +79,7 @@ namespace Catalog.API.Controllers
                     var emailConfirmationCode = await _userManager
                         .GenerateEmailConfirmationTokenAsync(userToRegister);
                     var callbackUrl = Url.Action(
-                        "ConfirmEmail", "Identity", 
+                        nameof(ConfirmEmail), "Identity", 
                         new { 
                             userId = userToRegister.Id, 
                             code = emailConfirmationCode 
@@ -92,7 +92,7 @@ namespace Catalog.API.Controllers
                         "Plamenna Petrova", 
                         userToRegister.Email,
                         "Confirm Your Account",
-                        $"confirm email: <a href='{callbackUrl}'>link</a>"
+                        $"Confirm your email by clicking here: <a href='{callbackUrl}'>link</a>"
                     );
 
                     await _userManager.AddToRoleAsync(userToRegister, GlobalConstants.NormalUserRoleName);
@@ -194,12 +194,91 @@ namespace Catalog.API.Controllers
                     RefreshToken = jwtAuthenticationResult.RefreshTokenDTO.TokenString
                 };
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                _logger.LogError(
-                    string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, "Register", exception.Message)
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage
+                );
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("forgot-password")]
+        public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
+        {
+            try
+            {
+                var userByEmail = await _userManager.FindByEmailAsync(forgotPasswordDTO.Email);
+
+                if (userByEmail == null)
+                {
+                    return BadRequest("The provided email address couldn't be found");
+                }
+
+                bool isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(userByEmail);
+
+                if (!isEmailConfirmed)
+                {
+                    return BadRequest("The provided email address is not confirmed");
+                }
+
+                var passwordResetTokenCode = await _userManager.GeneratePasswordResetTokenAsync(userByEmail);
+                var callbackUrl = Url.Action(
+                   nameof(ResetPassword), "Identity",
+                   new
+                   {
+                      code = passwordResetTokenCode
+                   },
+                   protocol: HttpContext.Request.Scheme
                 );
 
+                await _emailSender.SendEmailAsync(_configuration["SendGrid:SenderEmail"],
+                     "Plamenna Petrova",
+                     userByEmail.Email,
+                     "Reset Password",
+                     $"Reset your password by clicking here: <a href='{callbackUrl}'>{callbackUrl}</a>"
+                );
+
+                return Ok("Please check your email to reset your password.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage
+                );
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("reset-password")]
+        public async Task<ActionResult> ResetPassword([FromQuery] string code, [FromBody]ResetPasswordDTO resetPasswordDTO)
+        {
+            try
+            {
+                var userToResetPassword = await _userManager.FindByEmailAsync(resetPasswordDTO.Email);
+
+                if (userToResetPassword == null)
+                {
+                    return BadRequest("The provided email address is not valid");
+                }
+
+                var resetPasswordResult = await _userManager.ResetPasswordAsync(
+                    userToResetPassword, 
+                    code,
+                    resetPasswordDTO.Password
+                );
+
+                if (resetPasswordResult.Succeeded) 
+                {
+                    return Ok("Your password has been reset");
+                }
+
+                return BadRequest(resetPasswordResult.Errors.ToArray());
+            }
+            catch (Exception)
+            {
                 return StatusCode(
                     StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage
                 );

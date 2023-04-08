@@ -134,6 +134,9 @@ internal class Program
 
         services.AddHostedService<JWTRefreshTokenCache>();
 
+        services.Configure<DataProtectionTokenProviderOptions>(
+            dataProtectionTokenProviderOptions => dataProtectionTokenProviderOptions.TokenLifespan = TimeSpan.FromHours(3));
+
         services.AddControllers();
 
         services.AddEndpointsApiExplorer();

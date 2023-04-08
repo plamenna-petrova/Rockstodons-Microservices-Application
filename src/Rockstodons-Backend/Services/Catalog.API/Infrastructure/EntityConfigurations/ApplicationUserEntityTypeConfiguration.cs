@@ -13,20 +13,21 @@ namespace Catalog.API.Infrastructure.EntityConfigurations
                 .WithOne()
                 .HasForeignKey(au => au.UserId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
 
             applicationUserEntityTypeBuilder
                 .HasMany(au => au.Logins)
                 .WithOne()
                 .HasForeignKey(au => au.UserId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
 
             applicationUserEntityTypeBuilder
                 .HasMany(au => au.Roles)
                 .WithOne()
                 .HasForeignKey(au => au.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
