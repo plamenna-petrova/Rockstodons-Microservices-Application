@@ -18,9 +18,9 @@ namespace Catalog.API.Services.Data.Implementation
 
         private readonly IMapper _mapper;
 
-        public PerformersService(IDeletableEntityRepository<Performer> PerformersRepository, IMapper mapper)
+        public PerformersService(IDeletableEntityRepository<Performer> performersRepository, IMapper mapper)
         {
-            _performersRepository = PerformersRepository;
+            _performersRepository = performersRepository;
             _mapper = mapper;
         }
 
@@ -81,11 +81,11 @@ namespace Catalog.API.Services.Data.Implementation
             return _mapper.Map<PerformerDTO>(mappedPerformer);
         }
 
-        public async Task UpdatePerformer(Performer PerformerToUpdate, UpdatePerformerDTO updatePerformerDTO)
+        public async Task UpdatePerformer(Performer performerToUpdate, UpdatePerformerDTO updatePerformerDTO)
         {
-            _mapper.Map(updatePerformerDTO, PerformerToUpdate);
+            _mapper.Map(updatePerformerDTO, performerToUpdate);
 
-            _performersRepository.Update(PerformerToUpdate);
+            _performersRepository.Update(performerToUpdate);
             await _performersRepository.SaveChangesAsync();
         }
 

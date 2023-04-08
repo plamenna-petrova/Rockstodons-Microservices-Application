@@ -24,6 +24,8 @@ namespace Catalog.API.Infrastructure
 
         public virtual DbSet<Performer> Performers { get; set; } = default!;    
 
+        public virtual DbSet<Track> Tracks { get; set; } = default!;    
+
         public override int SaveChanges() => base.SaveChanges();
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

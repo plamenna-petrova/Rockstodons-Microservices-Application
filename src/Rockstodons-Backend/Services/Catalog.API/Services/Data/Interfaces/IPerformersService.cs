@@ -13,11 +13,11 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<List<Performer>> GetAllPerformersWithDeletedRecords();
 
-        Task<PagedList<Performer>> GetPaginatedPerformers(PerformerParameters PerformerParameters);
+        Task<PagedList<Performer>> GetPaginatedPerformers(PerformerParameters performerParameters);
 
-        Task<List<PerformerDetailsDTO>> SearchForPerformers(string PerformerSearchTerm);
+        Task<List<PerformerDetailsDTO>> SearchForPerformers(string performerSearchTerm);
 
-        Task<PagedList<PerformerDetailsDTO>> PaginateSearchedPerformers(PerformerParameters PerformerParameters);
+        Task<PagedList<PerformerDetailsDTO>> PaginateSearchedPerformers(PerformerParameters performerParameters);
 
         Task<Performer> GetPerformerById(string id);
 
@@ -25,14 +25,14 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<PerformerDTO> CreatePerformer(CreatePerformerDTO createPerformerDTO);
 
-        Task UpdatePerformer(Performer PerformerToUpdate, UpdatePerformerDTO updatePerformerDTO);
+        Task UpdatePerformer(Performer performerToUpdate, UpdatePerformerDTO updatePerformerDTO);
 
-        Task PartiallyUpdatePerformer(Performer PerformerToPartiallyUpdate, JsonPatchDocument<UpdatePerformerDTO> PerformerJsonPatchDocument);
+        Task PartiallyUpdatePerformer(Performer performerToPartiallyUpdate, JsonPatchDocument<UpdatePerformerDTO> performerJsonPatchDocument);
 
-        Task DeletePerformer(Performer PerformerToDelete);
+        Task DeletePerformer(Performer performerToDelete);
 
-        Task HardDeletePerformer(Performer PerformerToHardDelete);
+        Task HardDeletePerformer(Performer performerToHardDelete);
 
-        Task RestorePerformer(Performer PerformerToRestore);
+        Task RestorePerformer(Performer performerToRestore);
     }
 }

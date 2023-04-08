@@ -7,6 +7,11 @@ namespace Catalog.API.Data.Models
 {
     public class Album : BaseDeletableModel<string>
     {
+        public Album()
+        {
+            Tracks = new HashSet<Track>();
+        }
+
         public string Name { get; set; } = default!;
 
         public string Description { get; set; } = default!;
@@ -18,6 +23,14 @@ namespace Catalog.API.Data.Models
         public string PictureFileName { get; set; } = default!;
 
         public string PictureUrl { get; set; } = default!;
+
+        public int AvailableStock { get; set; }
+
+        public int RestockThreshold { get; set; }
+
+        public int MaxStockThreshold { get; set; }
+
+        public bool OnReorder { get; set; }
 
         public string AlbumTypeId { get; set; }
 
@@ -32,15 +45,9 @@ namespace Catalog.API.Data.Models
         public string PerformerId { get; set; }
 
         [JsonIgnore]
-        public virtual Performer Performer { get; set; }
+        public virtual Performer Performer { get; set; } 
 
-        public int AvailableStock { get; set; }
-
-        public int RestockThreshold { get; set; } 
-
-        public int MaxStockThreshold { get; set; }
-
-        public bool OnReorder { get; set; } 
+        public virtual ICollection<Track> Tracks { get; set; }  
 
         public int RemoveFromStock(int desiredQuantity)
         {
