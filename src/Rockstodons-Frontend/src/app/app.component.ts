@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   isCollapsed = false;
+  currentYear = new Date().getFullYear();
 }
