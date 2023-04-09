@@ -1,15 +1,22 @@
-.login-form {
-    max-width: 300px;
-}
-
-.login-form-margin {
-    margin-bottom: 16px;
-}
-
-.login-form-forgot {
-    float: right;
-}
-
-.login-form-button {
-    width: 100%;
-}
+    .login-form-margin {
+        margin-bottom: 16px;
+    }
+    
+    .login-form-button {
+        width: 100%;
+    }
+    
+    .login-form-col {
+        padding: 0 3%;
+    }
+    
+    form img {
+        max-height: 400px;
+        width: 100%;
+    }
+    
+    @media only screen and (max-width: 767px) {
+        .login-form-col {
+            padding: 0;
+        }
+    }

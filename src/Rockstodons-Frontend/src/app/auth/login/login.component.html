@@ -1,23 +1,34 @@
-<form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="onLoginFormSubmit()">
-    <nz-form-item>
-        <nz-form-control nzErrorTip="Please input your username!">
-            <nz-input-group nzPrefixIcon="user">
-                <input type="text" nz-input formControlName="userName" placeholder="Username" />
-            </nz-input-group>
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-control nzErrorTip="Please input your Password!">
-            <nz-input-group nzPrefixIcon="lock">
-                <input type="password" nz-input formControlName="password" placeholder="Password" />
-            </nz-input-group>
-        </nz-form-control>
-    </nz-form-item>
-    <div nz-row class="login-form-margin">
-        <div nz-col [nzSpan]="12">
-            <a class="login-form-forgot">Forgot password</a>
-        </div>
+<div nz-row style="height: 100%;">
+    <div nz-col nzSpan="8"></div>
+    <div nz-col nzSpan="8" class="login-form-col" style="align-self: center;">
+        <form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="onLoginFormSubmit()">
+            <nz-form-item>
+                <img src="../../../assets/images/tumblr_ooid5tnnr61vijw5wo1_500.png" class="login-image" alt="Login Image">
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Please input your username!">
+                    <nz-input-group nzPrefixIcon="user">
+                        <input type="text" nz-input formControlName="userName" placeholder="Username" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Please input your Password!">
+                    <nz-input-group nzPrefixIcon="lock">
+                        <input type="password" nz-input formControlName="password" placeholder="Password" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <div nz-row class="login-form-margin">
+                <div nz-col [nzSpan]="12">
+                    <a class="login-form-forgot">Forgot password</a>
+                </div>
+            </div>
+            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">
+                Log in
+            </button> Or
+            <a [routerLink]="['/register']">Register now!</a>
+        </form>
     </div>
-    <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button> Or
-    <a [routerLink]="['/register']">register now!</a>
-</form>
+    <div nz-col nzSpan="8"></div>
+</div>
