@@ -96,20 +96,26 @@ export class AuthService {
 
   refreshToken(): Observable<ILoginResponseDTO | null> {
     const refreshToken = localStorage.getItem('refresh_token');
+    console.log('refresh token');
+    console.log(refreshToken);
+
     if (!refreshToken) {
       this.clearLocalStorage();
       return of(null);
     }
 
     return this.httpClient
-       .post<ILoginResponseDTO>(`${this.identityAPIUrl}/refresh-token`, { refreshToken: refreshToken })
+      .post<ILoginResponseDTO>(`${this.identityAPIUrl}/refresh-token`, { refreshToken: refreshToken })
       .pipe(
-        map((u) => {
+        map((user) => {
+          console.log('here');
           this.currentUser.next({
-            username: u.userName,
-            role: u.role
+            username: user.userName,
+            role: user.role
           });
-          return u;
+          this.setLocalStorage(user);
+          this.startTokenTimer();
+          return user;
         })
       )
   }
