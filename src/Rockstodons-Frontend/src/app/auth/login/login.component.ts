@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,13 +10,14 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 export class LoginComponent {
   loginForm!: UntypedFormGroup;
 
-  constructor(private untypedFormBuilder: UntypedFormBuilder) {
+  constructor(private untypedFormBuilder: UntypedFormBuilder, private router: Router) {
 
   }
 
   onLoginFormSubmit(): void {
     if (this.loginForm.valid) {
        console.log('submit', this.loginForm.value);
+       this.router.navigate(['/dashboard']);
     } else {
       Object.values(this.loginForm.controls).forEach(controlValue => {
           if (controlValue.invalid) {
