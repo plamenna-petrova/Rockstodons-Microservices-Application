@@ -54,6 +54,12 @@ internal class Program
 
         AutomapperConfig.RegisterMappings(Assembly.GetExecutingAssembly());
 
+        app.UseCors(x => x
+          .AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+        );
+
         app.UseHttpsRedirection();
 
         app.UseRouting();

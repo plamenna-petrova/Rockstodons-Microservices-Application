@@ -1,0 +1,22 @@
+.register-form-margin {
+    margin-bottom: 16px;
+}
+
+.register-form-button {
+    width: 100%;
+}
+
+.register-form-col {
+    padding: 0 5%;
+}
+
+form img {
+    max-height: 300px;
+    width: 100%;
+}
+
+@media only screen and (max-width: 767px) {
+    .register-form-col {
+        padding: 0;
+    }
+}

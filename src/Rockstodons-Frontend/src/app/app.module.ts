@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +23,11 @@ import { IconsProviderModule } from './icons-provider.module';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { HomeComponent } from './content/home/home.component';
+import { appInitializer } from './core/services/app-initializer.service';
+import { AuthService } from './core/services/auth.service';
+import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { UnauthorizedInterceptor } from './core/interceptors/unauthorized.interceptor';
 
 registerLocaleData(en);
 
@@ -36,6 +41,7 @@ const icons: IconDefinition[] = [
     AppComponent,
     RegisterComponent,
     LoginComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,7 +60,26 @@ const icons: IconDefinition[] = [
     NzBreadCrumbModule
   ],
   providers: [
-    { provide: NZ_I18N, useValue: en_US }
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializer,
+      multi: true,
+      deps: [AuthService]
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthorizedInterceptor,
+      multi: true
+    },
+    {
+      provide: NZ_I18N,
+      useValue: en_US
+    }
   ],
   bootstrap: [AppComponent]
 })

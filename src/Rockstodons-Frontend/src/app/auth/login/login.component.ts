@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { finalize, Subscription } from 'rxjs';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -8,16 +10,46 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  loginForm!: UntypedFormGroup;
+  isBusy = false;
+  loginError = false;
+  loginForm!: FormGroup;
+  private subscription: Subscription | null = null;
 
-  constructor(private untypedFormBuilder: UntypedFormBuilder, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.loginForm = new FormGroup<LoginForm>({
+      username: new FormControl('', { nonNullable: true }),
+      password: new FormControl('', { nonNullable: true })
+    });
+  }
 
+  get username(): AbstractControl {
+    return this.loginForm.get('username')!;
+  }
+
+  get password(): AbstractControl {
+    return this.loginForm.get('password')!;
   }
 
   onLoginFormSubmit(): void {
     if (this.loginForm.valid) {
+       this.isBusy = true;
        console.log('submit', this.loginForm.value);
-       this.router.navigate(['/dashboard']);
+       this.authService
+          .login(this.loginForm.value.username, this.loginForm.value.password)
+          .pipe(finalize(() => { this.isBusy = false }))
+          .subscribe({
+            next: () => {
+              this.router.navigate(['/home']);
+            },
+            error: () => {
+              this.loginError = true;
+            }
+          });
     } else {
       Object.values(this.loginForm.controls).forEach(controlValue => {
           if (controlValue.invalid) {
@@ -29,9 +61,23 @@ export class LoginComponent {
   }
 
   ngOnInit(): void {
-    this.loginForm = this.untypedFormBuilder.group({
-      userName: [null, [Validators.required]],
-      password: [null, [Validators.required]]
+    this.subscription = this.authService.currentUser$.subscribe((user) => {
+      if (this.activatedRoute.snapshot.url[0].path == 'login') {
+        const accessToken = localStorage.getItem('access_token');
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (user && accessToken && refreshToken) {
+          this.router.navigate(['home']);
+        }
+      }
     });
   }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+}
+
+export interface LoginForm {
+  username: FormControl<string>;
+  password: FormControl<string>;
 }
