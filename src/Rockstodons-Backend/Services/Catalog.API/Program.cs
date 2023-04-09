@@ -1,5 +1,3 @@
-
-using Catalog.API;
 using Catalog.API.Data.Data.Common;
 using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Infrastructure;
@@ -8,12 +6,10 @@ using Catalog.API.Services.Mapping;
 using Catalog.API.Services.Data.Implementation;
 using Catalog.API.Services.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System.Reflection;
 using Catalog.API.Infrastructure.Seeding;
 using Catalog.API.Data.Data.Models;
 using Catalog.API.Utils;
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -51,7 +47,8 @@ internal class Program
                     catalogDbContext.Database.Migrate();
                 }
 
-                new CatalogDbContextSeeder().SeedAsync(catalogDbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
+                new CatalogDbContextSeeder()
+                    .SeedAsync(catalogDbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
             }
         }
 
@@ -127,6 +124,7 @@ internal class Program
         services.AddTransient<IAlbumTypesService, AlbumTypesService>();
         services.AddTransient<IPerformersService, PerformersService>();
         services.AddTransient<IAlbumsService, AlbumsService>();
+        services.AddTransient<ITracksService, TracksService>();
         services.AddTransient<IRolesService, RolesService>();
         services.AddSingleton<IIdentityService, IdentityService>();
         services.AddTransient<IUsersService, UsersService>();
@@ -135,7 +133,8 @@ internal class Program
         services.AddHostedService<JWTRefreshTokenCache>();
 
         services.Configure<DataProtectionTokenProviderOptions>(
-            dataProtectionTokenProviderOptions => dataProtectionTokenProviderOptions.TokenLifespan = TimeSpan.FromHours(3));
+            dataProtectionTokenProviderOptions => 
+            dataProtectionTokenProviderOptions.TokenLifespan = TimeSpan.FromHours(3));
 
         services.AddControllers();
 
