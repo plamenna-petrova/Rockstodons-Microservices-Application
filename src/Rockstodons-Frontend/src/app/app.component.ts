@@ -9,16 +9,9 @@ import { AuthService } from './core/services/auth.service';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-  subscription: Subscription;
 
   constructor(private router: Router, private authService: AuthService) {
-    this.subscription = router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        if (!router.navigated) {
-          console.log('testing');
-          this.authService.refreshToken();
-        }
-      }
-    });
+
   }
+  
 }

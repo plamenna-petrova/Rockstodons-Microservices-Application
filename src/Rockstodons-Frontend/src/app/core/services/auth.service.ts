@@ -1,13 +1,24 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, delay, finalize, map, Observable, of, Subscription, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  delay,
+  finalize,
+  map,
+  Observable,
+  of,
+  Subscription,
+  tap,
+} from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IApplicationUser } from '../interfaces/application-user';
 import { ILoginResponseDTO } from '../interfaces/login-response-dto';
+import { ILoginRequestDTO } from '../interfaces/login-request-dto';
+import { IRegisterRequestDTO } from '../interfaces/register-request-dto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly identityAPIUrl = `${environment.apiUrl}identity`;
@@ -15,26 +26,40 @@ export class AuthService {
   private currentUser = new BehaviorSubject<IApplicationUser | null>(null);
   currentUser$ = this.currentUser.asObservable();
 
+  private httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
+
   constructor(private router: Router, private httpClient: HttpClient) {
-     window.addEventListener('storage', this.storageEventListener.bind(this));
+    window.addEventListener('storage', this.storageEventListener.bind(this));
   }
 
-  login(username: string, password: string): Observable<ILoginResponseDTO> {
+  register(registerRequestDTO: IRegisterRequestDTO): Observable<any> {
+    return this.httpClient.post<IRegisterRequestDTO>(`${this.identityAPIUrl}/register`, {
+      userName: registerRequestDTO.userName,
+      email: registerRequestDTO.email,
+      password: registerRequestDTO.password,
+      confirmPassword: registerRequestDTO.confirmPassword
+    }, this.httpOptions);
+  }
+
+  login(loginRequestDTO: ILoginRequestDTO): Observable<ILoginResponseDTO> {
     return this.httpClient
-       .post<ILoginResponseDTO>(`${this.identityAPIUrl}/login`, { username, password })
-       .pipe(
-          map((user) => {
-            console.log('userrr');
-            console.log(user);
-            this.currentUser.next({
-              username: user.userName,
-              role: user.role
-            });
-            this.setLocalStorage(user);
-            this.startTokenTimer();
-            return user;
-          })
-       )
+      .post<ILoginResponseDTO>(`${this.identityAPIUrl}/login`, {
+        userName: loginRequestDTO.userName,
+        password: loginRequestDTO.password,
+      })
+      .pipe(
+        map((user) => {
+          this.currentUser.next({
+            username: user.userName,
+            role: user.role,
+          });
+          this.setLocalStorage(user);
+          this.startTokenTimer();
+          return user;
+        })
+      );
   }
 
   logout(): Subscription {
@@ -42,9 +67,9 @@ export class AuthService {
       .post<unknown>(`${this.identityAPIUrl}/logout`, {})
       .pipe(
         finalize(() => {
-          this.clearLocalStorage();
-          this.currentUser.next(null);
           this.stopTokenTimer();
+          this.clearLocalStorage();
+          this.currentUser.next(null)
           this.router.navigate(['login']);
         })
       )
@@ -60,13 +85,14 @@ export class AuthService {
           break;
         case 'login-event':
           this.stopTokenTimer();
-          this.httpClient.get<ILoginResponseDTO>(`${this.identityAPIUrl}/current-user`)
+          this.httpClient
+            .get<ILoginResponseDTO>(`${this.identityAPIUrl}/current-user`)
             .subscribe((user) => {
               this.currentUser.next({
                 username: user.userName,
-                role: user.role
+                role: user.role,
               });
-          });
+            });
           break;
       }
     }
@@ -85,19 +111,23 @@ export class AuthService {
   private startTokenTimer(): void {
     const timeout = this.getTokenRemainingTime();
     this.timer = of(true)
-        .pipe(
-          delay(timeout),
-          tap({
-            next: () => this.refreshToken().subscribe()
-          })
-        )
-        .subscribe();
+      .pipe(
+        delay(timeout),
+        tap({
+          next: () => {
+            this.refreshToken();
+          },
+          error: (err) => {
+            console.log('the error');
+            console.log(err);
+          }
+        })
+      )
+      .subscribe();
   }
 
   refreshToken(): Observable<ILoginResponseDTO | null> {
     const refreshToken = localStorage.getItem('refresh_token');
-    console.log('refresh token');
-    console.log(refreshToken);
 
     if (!refreshToken) {
       this.clearLocalStorage();
@@ -105,19 +135,20 @@ export class AuthService {
     }
 
     return this.httpClient
-      .post<ILoginResponseDTO>(`${this.identityAPIUrl}/refresh-token`, { refreshToken: refreshToken })
+      .post<ILoginResponseDTO>(`${this.identityAPIUrl}/refresh-token`, {
+        refreshToken: refreshToken,
+      })
       .pipe(
         map((user) => {
-          console.log('here');
           this.currentUser.next({
             username: user.userName,
-            role: user.role
+            role: user.role,
           });
           this.setLocalStorage(user);
           this.startTokenTimer();
           return user;
         })
-      )
+      );
   }
 
   setLocalStorage(loginResponseDTO: ILoginResponseDTO) {

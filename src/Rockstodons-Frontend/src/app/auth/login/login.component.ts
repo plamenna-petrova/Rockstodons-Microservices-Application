@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, Subscription } from 'rxjs';
+import { ILoginRequestDTO } from 'src/app/core/interfaces/login-request-dto';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -10,18 +11,17 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  isBusy = false;
+  isLoginFormEngaged = false;
   loginError = false;
   loginForm!: FormGroup;
   private subscription: Subscription | null = null;
 
   constructor(
-    private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private router: Router
   ) {
-    this.loginForm = new FormGroup<LoginForm>({
+    this.loginForm = new FormGroup<ILoginForm>({
       username: new FormControl('', { nonNullable: true }),
       password: new FormControl('', { nonNullable: true })
     });
@@ -37,16 +37,22 @@ export class LoginComponent {
 
   onLoginFormSubmit(): void {
     if (this.loginForm.valid) {
-       this.isBusy = true;
+       this.isLoginFormEngaged = true;
        console.log('submit', this.loginForm.value);
+       const userToLogin = {
+          userName: this.loginForm.value.username,
+          password: this.loginForm.value.password
+       } as ILoginRequestDTO;
        this.authService
-          .login(this.loginForm.value.username, this.loginForm.value.password)
-          .pipe(finalize(() => { this.isBusy = false }))
+          .login(userToLogin)
+          .pipe(finalize(() => { this.isLoginFormEngaged = false }))
           .subscribe({
             next: () => {
               this.router.navigate(['/home']);
             },
-            error: () => {
+            error: (err) => {
+              console.log('errors when during login');
+              console.log(err);
               this.loginError = true;
             }
           });
@@ -77,7 +83,7 @@ export class LoginComponent {
   }
 }
 
-export interface LoginForm {
+export interface ILoginForm {
   username: FormControl<string>;
   password: FormControl<string>;
 }
