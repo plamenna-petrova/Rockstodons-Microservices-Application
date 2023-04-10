@@ -16,15 +16,17 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { DashboardComponent } from './dashboard.component';
-import { AppRoutingModule } from 'src/app/app-routing.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
+import { AlbumsManagementComponent } from './albums-management/albums-management.component';
+import { SharedModule } from 'src/app/common/shared/shared.module';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
-    DashboardComponent
+    DashboardComponent,
+    AlbumsManagementComponent
   ],
   imports: [
     DashboardRoutingModule,
@@ -38,7 +40,8 @@ registerLocaleData(en);
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,
-    NzBreadCrumbModule
+    NzBreadCrumbModule,
+    SharedModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }

@@ -28,6 +28,7 @@ import { appInitializer } from './core/services/app-initializer.service';
 import { AuthService } from './core/services/auth.service';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { UnauthorizedInterceptor } from './core/interceptors/unauthorized.interceptor';
+import { SharedModule } from './common/shared/shared.module';
 
 registerLocaleData(en);
 
@@ -41,7 +42,7 @@ const icons: IconDefinition[] = [
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    HomeComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -57,7 +58,8 @@ const icons: IconDefinition[] = [
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,
-    NzBreadCrumbModule
+    NzBreadCrumbModule,
+    SharedModule
   ],
   providers: [
     {

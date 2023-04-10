@@ -18,12 +18,9 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    console.log('intercepting');
-
     const accessToken = localStorage.getItem('access_token');
     const isAPIUrl = request.url.startsWith(environment.apiUrl);
-    console.log('request url');
-    console.log(request.url);
+
     if (accessToken && isAPIUrl) {
       request = request.clone({
         setHeaders: { Authorization: `Bearer ${accessToken}` }

@@ -18,7 +18,7 @@ import { comparePasswords } from 'src/app/core/validators/password-match';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
-  registerForm!: UntypedFormGroup;
+  registerForm!: FormGroup;
 
   constructor(private router: Router, private authService: AuthService) {
     this.registerForm = new FormGroup<IRegisterForm>({
@@ -91,7 +91,7 @@ export class RegisterComponent {
       this.authService.register(userToRegister).subscribe(() => {
         console.log('successful registration?');
       });
-      // this.router.navigate(['login']);
+      this.router.navigate(['login']);
     } else {
       Object.values(this.registerForm.controls).forEach((controlValue) => {
         if (controlValue.invalid) {
@@ -102,7 +102,9 @@ export class RegisterComponent {
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 }
 
 export interface IMatchingPasswords {
