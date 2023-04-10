@@ -18,7 +18,6 @@ import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IconsProviderModule } from './icons-provider.module';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -29,6 +28,8 @@ import { AuthService } from './core/services/auth.service';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { UnauthorizedInterceptor } from './core/interceptors/unauthorized.interceptor';
 import { SharedModule } from './common/shared/shared.module';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 registerLocaleData(en);
 
@@ -83,6 +84,6 @@ const icons: IconDefinition[] = [
       useValue: en_US
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

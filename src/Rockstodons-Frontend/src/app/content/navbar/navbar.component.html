@@ -1,18 +1,21 @@
 <nz-header>
     <div class="logo">
-        <img src="../assets/images/rockstodons-logo.png" alt="Rockstodons Logo">
+        <a [routerLink]="['/home']">
+            <img src="../assets/images/rockstodons-logo.png" alt="Rockstodons Logo">
+        </a>
     </div>
     <ul nz-menu nzTheme="dark" nzMode="horizontal" class="header-menu">
-        <li nz-menu-item nzSelected>Dashboard</li>
+        <li nz-menu-item nzSelected [routerLink]="['/home']">Home</li>
+        <li nz-menu-item *ngIf="role == 'Administrator'" [routerLink]="['/dashboard']">Dashboard</li>
         <li nz-menu-item>Albums</li>
         <li nz-menu-item>Performers</li>
         <li nz-menu-item>Genres</li>
         <li nz-menu-item>Tracks</li>
         <li nz-menu-item>Playlists</li>
         <li nz-menu-item>Profile</li>
-        <li nz-menu-item *ngIf="applicationUser$ | async as user">
-            <h4 class="card-header">Hi {{ user.username }}, Role: {{ user.role }}</h4>
-            <button (click)="logout()">Logout</button>
+        <li nz-menu-item *ngIf="username">{{ username }}'s Profile</li>
+        <li nz-menu-item *ngIf="applicationUser$ | async as user" (click)="logout()">
+            Logout
         </li>
     </ul>
 </nz-header>

@@ -35,7 +35,7 @@
                             }
                         ],
                         "styles": [
-                          "src/theme.less"
+                            "src/theme.less"
                         ],
                         "scripts": []
                     },
@@ -99,10 +99,27 @@
                         "styles": [
                             "src/styles.scss"
                         ],
-                        "scripts": []
+                        "scripts": [
+                            "./node_modules/chart.js/dist/Chart.js",
+                            "./node_modules/hammerjs/hammer.min.js"
+                        ]
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "lintFilePatterns": [
+                            "src/**/*.ts",
+                            "src/**/*.html"
+                        ]
                     }
                 }
             }
         }
+    },
+    "cli": {
+        "schematicCollections": [
+            "@angular-eslint/schematics"
+        ]
     }
 }

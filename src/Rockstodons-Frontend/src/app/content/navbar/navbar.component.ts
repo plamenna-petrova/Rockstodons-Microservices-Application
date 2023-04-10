@@ -10,9 +10,15 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class NavbarComponent {
   applicationUser$: Observable<IApplicationUser | null>;
+  username?: string;
+  role?: string;
 
   constructor(private authService: AuthService) {
     this.applicationUser$ = this.authService.currentUser$;
+    this.applicationUser$.subscribe(u => {
+      this.username = u?.username;
+      this.role = u?.role;
+    });
   }
 
   logout(): void {
