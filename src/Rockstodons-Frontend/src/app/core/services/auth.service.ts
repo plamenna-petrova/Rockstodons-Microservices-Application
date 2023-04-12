@@ -21,7 +21,7 @@ import { IRegisterRequestDTO } from '../interfaces/register-request-dto';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly identityAPIUrl = `${environment.apiUrl}identity`;
+  private readonly identityAPIUrl = `${environment.apiUrl}/identity`;
   private timer: Subscription | null = null;
   private currentUser = new BehaviorSubject<IApplicationUser | null>(null);
   currentUser$ = this.currentUser.asObservable();

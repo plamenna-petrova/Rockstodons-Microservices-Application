@@ -1,1 +1,58 @@
-<p>albums-management works!</p>
+<div class="albums-management-table-control-bar">
+    <form nz-form nzLayout="inline" [formGroup]="albumsManagementTableSettingsForm">
+        <nz-form-item *ngFor="let switch of listOfSwitches">
+            <nz-form-label>{{ switch.name }}</nz-form-label>
+            <nz-form-control>
+                <nz-switch [formControlName]="switch.formControlName"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item *ngFor="let radio of listOfRadioButtons">
+            <nz-form-label>{{ radio.name }}</nz-form-label>
+            <nz-form-control>
+                <nz-radio-group [formControlName]="radio.formControlName">
+                    <label *ngFor="let o of radio.listOfOptions" nz-radio-button [nzValue]="o.value">{{ o.label }}</label>
+                </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>
+
+<button nz-button class="get-albums-data-button" [nzType]="'primary'" (click)="onGetAlbumsDataClick()">
+  Get Albums
+</button>
+
+<nz-table #albumsManagementDynamicTable [nzScroll]="{ x: scrollX, y: scrollY }" [nzData]="albumsToManage" [nzTableLayout]="albumsManagementTableSetting.tableLayout" [nzBordered]="albumsManagementTableSetting.isBordered" [nzSimple]="albumsManagementTableSetting.isSimple"
+    [nzLoading]="albumsManagementTableSetting.withLoading" [nzPaginationType]="albumsManagementTableSetting.paginationType" [nzPaginationPosition]="albumsManagementTableSetting.position" [nzShowSizeChanger]="albumsManagementTableSetting.hasSizeChanger" [nzFrontPagination]="albumsManagementTableSetting.hasPagination"
+    [nzShowPagination]="albumsManagementTableSetting.hasPagination" [nzFooter]="
+    albumsManagementTableSetting.hasFooter ? 'Albums Management' : null
+  " [nzTitle]="albumsManagementTableSetting.hasTitle ? 'Manage Albums' : null" [nzSize]="albumsManagementTableSetting.tableSize" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
+    <thead>
+        <tr *ngIf="albumsManagementTableSetting.hasHeader">
+            <th nzWidth="40px" *ngIf="albumsManagementTableSetting.isExpandable" [nzLeft]="fixedColumn"></th>
+            <th *ngIf="albumsManagementTableSetting.withCheckbox" nzWidth="60px" [(nzChecked)]="allSettingsChecked" [nzLeft]="fixedColumn" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+            <th [nzLeft]="fixedColumn">Name</th>
+            <th>Price</th>
+            <th>Year Of Release</th>
+            <th [nzRight]="fixedColumn">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <ng-container *ngFor="let data of albumsManagementDynamicTable.data">
+            <tr>
+                <td [nzLeft]="fixedColumn" *ngIf="albumsManagementTableSetting.isExpandable" [(nzExpand)]="data.expanded"></td>
+                <td [nzLeft]="fixedColumn" *ngIf="albumsManagementTableSetting.withCheckbox" [(nzChecked)]="data.checked" (nzCheckedChange)="refreshAlbumsManagementSettingsStatus()"></td>
+                <td [nzLeft]="fixedColumn">{{ data.album.name }}</td>
+                <td>{{ data.album.price }}</td>
+                <td>{{ data.album.yearOfRelease }}</td>
+                <td [nzRight]="fixedColumn" [nzEllipsis]="albumsManagementTableSetting.withEllipsis">
+                    <a href="#">Delete</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a href="#">More actions</a>
+                </td>
+            </tr>
+            <tr *ngIf="albumsManagementTableSetting.isExpandable" [nzExpand]="data.expanded">
+                <span>{{ data.album.description }}</span>
+            </tr>
+        </ng-container>
+    </tbody>
+</nz-table>

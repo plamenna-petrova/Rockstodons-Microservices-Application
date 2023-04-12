@@ -15,9 +15,9 @@ export class NavbarComponent {
 
   constructor(private authService: AuthService) {
     this.applicationUser$ = this.authService.currentUser$;
-    this.applicationUser$.subscribe(u => {
-      this.username = u?.username;
-      this.role = u?.role;
+    this.applicationUser$.subscribe(user => {
+      this.username = user?.username;
+      this.role = user?.role;
     });
   }
 

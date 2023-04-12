@@ -16,7 +16,7 @@ namespace Catalog.API.Controllers
 {
     [Route("api/v1/albums")]
     [ApiController]
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "Administrator")]
     public class AlbumsController : ControllerBase
     {
         private const string AlbumsName = "Albums";

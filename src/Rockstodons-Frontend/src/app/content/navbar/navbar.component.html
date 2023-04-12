@@ -12,7 +12,6 @@
         <li nz-menu-item>Genres</li>
         <li nz-menu-item>Tracks</li>
         <li nz-menu-item>Playlists</li>
-        <li nz-menu-item>Profile</li>
         <li nz-menu-item *ngIf="username">{{ username }}'s Profile</li>
         <li nz-menu-item *ngIf="applicationUser$ | async as user" (click)="logout()">
             Logout

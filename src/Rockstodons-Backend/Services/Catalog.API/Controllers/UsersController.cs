@@ -16,7 +16,6 @@ namespace Catalog.API.Controllers
     {
         private const string UsersName = "Users";
         private const string SingleUserName = "user";
-        private const string UserDetailsRouteName = "UserDetails";
 
         private readonly IUsersService _usersService;
         private readonly UserManager<ApplicationUser> _userManager;

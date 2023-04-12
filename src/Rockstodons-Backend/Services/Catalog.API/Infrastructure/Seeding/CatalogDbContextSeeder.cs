@@ -19,6 +19,7 @@
             var seeders = new List<ISeeder>
             {
                 new RolesSeeder(),
+                new UsersSeeder(),
                 new EntitiesSeeder()
             };
 
