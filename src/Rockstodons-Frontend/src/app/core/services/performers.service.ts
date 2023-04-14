@@ -14,7 +14,7 @@ export class PerformersService {
 
   }
 
-  getAllPerformerss(): Observable<IPerformer[]> {
+  getAllPerformers(): Observable<IPerformer[]> {
     return this.httpClient.get<IPerformer[]>(this.performersAPIUrl);
   }
 

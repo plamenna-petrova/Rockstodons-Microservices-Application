@@ -21,6 +21,10 @@
   Get Albums
 </button>
 
+<button nz-button nzType="primary" (click)="showModal()">
+  <span>Show Modal</span>
+</button>
+
 <nz-table #albumsManagementDynamicTable [nzScroll]="{ x: scrollX, y: scrollY }" [nzData]="albumsToManage" [nzTableLayout]="albumsManagementTableSetting.tableLayout" [nzBordered]="albumsManagementTableSetting.isBordered" [nzSimple]="albumsManagementTableSetting.isSimple"
     [nzLoading]="albumsManagementTableSetting.withLoading" [nzPaginationType]="albumsManagementTableSetting.paginationType" [nzPaginationPosition]="albumsManagementTableSetting.position" [nzShowSizeChanger]="albumsManagementTableSetting.hasSizeChanger" [nzFrontPagination]="albumsManagementTableSetting.hasPagination"
     [nzShowPagination]="albumsManagementTableSetting.hasPagination" [nzFooter]="
@@ -31,8 +35,10 @@
             <th nzWidth="40px" *ngIf="albumsManagementTableSetting.isExpandable" [nzLeft]="fixedColumn"></th>
             <th *ngIf="albumsManagementTableSetting.withCheckbox" nzWidth="60px" [(nzChecked)]="allSettingsChecked" [nzLeft]="fixedColumn" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
             <th [nzLeft]="fixedColumn">Name</th>
-            <th>Price</th>
             <th>Year Of Release</th>
+            <td>Album Type</td>
+            <td>Performer</td>
+            <td>Genre</td>
             <th [nzRight]="fixedColumn">Actions</th>
         </tr>
     </thead>
@@ -42,7 +48,6 @@
                 <td [nzLeft]="fixedColumn" *ngIf="albumsManagementTableSetting.isExpandable" [(nzExpand)]="data.expanded"></td>
                 <td [nzLeft]="fixedColumn" *ngIf="albumsManagementTableSetting.withCheckbox" [(nzChecked)]="data.checked" (nzCheckedChange)="refreshAlbumsManagementSettingsStatus()"></td>
                 <td [nzLeft]="fixedColumn">{{ data.album.name }}</td>
-                <td>{{ data.album.price }}</td>
                 <td>
                     <ng-container *ngIf="data.album.yearOfRelease; else yearOfReleaseDefaultValue">
                         {{ data.album.yearOfRelease }}
@@ -51,10 +56,19 @@
                         -
                     </ng-template>
                 </td>
+                <td>
+                    {{ data.album.albumType.name }}
+                </td>
+                <td>
+                    {{ data.album.performer.name }}
+                </td>
+                <td>
+                    {{ data.album.genre.name }}
+                </td>
                 <td [nzRight]="fixedColumn" [nzEllipsis]="albumsManagementTableSetting.withEllipsis">
-                    <a href="#">Delete</a>
+                    <button nz-button>Edit</button>
+                    <button nz-button (click)="showAlbumRemovalModal(data.album)">Delete</button>
                     <nz-divider nzType="vertical"></nz-divider>
-                    <a href="#">More actions</a>
                 </td>
             </tr>
             <tr *ngIf="albumsManagementTableSetting.isExpandable" [nzExpand]="data.expanded">

@@ -158,131 +158,108 @@ namespace Catalog.API.Infrastructure.Seeding
             {
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "Crusader",
                     Name = "Crusader",
-                    Price = 19.5M,
-                    PictureFileName = "1.png",
+                    Description = "Crusader",
+                    YearOfRelease = 1978,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[1],
                     PerformerId = existingPerformersIds[0]
                 },
                 new()
                 {
-                    AvailableStock = 100,
                     Description = "Forever Free",
                     Name = "Forever Free",
-                    Price= 8.50M,
-                    PictureFileName = "2.png",
+                    YearOfRelease = 1982,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[1],
                     PerformerId = existingPerformersIds[0]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "Ride The Lightning",
                     Name = "Ride The Lightning",
-                    Price = 12,
-                    PictureFileName = "3.png",
+                    Description = "Ride The Lightning",
+                    YearOfRelease = 1983,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[3],
                     PerformerId = existingPerformersIds[1]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "Magma",
                     Name = "Magma",
-                    Price = 12,
-                    PictureFileName = "4.png",
+                    Description = "Magma",
+                    YearOfRelease = 2016,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[2]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "Fortitude",
                     Name = "Fortitude",
-                    Price = 8.5M,
-                    PictureFileName = "5.png",
+                    Description = "Fortitude",
+                    YearOfRelease = 2021,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[2]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "The Way Of All Flesh",
                     Name = "The Way Of All Flesh",
-                    Price = 12,
-                    PictureFileName = "6.png",
+                    Description = "The Way Of All Flesh",
+                    YearOfRelease = 2008,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[2]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "Lateralus",
                     Name = "Lateralus",
-                    Price = 12,
-                    PictureFileName = "7.png",
+                    Description = "Lateralus",
+                    YearOfRelease = 2001,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[2],
                     PerformerId = existingPerformersIds[3]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "Leviathan",
                     Name = "Leviathan",
-                    Price = 8.5M,
-                    PictureFileName = "8.png",
+                    Description = "Leviathan",
+                    YearOfRelease = 2004,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[4]
                 },
                 new()
                 {
-                    AvailableStock = 100,
+                    Name = "Blood Mountain",
                     Description = "Blood Mountain",
-                    Name = "Bloo Mountain",
-                    Price = 12,
-                    PictureFileName = "9.png",
+                    YearOfRelease = 2005,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[4]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "The Hunter",
                     Name = "The Hunter",
-                    Price = 12,
-                    PictureFileName = "10.png",
+                    Description = "The Hunter",
+                    YearOfRelease = 2011,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[4]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "Sounds of a Playground Fading",
                     Name = "Sounds of a Playground Fading",
-                    Price = 8.5M,
+                    Description = "Sounds of a Playground Fading",
+                    YearOfRelease = 2008,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[5]
                 },
                 new()
                 {
-                    AvailableStock = 100,
-                    Description = "A Sense Of Purpose",
                     Name = "A Sense Of Purpose",
-                    Price = 12,
-                    PictureFileName = "12.png",
+                    Description = "A Sense Of Purpose",
+                    YearOfRelease = 2007,
                     AlbumTypeId = existingAlbumTypesIds[1],
                     GenreId = existingGenresIds[4],
                     PerformerId = existingPerformersIds[5]

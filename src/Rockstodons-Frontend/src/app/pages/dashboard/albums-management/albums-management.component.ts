@@ -1,8 +1,16 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
 import { IAlbum } from 'src/app/core/interfaces/album';
+import { IAlbumType } from 'src/app/core/interfaces/album-type';
+import { IGenre } from 'src/app/core/interfaces/genre';
+import { IPerformer } from 'src/app/core/interfaces/performer';
+import { AlbumTypesService } from 'src/app/core/services/album-types.service';
 import { AlbumsService } from 'src/app/core/services/albums.service';
+import { GenresService } from 'src/app/core/services/genres.service';
+import { PerformersService } from 'src/app/core/services/performers.service';
 
 @Component({
   selector: 'app-albums-management',
@@ -11,6 +19,9 @@ import { AlbumsService } from 'src/app/core/services/albums.service';
 })
 export class AlbumsManagementComponent {
   albumsManagementTableSettingsForm!: FormGroup;
+  performersForAlbums!: IPerformer[];
+  genresForAlbums!: IGenre[];
+  typesForAlbums!: IAlbumType[];
   albumsToManage: IAlbumTableData[] = [];
   albumsDisplayData: readonly IAlbumTableData[] = [];
   allSettingsChecked = false;
@@ -19,6 +30,11 @@ export class AlbumsManagementComponent {
   scrollX: string | null = null;
   scrollY: string | null = null;
   albumsManagementTableSetting!: IAlbumsManagementTableSetting;
+
+  isAlbumRemovalModalVisible = false;
+
+  isVisible = false;
+  isConfirmLoading = false;
 
   listOfSwitches = [
     { name: 'Bordered', formControlName: 'isBordered' },
@@ -82,7 +98,14 @@ export class AlbumsManagementComponent {
     }
   ];
 
-  constructor(private albumsService: AlbumsService) {
+  constructor(
+    private performersService: PerformersService,
+    private albumsService: AlbumsService,
+    private genresService: GenresService,
+    private albumTypesService: AlbumTypesService,
+    private nzNotificationService: NzNotificationService,
+    private nzModalService: NzModalService
+  ) {
 
   }
 
@@ -219,15 +242,81 @@ export class AlbumsManagementComponent {
     this.retriveAlbumsData();
   }
 
+  showAlbumRemovalModal(albumToRemove: IAlbum): void {
+    this.nzModalService.confirm({
+      nzTitle: `Do you really wish to remove ${albumToRemove.name}?`,
+      nzOkText: 'Yes',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzOnOk: () => this.handleOkAlbumRemovalModal(albumToRemove),
+      nzCancelText: 'No',
+      nzOnCancel: () => this.handleCancelAlbumRemovalModal()
+    })
+  }
+
+  handleOkAlbumRemovalModal(albumToRemove: IAlbum) {
+    console.log('album to remove');
+    console.log(albumToRemove);
+    this.albumsService.deleteAlbum(albumToRemove.id).subscribe(() => {
+      this.nzNotificationService.success(
+        'Successful Operation',
+        `The album ${albumToRemove.name} has been removed!`
+      );
+      this.retriveAlbumsData();
+    });
+  }
+
+  handleCancelAlbumRemovalModal() {
+    this.nzNotificationService.info(`Aborted operation`, `Album removal cancelled`);
+  }
+
+  showModal(): void {
+    this.isVisible = true;
+  }
+
+  handleOk(): void {
+    this.isConfirmLoading = true;
+    setTimeout(() => {
+      this.isVisible = false;
+      this.isConfirmLoading = false;
+    }, 1000);
+  }
+
+  handleCancel(): void {
+    this.isVisible = false;
+  }
+
   retriveAlbumsData(): void {
+    this.performersService.getAllPerformers().subscribe(performersData => {
+      this.performersForAlbums = performersData;
+    });
+    this.genresService.getAllGenres().subscribe(genresData => {
+      this.genresForAlbums = genresData;
+    });
+    this.albumTypesService.getAllAlbumTypes().subscribe(albumTypesData => {
+      this.typesForAlbums = albumTypesData;
+    });
     this.albumsService.getAlbumsWithFullDetails().subscribe(albumsData => {
       this.albumsToManage = [];
-      albumsData.forEach(retrievedAlbum => {
+      console.log('albums data');
+      console.log(albumsData);
+      albumsData.filter(album => !album.isDeleted).map(retrievedAlbum => {
         this.albumsToManage.push({
-          album: { ...retrievedAlbum },
+          album: {
+            id: retrievedAlbum.id,
+            name: retrievedAlbum.name,
+            yearOfRelease: retrievedAlbum.yearOfRelease,
+            description: retrievedAlbum.description,
+            performer: this.performersForAlbums
+              .find(albumPerformer => albumPerformer.id === retrievedAlbum.performerId),
+            genre: this.genresForAlbums
+              .find(albumGenre => albumGenre.id === retrievedAlbum.genreId),
+            albumType: this.typesForAlbums
+              .find(type => type.id === retrievedAlbum.albumTypeId)
+          },
           checked: false,
           expanded: false
-        } as IAlbumTableData);
+        } as IAlbumTableData)
       });
     });
   }

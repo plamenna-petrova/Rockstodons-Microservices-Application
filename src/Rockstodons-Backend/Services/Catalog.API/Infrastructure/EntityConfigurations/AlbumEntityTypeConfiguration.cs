@@ -14,15 +14,6 @@ namespace Catalog.API.Infrastructure.EntityConfigurations
                 .IsRequired(true)
                 .HasMaxLength(50);
 
-            albumEntityTypeBuilder.Property(a => a.Price)
-                .IsRequired(true)
-                .HasColumnType("decimal(18,4)");
-
-            albumEntityTypeBuilder.Property(a => a.PictureFileName)
-                .IsRequired(false);
-
-            albumEntityTypeBuilder.Ignore(a => a.PictureUrl);
-
             albumEntityTypeBuilder.HasOne(a => a.Genre)
                 .WithMany()
                 .HasForeignKey(a => a.GenreId);
