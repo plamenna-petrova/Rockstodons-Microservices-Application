@@ -43,7 +43,14 @@
                 <td [nzLeft]="fixedColumn" *ngIf="albumsManagementTableSetting.withCheckbox" [(nzChecked)]="data.checked" (nzCheckedChange)="refreshAlbumsManagementSettingsStatus()"></td>
                 <td [nzLeft]="fixedColumn">{{ data.album.name }}</td>
                 <td>{{ data.album.price }}</td>
-                <td>{{ data.album.yearOfRelease }}</td>
+                <td>
+                    <ng-container *ngIf="data.album.yearOfRelease; else yearOfReleaseDefaultValue">
+                        {{ data.album.yearOfRelease }}
+                    </ng-container>
+                    <ng-template #yearOfReleaseDefaultValue>
+                        -
+                    </ng-template>
+                </td>
                 <td [nzRight]="fixedColumn" [nzEllipsis]="albumsManagementTableSetting.withEllipsis">
                     <a href="#">Delete</a>
                     <nz-divider nzType="vertical"></nz-divider>
@@ -51,7 +58,7 @@
                 </td>
             </tr>
             <tr *ngIf="albumsManagementTableSetting.isExpandable" [nzExpand]="data.expanded">
-                <span>{{ data.album.description }}</span>
+                <span>Description: {{ data.album.description }}</span>
             </tr>
         </ng-container>
     </tbody>

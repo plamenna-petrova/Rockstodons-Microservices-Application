@@ -22,6 +22,7 @@ import { IconsProviderModule } from './icons-provider.module';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { HomeComponent } from './content/home/home.component';
 import { appInitializer } from './core/services/app-initializer.service';
 import { AuthService } from './core/services/auth.service';
@@ -54,6 +55,7 @@ const icons: IconDefinition[] = [
     NzFormModule,
     NzInputModule,
     NzButtonModule,
+    NzNotificationModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,
@@ -82,7 +84,7 @@ const icons: IconDefinition[] = [
     {
       provide: NZ_I18N,
       useValue: en_US
-    }
+    },
   ],
   bootstrap: [AppComponent],
 })

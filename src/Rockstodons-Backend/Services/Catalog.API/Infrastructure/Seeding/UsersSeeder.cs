@@ -18,17 +18,21 @@ namespace Catalog.API.Infrastructure.Seeding
                     UserName = "Admin",
                     Email = "admin@admin.com",
                     EmailConfirmed = true
+                },
+                new ApplicationUser()
+                {
+                    UserName = "Editor",
+                    Email = "editor@editor.com",
+                    EmailConfirmed = true
                 }
             };
 
-            foreach (var userToSeed in usersToSeed)
-            {
-                await SeedUserAsync(userManager, userToSeed, "Admin123");
-            }
+            await SeedUserAsync(userManager, usersToSeed[0], "Admin123", GlobalConstants.AdministratorRoleName);
+            await SeedUserAsync(userManager, usersToSeed[1], "Editor123", GlobalConstants.EditorRoleName);
         }
 
         private static async Task SeedUserAsync(
-            UserManager<ApplicationUser> userManager, ApplicationUser applicationUser, string password)
+            UserManager<ApplicationUser> userManager, ApplicationUser applicationUser, string password, string roleToAssignName)
         {
             try
             {
@@ -40,8 +44,7 @@ namespace Catalog.API.Infrastructure.Seeding
 
                     if (userCreationResult.Succeeded)
                     {
-
-                        await userManager.AddToRoleAsync(applicationUser, GlobalConstants.AdministratorRoleName);
+                        await userManager.AddToRoleAsync(applicationUser, roleToAssignName);
                     }
                     else
                     {

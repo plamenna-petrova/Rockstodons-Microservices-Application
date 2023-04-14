@@ -1,6 +1,14 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { ToastrService } from 'ngx-toastr';
 import { finalize, Subscription } from 'rxjs';
 import { ILoginRequestDTO } from 'src/app/core/interfaces/login-request-dto';
 import { AuthService } from 'src/app/core/services/auth.service';
@@ -8,7 +16,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   isLoginFormEngaged = false;
@@ -19,11 +27,12 @@ export class LoginComponent {
   constructor(
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private nzNotificationService: NzNotificationService
   ) {
     this.loginForm = new FormGroup<ILoginForm>({
       username: new FormControl('', { nonNullable: true }),
-      password: new FormControl('', { nonNullable: true })
+      password: new FormControl('', { nonNullable: true }),
     });
   }
 
@@ -37,31 +46,34 @@ export class LoginComponent {
 
   onLoginFormSubmit(): void {
     if (this.loginForm.valid) {
-       this.isLoginFormEngaged = true;
-       console.log('submit', this.loginForm.value);
-       const userToLogin = {
-          userName: this.loginForm.value.username,
-          password: this.loginForm.value.password
-       } as ILoginRequestDTO;
-       this.authService
-          .login(userToLogin)
-          .pipe(finalize(() => { this.isLoginFormEngaged = false }))
-          .subscribe({
-            next: () => {
-              this.router.navigate(['/home']);
-            },
-            error: (err) => {
-              console.log('errors when during login');
-              console.log(err);
-              this.loginError = true;
-            }
-          });
+      this.isLoginFormEngaged = true;
+      const userToLogin = {
+        userName: this.loginForm.value.username,
+        password: this.loginForm.value.password,
+      } as ILoginRequestDTO;
+      this.authService
+        .login(userToLogin)
+        .pipe(
+          finalize(() => {
+            this.isLoginFormEngaged = false;
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.router.navigate(['/home']);
+          },
+          error: (err) => {
+            console.log('errors when during login');
+            console.log(err);
+            this.loginError = true;
+          },
+        });
     } else {
-      Object.values(this.loginForm.controls).forEach(controlValue => {
-          if (controlValue.invalid) {
-            controlValue.markAsDirty();
-            controlValue.updateValueAndValidity({ onlySelf: true });
-          }
+      Object.values(this.loginForm.controls).forEach((controlValue) => {
+        if (controlValue.invalid) {
+          controlValue.markAsDirty();
+          controlValue.updateValueAndValidity({ onlySelf: true });
+        }
       });
     }
   }

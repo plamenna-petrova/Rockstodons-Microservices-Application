@@ -46,6 +46,8 @@
 
         public const string AdministratorRoleName = "Administrator";
 
+        public const string EditorRoleName = "Editor";
+
         public const string NormalUserRoleName = "User";
     }
 }

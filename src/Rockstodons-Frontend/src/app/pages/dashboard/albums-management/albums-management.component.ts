@@ -201,6 +201,7 @@ export class AlbumsManagementComponent {
       tableLayout: new FormControl('auto', { nonNullable: true }),
       position: new FormControl('bottom', { nonNullable: true })
     });
+    this.retriveAlbumsData();
     this.albumsManagementTableSetting = this.albumsManagementTableSettingsForm?.value;
     this.albumsManagementTableSettingsForm?.valueChanges.subscribe(value => {
       this.albumsManagementTableSetting = value;
@@ -215,6 +216,10 @@ export class AlbumsManagementComponent {
   }
 
   onGetAlbumsDataClick(): void {
+    this.retriveAlbumsData();
+  }
+
+  retriveAlbumsData(): void {
     this.albumsService.getAlbumsWithFullDetails().subscribe(albumsData => {
       this.albumsToManage = [];
       albumsData.forEach(retrievedAlbum => {

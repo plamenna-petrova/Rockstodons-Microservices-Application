@@ -44,7 +44,7 @@ export class AlbumsService {
     return this.httpClient.delete<void>(`${this.albumsAPIUrl}/delete/${albumToDeleteId}`)
   }
 
-  deletePermanently(albumToDeletePermanentlyId: string): Observable<void> {
+  deleteAlbumPermanently(albumToDeletePermanentlyId: string): Observable<void> {
     return this.httpClient.delete<void>(
       `${this.albumsAPIUrl}/confirm-deletion/${albumToDeletePermanentlyId}`
     );

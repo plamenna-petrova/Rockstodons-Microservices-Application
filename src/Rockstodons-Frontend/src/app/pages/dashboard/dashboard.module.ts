@@ -26,13 +26,21 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { AlbumsManagementComponent } from './albums-management/albums-management.component';
 import { SharedModule } from 'src/app/common/shared/shared.module';
+import { GenresManagementComponent } from './genres-management/genres-management.component';
+import { AlbumTypesManagementComponent } from './album-types-management/album-types-management.component';
+import { PerformersManagementComponent } from './performers-management/performers-management.component';
+import { UsersManagementComponent } from './users-management/users-management.component';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    AlbumsManagementComponent
+    AlbumsManagementComponent,
+    GenresManagementComponent,
+    AlbumTypesManagementComponent,
+    PerformersManagementComponent,
+    UsersManagementComponent
   ],
   imports: [
     DashboardRoutingModule,
