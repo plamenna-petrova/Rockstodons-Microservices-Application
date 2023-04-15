@@ -38,12 +38,9 @@ export class AlbumTypesService {
   }
 
   updateAlbumType(albumTypeToUpdate: IAlbumTypeUpdateDTO): Observable<IAlbumTypeUpdateDTO> {
-    const albumTypeUpdateRequestBody = {
-      name: albumTypeToUpdate.name
-    }
-
+    const updateAlbumTypeRequestBody = (({ id, ...amtu }) => amtu)(albumTypeToUpdate);
     return this.httpClient.put<IAlbumType>(
-      `${this.albumTypesAPIUrl}/update/${albumTypeToUpdate.id}`, albumTypeUpdateRequestBody
+      `${this.albumTypesAPIUrl}/update/${albumTypeToUpdate.id}`, updateAlbumTypeRequestBody
     );
   }
 

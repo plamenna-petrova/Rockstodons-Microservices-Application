@@ -37,12 +37,9 @@ export class GenresService {
   }
 
   updateGenre(genreToUpdate: IGenreUpdateDTO): Observable<IGenreUpdateDTO> {
-    const genreUpdateRequestBody = {
-      name: genreToUpdate.name
-    };
-
+    const updateGenreRequestBody = (({ id, ...gtu }) => gtu)(genreToUpdate);
     return this.httpClient.put<any>(
-      `${this.genresAPIUrl}/update/${genreToUpdate.id}`, genreUpdateRequestBody
+      `${this.genresAPIUrl}/update/${genreToUpdate.id}`, updateGenreRequestBody
     );
   }
 

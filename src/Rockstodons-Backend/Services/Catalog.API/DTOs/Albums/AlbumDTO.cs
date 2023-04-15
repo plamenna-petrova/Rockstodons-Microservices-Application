@@ -23,14 +23,6 @@ namespace Catalog.API.DTOs.Albums
 
         public PerformerDTO Performer { get; set; }
 
-        public int AvailableStock { get; set; }
-
-        public int RestockThreshold { get; set; }
-
-        public int MaxStockThreshold { get; set; }
-
-        public bool OnReorder { get; set; }
-
         public DateTime CreatedOn { get; set; }
     }
 }

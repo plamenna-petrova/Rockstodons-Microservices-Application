@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { IAlbum } from '../interfaces/album';
 import { environment } from 'src/environments/environment';
 import { IAlbumDetails } from '../interfaces/album-details';
+import { IAlbumCreateDTO } from '../interfaces/album-create-dto';
+import { IAlbumUpdateDTO } from '../interfaces/album-update-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -31,13 +33,14 @@ export class AlbumsService {
     return this.httpClient.get<IAlbum>(`${this.albumsAPIUrl}/details/${albumDetailsId}`)
   }
 
-  createNewAlbum(albumToCreate: IAlbum): Observable<IAlbum> {
-    return this.httpClient.post<IAlbum>(`${this.albumsAPIUrl}/create`, albumToCreate);
+  createNewAlbum(albumToCreate: IAlbumCreateDTO): Observable<IAlbumCreateDTO> {
+    return this.httpClient.post<IAlbumCreateDTO>(`${this.albumsAPIUrl}/create`, albumToCreate);
   }
 
-  updateAlbum(albumToUpdate: IAlbum): Observable<IAlbum> {
-    return this.httpClient.post<IAlbum>(`
-      ${this.albumsAPIUrl}/update/${albumToUpdate.id}`, albumToUpdate
+  updateAlbum(albumToUpdate: IAlbumUpdateDTO): Observable<IAlbumUpdateDTO> {
+    const updateAlbumRequestBody = (({ id, ...atu }) => atu)(albumToUpdate);
+    return this.httpClient.put<IAlbumUpdateDTO>(
+      `${this.albumsAPIUrl}/update/${albumToUpdate.id}`, updateAlbumRequestBody
     );
   }
 

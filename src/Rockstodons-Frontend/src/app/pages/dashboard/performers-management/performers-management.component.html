@@ -73,7 +73,7 @@
                 <td>{{ data.performer.country }}</td>
                 <td>
                     <button nz-button class="edit-performer-button" (click)="showPerformerEditModal(data)">Edit</button>
-                    <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Genre" (nzOnOk)="handleOkPerformerEditModal(data)" (nzOnCancel)="handleCancelPerformerEditModal(data)">
+                    <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Performer" (nzOnOk)="handleOkPerformerEditModal(data)" (nzOnCancel)="handleCancelPerformerEditModal(data)">
                         <ng-container *nzModalContent>
                             <form nz-form [formGroup]="performersEditForm">
                                 <nz-form-item>

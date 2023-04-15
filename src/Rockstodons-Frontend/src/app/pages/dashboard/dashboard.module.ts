@@ -24,6 +24,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
@@ -33,6 +34,7 @@ import { GenresManagementComponent } from './genres-management/genres-management
 import { AlbumTypesManagementComponent } from './album-types-management/album-types-management.component';
 import { PerformersManagementComponent } from './performers-management/performers-management.component';
 import { UsersManagementComponent } from './users-management/users-management.component';
+import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 
 registerLocaleData(en);
 
@@ -43,7 +45,8 @@ registerLocaleData(en);
     GenresManagementComponent,
     AlbumTypesManagementComponent,
     PerformersManagementComponent,
-    UsersManagementComponent
+    UsersManagementComponent,
+    RecycleBinComponent
   ],
   imports: [
     DashboardRoutingModule,
@@ -63,6 +66,7 @@ registerLocaleData(en);
     NzModalModule,
     NzDropDownModule,
     NzAutocompleteModule,
+    NzInputNumberModule,
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,

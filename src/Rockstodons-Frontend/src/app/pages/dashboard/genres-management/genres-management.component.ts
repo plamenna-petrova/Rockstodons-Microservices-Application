@@ -38,7 +38,7 @@ export class GenresManagementComponent {
   }
 
   buildGenresActionForms(): void {
-    this.genresCreationForm = new FormGroup<IGenreActionForm>({
+    const genresActionFormGroup = new FormGroup<IGenreActionForm>({
       genreName: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -48,16 +48,7 @@ export class GenresManagementComponent {
         nonNullable: true,
       }),
     });
-    this.genresEditForm = new FormGroup<IGenreActionForm>({
-      genreName: new FormControl('', {
-        validators: Validators.compose([
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(20),
-        ]),
-        nonNullable: true,
-      }),
-    });
+    this.genresCreationForm = this.genresEditForm = genresActionFormGroup;
   }
 
   get genreName(): AbstractControl {

@@ -310,7 +310,7 @@ export class PerformersManagementComponent {
   }
 
   buildPerformersActionForms(): void {
-    this.performersCreationForm = new FormGroup<IPerformerActionForm>({
+    const performersActionFormGroup = new FormGroup<IPerformerActionForm>({
       name: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -331,37 +331,12 @@ export class PerformersManagementComponent {
         validators: Validators.compose([
           Validators.required,
           Validators.minLength(20),
-          Validators.maxLength(200),
+          Validators.maxLength(500),
         ]),
         nonNullable: true,
       }),
     });
-    this.performersEditForm = new FormGroup<IPerformerActionForm>({
-      name: new FormControl('', {
-        validators: Validators.compose([
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(30),
-        ]),
-        nonNullable: true,
-      }),
-      country: new FormControl('', {
-        validators: Validators.compose([
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(20),
-        ]),
-        nonNullable: true,
-      }),
-      history: new FormControl('', {
-        validators: Validators.compose([
-          Validators.required,
-          Validators.minLength(20),
-          Validators.maxLength(200),
-        ]),
-        nonNullable: true,
-      }),
-    });
+    this.performersCreationForm = this.performersEditForm = performersActionFormGroup;
   }
 
   get name(): AbstractControl {
@@ -449,9 +424,6 @@ export class PerformersManagementComponent {
       ...this.performersCreationForm.value,
     };
 
-    console.log('performer to create');
-    console.log(performerToCreate);
-
     const isPerformerExisting = this.performersData.some(
       (data) => data.performer.name === name
     );
@@ -459,7 +431,7 @@ export class PerformersManagementComponent {
     if (isPerformerExisting) {
       this.nzNotificationService.error(
         `Error`,
-        `The performer ${name} already existss!`
+        `The performer ${name} already exists!`
       );
       return;
     }
@@ -523,7 +495,7 @@ export class PerformersManagementComponent {
       nzOnOk: () => this.handleOkPerformerRemovalModal(performerToRemove),
       nzCancelText: 'No',
       nzOnCancel: () => this.handleCancelPerformerRemovalModal()
-     })
+    });
   }
 
   handleOkPerformerRemovalModal(performerToRemove: IPerformer): void {

@@ -11,14 +11,6 @@ namespace Catalog.API.DTOs.Albums
     {
         public string Name { get; set; }
 
-        public decimal Price { get; set; }
-
-        public int AvailableStock { get; set; }
-
-        public int RestockThreshold { get; set; }
-
-        public int MaxStockThreshold { get; set; }
-
-        public bool OnReorder { get; set; }
+        public int YearOfRelease { get; set; }
     }
 }

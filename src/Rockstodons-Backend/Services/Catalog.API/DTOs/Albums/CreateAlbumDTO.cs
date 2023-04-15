@@ -14,8 +14,6 @@ namespace Catalog.API.DTOs.Albums
 
         public string? Description { get; set; }
 
-        public decimal? Price { get; set; }
-
         public int? YearOfRelease { get; set; }
 
         [Required]
@@ -26,13 +24,5 @@ namespace Catalog.API.DTOs.Albums
 
         [Required]
         public string PerformerId { get; set; }
-
-        public int? AvailableStock { get; set; }
-
-        public int? RestockThreshold { get; set; }
-
-        public int? MaxStockThreshold { get; set; }
-
-        public bool? OnReorder { get; set; }
     }
 }

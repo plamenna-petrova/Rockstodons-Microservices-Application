@@ -342,7 +342,7 @@ namespace Catalog.API.Controllers
 
                 await _albumService.UpdateAlbum(albumToUpdate, updateAlbumDTO);
 
-                return NoContent();
+                return Ok(updateAlbumDTO);
             }
             catch (Exception exception)
             {

@@ -46,7 +46,7 @@
         </button>
                 <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Album Type" (nzOnOk)="handleOkAlbumTypeEditModal(data)" (nzOnCancel)="handleCancelAlbumTypeEditModal(data)">
                     <ng-container *nzModalContent>
-                        <form nz-form [formGroup]="albumTypesEditForm">
+                        <form nz-form [formGroup]="albumTypesEditForm" (ngSubmit)="onAlbumTypesEditFormSubmit(data.albumType.id)">
                             <nz-form-item>
                                 <nz-form-label [nzSpan]="5">Name</nz-form-label>
                                 <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumTypeEditNameValidationTemplate">

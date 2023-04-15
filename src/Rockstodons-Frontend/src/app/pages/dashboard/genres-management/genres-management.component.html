@@ -42,7 +42,7 @@
                 <button nz-button class="edit-genre-button" (click)="showGenreEditModal(data)">Edit</button>
                 <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Genre" (nzOnOk)="handleOkGenreEditModal(data)" (nzOnCancel)="handleCancelGenreEditModal(data)">
                     <ng-container *nzModalContent>
-                        <form nz-form [formGroup]="genresEditForm">
+                        <form nz-form [formGroup]="genresEditForm" (ngSubmit)="onGenresEditFormSubmit(data.genre.id)">
                             <nz-form-item>
                                 <nz-form-label [nzSpan]="5">Name</nz-form-label>
                                 <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineGenreEditNameValidationTemplate">
