@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { IAlbumType } from 'src/app/core/interfaces/album-type';
@@ -11,7 +16,7 @@ import { IAlbumTypeUpdateDTO } from 'src/app/core/interfaces/album-type-update-d
 @Component({
   selector: 'app-album-types-management',
   templateUrl: './album-types-management.component.html',
-  styleUrls: ['./album-types-management.component.scss']
+  styleUrls: ['./album-types-management.component.scss'],
 })
 export class AlbumTypesManagementComponent {
   searchValue = '';
@@ -38,20 +43,20 @@ export class AlbumTypesManagementComponent {
         validators: Validators.compose([
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(20)
+          Validators.maxLength(20),
         ]),
-        nonNullable: true
-      })
+        nonNullable: true,
+      }),
     });
     this.albumTypesEditForm = new FormGroup<IAlbumTypeActionForm>({
       albumTypeName: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(20)
+          Validators.maxLength(20),
         ]),
-        nonNullable: true
-      })
+        nonNullable: true,
+      }),
     });
   }
 
@@ -93,7 +98,9 @@ export class AlbumTypesManagementComponent {
 
   showAlbumTypeEditModal(albumTypeTableDatum: IAlbumTypeTableData): void {
     albumTypeTableDatum.isEditingModalVisible = true;
-    this.albumTypesEditForm.controls['albumTypeName'].setValue(albumTypeTableDatum.albumType.name);
+    this.albumTypesEditForm.controls['albumTypeName'].setValue(
+      albumTypeTableDatum.albumType.name
+    );
   }
 
   handleOkAlbumTypeEditModal(albumTypeTableDatum: IAlbumTypeTableData): void {
@@ -101,22 +108,29 @@ export class AlbumTypesManagementComponent {
     this.onAlbumTypesEditFormSubmit(albumTypeTableDatum.albumType.id);
   }
 
-  handleCancelAlbumTypeEditModal(albumTypeTableDatum: IAlbumTypeTableData): void {
+  handleCancelAlbumTypeEditModal(
+    albumTypeTableDatum: IAlbumTypeTableData
+  ): void {
     albumTypeTableDatum.isEditingModalVisible = false;
   }
 
   onAlbumTypesCreationFormSubmit(): void {
-    const albumTypeName: string = this.albumTypesCreationForm.value.albumTypeName;
+    const albumTypeName: string =
+      this.albumTypesCreationForm.value.albumTypeName;
 
     const albumTypeToCreate: IAlbumTypeCreateDTO = {
-      name: albumTypeName
+      name: albumTypeName,
     };
 
-    const isAlbumTypeExisting = this.albumTypesData.some(data => data.albumType.name === albumTypeName);
+    const isAlbumTypeExisting = this.albumTypesData.some(
+      (data) => data.albumType.name === albumTypeName
+    );
 
     if (isAlbumTypeExisting) {
-      this.nzNotificationService
-        .error(`Error`, `The album type ${albumTypeName} already exists!`);
+      this.nzNotificationService.error(
+        `Error`,
+        `The album type ${albumTypeName} already exists!`
+      );
       return;
     }
 
@@ -134,7 +148,7 @@ export class AlbumTypesManagementComponent {
         });
     } else {
       Object.values(this.albumTypesCreationForm.controls).forEach((control) => {
-        if(control.invalid) {
+        if (control.invalid) {
           control.markAsDirty();
           control.updateValueAndValidity({ onlySelf: true });
         }
@@ -145,7 +159,7 @@ export class AlbumTypesManagementComponent {
   onAlbumTypesEditFormSubmit(albumTypeId: string): void {
     const albumTypeToEdit: IAlbumTypeUpdateDTO = {
       id: albumTypeId,
-      name: this.albumTypesEditForm.value.albumTypeName
+      name: this.albumTypesEditForm.value.albumTypeName,
     };
 
     if (this.albumTypesEditForm.valid) {
@@ -154,8 +168,6 @@ export class AlbumTypesManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let editedAlbumType = response;
-          console.log('edited album type');
-          console.log(editedAlbumType);
           this.nzNotificationService.success(
             `Successful Operation`,
             `The album type ${editedAlbumType.name} is edited successfully!`
@@ -180,22 +192,27 @@ export class AlbumTypesManagementComponent {
       nzOkDanger: true,
       nzOnOk: () => this.handleOkAlbumTypeRemovalModal(albumTypeToRemove),
       nzCancelText: 'No',
-      nzOnCancel: () => this.handleCancelAlbumTypeRemovalModal()
-    })
-  }
-
-  handleOkAlbumTypeRemovalModal(albumTypeToRemove: IAlbumType): void {
-    this.albumTypesService.deleteAlbumType(albumTypeToRemove.id).subscribe(() => {
-      this.nzNotificationService.success(
-        'Successful Operation',
-        `The album type ${albumTypeToRemove.name} has been removed!`
-      );
-      this.retrieveAlbumTypesData();
+      nzOnCancel: () => this.handleCancelAlbumTypeRemovalModal(),
     });
   }
 
+  handleOkAlbumTypeRemovalModal(albumTypeToRemove: IAlbumType): void {
+    this.albumTypesService
+      .deleteAlbumType(albumTypeToRemove.id)
+      .subscribe(() => {
+        this.nzNotificationService.success(
+          'Successful Operation',
+          `The album type ${albumTypeToRemove.name} has been removed!`
+        );
+        this.retrieveAlbumTypesData();
+      });
+  }
+
   handleCancelAlbumTypeRemovalModal(): void {
-    this.nzNotificationService.info(`Aborted Operation`, `Album Type removal cancelled`);
+    this.nzNotificationService.info(
+      `Aborted Operation`,
+      `Album Type removal cancelled`
+    );
   }
 
   ngOnInit(): void {
@@ -206,12 +223,14 @@ export class AlbumTypesManagementComponent {
     this.isLoading = true;
     this.albumTypesService.getAlbumTypesWithFullDetails().subscribe((data) => {
       this.albumTypesData = [];
-      data.filter(albumType => !albumType.isDeleted).map(albumType => {
-        this.albumTypesData.push({
-          albumType: albumType,
-          isEditingModalVisible: false
-        })
-      });
+      data
+        .filter((albumType) => !albumType.isDeleted)
+        .map((albumType) => {
+          this.albumTypesData.push({
+            albumType: albumType,
+            isEditingModalVisible: false,
+          });
+        });
       this.albumTypesDisplayData = [...this.albumTypesData];
       this.isLoading = false;
     });

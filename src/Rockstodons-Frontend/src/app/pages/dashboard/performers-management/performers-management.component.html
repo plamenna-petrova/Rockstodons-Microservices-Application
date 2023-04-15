@@ -2,6 +2,47 @@
   Load Performers
 </button>
 
+<button nz-button class="create-new-performer-button" [nzType]="'dashed'" (click)="showPerformerCreationModal()">
+  Create New Performer
+</button>
+<nz-modal [(nzVisible)]="isPerformersCreationModalVisible" nzTitle="Create New Performer" (nzOnOk)="handleOkPerformerCreationModal()" (nzOnCancel)="handleCancelPerformerCreationModal()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="performersCreationForm" (ngSubmit)="onPerformersCreationFormSubmit()">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combinePerformerCreationNameValidationTemplate">
+                    <input nz-input formControlName="name" minlength="3" maxlength="20" required />
+                    <ng-template #combinePerformerCreationNameValidationTemplate let-control>
+                        <ng-container *ngIf="control.hasError('maxlength')">The performer's name cannot be longer than 20 characters</ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The performer's name must be at least 3 character long</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">The performer's name is required</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="5">Country</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input placeholder='Start typing to filter countries' nz-input formControlName="country" (ngModelChange)="onCountryAutocompleteChange($event)" [nzAutocomplete]="auto" />
+                    <nz-autocomplete [nzDataSource]="filteredCountriesList!" #auto></nz-autocomplete>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="5">History</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combinePerformerCreationHistoryValidationTemplate">
+                    <nz-textarea-count [nzMaxCharacterCount]="200">
+                        <textarea rows="4" formControlName="history" nz-input></textarea>
+                    </nz-textarea-count>
+                    <ng-template #combinePerformerCreationHistoryValidationTemplate let-control>
+                        <ng-container *ngIf="control.hasError('maxlength')">The history of the performer cannot be longer than 200 characters</ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The history of the performer must be at least 20 character long</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">The history of the performer is required</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
 <nz-table #sortTable [nzData]="performersDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
     <thead>
         <tr>
@@ -21,6 +62,7 @@
                     </div>
                 </div>
             </th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -29,9 +71,50 @@
                 <td [(nzExpand)]="data.expanded"></td>
                 <td>{{ data.performer.name }}</td>
                 <td>{{ data.performer.country }}</td>
+                <td>
+                    <button nz-button class="edit-performer-button" (click)="showPerformerEditModal(data)">Edit</button>
+                    <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Genre" (nzOnOk)="handleOkPerformerEditModal(data)" (nzOnCancel)="handleCancelPerformerEditModal(data)">
+                        <ng-container *nzModalContent>
+                            <form nz-form [formGroup]="performersEditForm">
+                                <nz-form-item>
+                                    <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                                    <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combinePerformerCreationNameValidationTemplate">
+                                        <input nz-input formControlName="name" minlength="3" maxlength="20" required />
+                                        <ng-template #combinePerformerCreationNameValidationTemplate let-control>
+                                            <ng-container *ngIf="control.hasError('maxlength')">The performer's name cannot be longer than 20 characters</ng-container>
+                                            <ng-container *ngIf="control.hasError('minlength')">The performer's name must be at least 3 character long</ng-container>
+                                            <ng-container *ngIf="control.hasError('required')">The performer's name is required</ng-container>
+                                        </ng-template>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label [nzSpan]="5">Country</nz-form-label>
+                                    <nz-form-control nzHasFeedback [nzSpan]="12">
+                                        <input placeholder='Start typing to filter countries' nz-input formControlName="country" (ngModelChange)="onCountryAutocompleteChange($event)" [nzAutocomplete]="auto" />
+                                        <nz-autocomplete [nzDataSource]="filteredCountriesList!" #auto></nz-autocomplete>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label [nzSpan]="5">History</nz-form-label>
+                                    <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combinePerformerCreationHistoryValidationTemplate">
+                                        <nz-textarea-count [nzMaxCharacterCount]="200">
+                                            <textarea rows="4" formControlName="history" nz-input></textarea>
+                                        </nz-textarea-count>
+                                        <ng-template #combinePerformerCreationHistoryValidationTemplate let-control>
+                                            <ng-container *ngIf="control.hasError('maxlength')">The history of the performer cannot be longer than 200 characters</ng-container>
+                                            <ng-container *ngIf="control.hasError('minlength')">The history of the performer must be at least 20 character long</ng-container>
+                                            <ng-container *ngIf="control.hasError('required')">The history of the performer is required</ng-container>
+                                        </ng-template>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </form>
+                        </ng-container>
+                    </nz-modal>
+                    <button nz-button (click)="showPerformerRemovalModal(data.performer)" nzDanger>Delete</button>
+                </td>
             </tr>
             <tr [nzExpand]="data.expanded">
-                <span>Description: {{ data.performer.history }}</span>
+                <span>History: {{ data.performer.history }}</span>
             </tr>
         </ng-container>
     </tbody>

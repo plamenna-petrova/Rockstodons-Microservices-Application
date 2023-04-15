@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IPerformer } from '../interfaces/performer';
+import { IPerformerCreateDTO } from '../interfaces/performer-create-dto';
+import { IPerformerUpdateDTO } from '../interfaces/performer-update-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -30,13 +32,19 @@ export class PerformersService {
     return this.httpClient.get<IPerformer>(`${this.performersAPIUrl}/details/${performerDetailsId}`);
   }
 
-  createNewPerformer(performerToCreate: IPerformer): Observable<IPerformer> {
-    return this.httpClient.post<IPerformer>(`${this.performersAPIUrl}/create`, performerToCreate);
+  createNewPerformer(performerToCreate: IPerformerCreateDTO): Observable<IPerformerCreateDTO> {
+    return this.httpClient.post<IPerformerCreateDTO>(`${this.performersAPIUrl}/create`, performerToCreate);
   }
 
-  updatePerformer(performerToUpdate: IPerformer): Observable<IPerformer> {
-    return this.httpClient.post<IPerformer>(`
-      ${this.performersAPIUrl}/update/${performerToUpdate.id}`, performerToUpdate
+  updatePerformer(performerToUpdate: IPerformerUpdateDTO): Observable<IPerformerUpdateDTO> {
+    const updatePerformerRequestBody = {
+      name: performerToUpdate.name,
+      country: performerToUpdate.country,
+      history: performerToUpdate.history
+    };
+
+    return this.httpClient.put<IPerformer>(
+      `${this.performersAPIUrl}/update/${performerToUpdate.id}`, updatePerformerRequestBody
     );
   }
 

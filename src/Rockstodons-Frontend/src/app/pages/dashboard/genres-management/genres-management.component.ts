@@ -53,10 +53,10 @@ export class GenresManagementComponent {
         validators: Validators.compose([
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(20)
+          Validators.maxLength(20),
         ]),
-        nonNullable: true
-      })
+        nonNullable: true,
+      }),
     });
   }
 
@@ -98,7 +98,9 @@ export class GenresManagementComponent {
 
   showGenreEditModal(genreTableDatum: IGenreTableData): void {
     genreTableDatum.isEditingModalVisible = true;
-    this.genresEditForm.controls['genreName'].setValue(genreTableDatum.genre.name);
+    this.genresEditForm.controls['genreName'].setValue(
+      genreTableDatum.genre.name
+    );
   }
 
   handleOkGenreEditModal(genreTableDatum: IGenreTableData): void {
@@ -117,11 +119,15 @@ export class GenresManagementComponent {
       name: genreName,
     };
 
-    const isGenreExisting = this.genresData.some(data => data.genre.name === genreToCreate.name);
+    const isGenreExisting = this.genresData.some(
+      (data) => data.genre.name === genreToCreate.name
+    );
 
     if (isGenreExisting) {
-      this.nzNotificationService
-        .error(`Error`, `The genre ${genreName} already exists!`);
+      this.nzNotificationService.error(
+        `Error`,
+        `The genre ${genreName} already exists!`
+      );
       return;
     }
 
@@ -150,7 +156,7 @@ export class GenresManagementComponent {
   onGenresEditFormSubmit(genreId: string): void {
     const genreToEdit: IGenreUpdateDTO = {
       id: genreId,
-      name: this.genresEditForm.value.genreName
+      name: this.genresEditForm.value.genreName,
     };
 
     if (this.genresEditForm.valid) {
@@ -171,7 +177,7 @@ export class GenresManagementComponent {
           control.markAsDirty();
           control.updateValueAndValidity({ onlySelf: true });
         }
-      })
+      });
     }
   }
 
@@ -184,7 +190,7 @@ export class GenresManagementComponent {
       nzOnOk: () => this.handleOkGenreRemovalModal(genreToRemove),
       nzCancelText: 'No',
       nzOnCancel: () => this.handleCancelGenreRemovalModal()
-    })
+    });
   }
 
   handleOkGenreRemovalModal(genreToRemove: IGenre): void {
@@ -198,7 +204,10 @@ export class GenresManagementComponent {
   }
 
   handleCancelGenreRemovalModal(): void {
-    this.nzNotificationService.info(`Aborted operation`, `Genre removal cancelled`);
+    this.nzNotificationService.info(
+      `Aborted operation`,
+      `Genre removal cancelled`
+    );
   }
 
   ngOnInit(): void {
@@ -209,12 +218,14 @@ export class GenresManagementComponent {
     this.isLoading = true;
     this.genresService.getGenresWithFullDetails().subscribe((data) => {
       this.genresData = [];
-      data.filter(genre => !genre.isDeleted).map(genre => {
-        this.genresData.push({
-          genre: genre,
-          isEditingModalVisible: false
-        })
-      });
+      data
+        .filter((genre) => !genre.isDeleted)
+        .map((genre) => {
+          this.genresData.push({
+            genre: genre,
+            isEditingModalVisible: false,
+          });
+        });
       this.genresDisplayData = [...this.genresData];
       this.isLoading = false;
     });

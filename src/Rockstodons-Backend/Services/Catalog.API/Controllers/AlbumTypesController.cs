@@ -31,6 +31,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(List<AlbumTypeDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<AlbumTypeDTO>>> GetAllAlbumTypes()
         {
@@ -68,7 +69,6 @@ namespace Catalog.API.Controllers
 
         [HttpGet("all")]
         [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
-
         public async Task<ActionResult<List<AlbumType>>> GetAlbumTypesWithDeletedRecords()
         {
             try
