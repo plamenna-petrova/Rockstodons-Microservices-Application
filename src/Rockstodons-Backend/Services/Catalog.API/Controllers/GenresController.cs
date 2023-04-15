@@ -320,7 +320,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
-        [AllowAnonymous]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateGenre(string id, [FromBody] UpdateGenreDTO updateGenreDTO)
         {

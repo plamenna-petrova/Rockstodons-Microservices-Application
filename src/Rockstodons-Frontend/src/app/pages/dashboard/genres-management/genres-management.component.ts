@@ -38,7 +38,7 @@ export class GenresManagementComponent {
   }
 
   buildGenresActionForms(): void {
-    this.genresCreationForm = new FormGroup<IGenresActionForm>({
+    this.genresCreationForm = new FormGroup<IGenreActionForm>({
       genreName: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -48,7 +48,7 @@ export class GenresManagementComponent {
         nonNullable: true,
       }),
     });
-    this.genresEditForm = new FormGroup<IGenresActionForm>({
+    this.genresEditForm = new FormGroup<IGenreActionForm>({
       genreName: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -120,7 +120,8 @@ export class GenresManagementComponent {
     const isGenreExisting = this.genresData.some(data => data.genre.name === genreToCreate.name);
 
     if (isGenreExisting) {
-      this.nzNotificationService.error(`Error`, `The genre ${genreName} already exists!`);
+      this.nzNotificationService
+        .error(`Error`, `The genre ${genreName} already exists!`);
       return;
     }
 
@@ -155,7 +156,7 @@ export class GenresManagementComponent {
     if (this.genresEditForm.valid) {
       this.genresService
         .updateGenre(genreToEdit)
-        .pipe(retry(1), take(1))
+        .pipe(take(1))
         .subscribe((response) => {
           let editedGenre = response;
           this.nzNotificationService.success(
@@ -186,7 +187,7 @@ export class GenresManagementComponent {
     })
   }
 
-  handleOkGenreRemovalModal(genreToRemove: IGenre) {
+  handleOkGenreRemovalModal(genreToRemove: IGenre): void {
     this.genresService.deleteGenre(genreToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
         'Successful Operation',
@@ -196,7 +197,7 @@ export class GenresManagementComponent {
     });
   }
 
-  handleCancelGenreRemovalModal() {
+  handleCancelGenreRemovalModal(): void {
     this.nzNotificationService.info(`Aborted operation`, `Genre removal cancelled`);
   }
 
@@ -225,6 +226,6 @@ export interface IGenreTableData {
   isEditingModalVisible: boolean;
 }
 
-export interface IGenresActionForm {
+export interface IGenreActionForm {
   genreName: FormControl<string>;
 }

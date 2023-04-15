@@ -3,9 +3,11 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Data;
 using System.Net;
 using System.Text.Encodings.Web;
 
@@ -65,6 +67,8 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
+
         public async Task<ActionResult<List<AlbumType>>> GetAlbumTypesWithDeletedRecords()
         {
             try
@@ -100,6 +104,8 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
+
         public async Task<ActionResult<List<Genre>>> GetPaginatedGenres([FromQuery] AlbumTypeParameters albumTypeParameters)
         {
             var paginatedAlbumTypes = await _albumTypesService.GetPaginatedAlbumTypes(albumTypeParameters);
@@ -138,6 +144,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("search/{term}")]
         public async Task<ActionResult<AlbumTypeDetailsDTO>> SearchForAlbumTypes(string term)
         {
@@ -174,6 +181,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("search")]
         public async Task<ActionResult<AlbumTypeDetailsDTO>> PaginateSearchedAlbumTypes([FromQuery] AlbumTypeParameters albumTypeParameters)
         {
@@ -224,6 +232,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id}")]
         public async Task<ActionResult<AlbumType>> GetAlbumTypeById(string id)
         {
@@ -248,6 +257,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("details/{id}", Name = AlbumTypeDetailsRouteName)]
         [ProducesResponseType(typeof(AlbumTypeDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<AlbumTypeDetailsDTO>> GetAlbumTypeDetails(string id)
@@ -273,6 +283,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("create")]
         public async Task<ActionResult> CreateAlbumType([FromBody] CreateAlbumTypeDTO createAlbumTypeDTO)
         {
@@ -300,6 +311,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateAlbumType(string id, [FromBody] UpdateAlbumTypeDTO updateAlbumTypeDTO)
         {
@@ -321,7 +333,7 @@ namespace Catalog.API.Controllers
 
                 await _albumTypesService.UpdateAlbumType(albumTypeToUpdate, updateAlbumTypeDTO);
 
-                return NoContent();
+                return Ok(albumTypeToUpdate);
             }
             catch (Exception exception)
             {
@@ -334,6 +346,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateGenre(string id, [FromBody] JsonPatchDocument<UpdateAlbumTypeDTO> albumTypeJsonPatchDocument)
         {
@@ -368,6 +381,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteAlbumType(string id)
         {
@@ -397,6 +411,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteAlbumType(string id)
         {
@@ -426,6 +441,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreAlbumType(string id)
         {

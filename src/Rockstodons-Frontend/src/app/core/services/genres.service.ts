@@ -41,8 +41,8 @@ export class GenresService {
       name: genreToUpdate.name
     };
 
-    return this.httpClient.put<any>(`
-      ${this.genresAPIUrl}/update/${genreToUpdate.id}`, genreUpdateRequestBody
+    return this.httpClient.put<any>(
+      `${this.genresAPIUrl}/update/${genreToUpdate.id}`, genreUpdateRequestBody
     );
   }
 

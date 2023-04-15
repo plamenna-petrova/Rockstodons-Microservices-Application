@@ -2,6 +2,29 @@
   Load Album Types
 </button>
 
+<button nz-button class="create-new-album-type-button" [nzType]="'dashed'" (click)="showAlbumTypeCreationModal()">
+  Create New Album Type
+</button>
+<nz-modal [(nzVisible)]="isAlbumTypeCreationModalVisible" nzTitle="Create New Album Type" (nzOnOk)="handleOkAlbumTypeCreationModal()" (nzOnCancel)="handleCancelAlbumTypeCreationModal()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="albumTypesCreationForm" (ngSubmit)="onAlbumTypesCreationFormSubmit()">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumTypeCreationNameValidationTemplate">
+                    <input nz-input formControlName="albumTypeName" minlength="3" maxlength="20" required />
+                    <ng-template #combineAlbumTypeCreationNameValidationTemplate let-control>
+                        <ng-container *ngIf="control.hasError('maxlength')">The album type name cannot be longer than 20 characters
+                        </ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The album type name must be at least 3 character long
+                        </ng-container>
+                        <ng-container *ngIf="control.hasError('required')">The album type name is required</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
 <nz-table #nzTable [nzData]="albumTypesData" nzTableLayout="fixed" [nzLoading]="isLoading">
     <thead>
         <tr>
@@ -16,10 +39,33 @@
     </thead>
     <tbody>
         <tr *ngFor="let data of nzTable.data">
-            <td>{{ data.name }}</td>
+            <td>{{ data.albumType.name }}</td>
             <td>
-                <button nz-button>Edit</button>
-                <button nz-button>Delete</button>
+                <button nz-button class="edit-album-type-button" (click)="showAlbumTypeEditModal(data)">
+          Edit
+        </button>
+                <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Album Type" (nzOnOk)="handleOkAlbumTypeEditModal(data)" (nzOnCancel)="handleCancelAlbumTypeEditModal(data)">
+                    <ng-container *nzModalContent>
+                        <form nz-form [formGroup]="albumTypesEditForm">
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumTypeEditNameValidationTemplate">
+                                    <input nz-input formControlName="albumTypeName" minlength="3" maxlength="20" required />
+                                    <ng-template #combineAlbumTypeEditNameValidationTemplate let-control>
+                                        <ng-container *ngIf="control.hasError('maxlength')">The album type name cannot be longer than 20 characters
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('minlength')">The album type name must be at least 3 character long
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('required')">The album type name is required</ng-container>
+                                    </ng-template>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+                <button nz-button (click)="showAlbumTypeRemovalModal(data.albumType)" nzDanger>
+          Delete
+        </button>
             </td>
         </tr>
     </tbody>
@@ -28,8 +74,12 @@
     <div class="ant-table-filter-dropdown">
         <div class="search-box">
             <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
-            <button nz-button nzSize="small" nzType="primary" (click)="searchForalbumTypes()" class="search-button">Search</button>
-            <button nz-button nzSize="small" (click)="resetAlbumTypesSearch()">Reset</button>
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForAlbumTypes()" class="search-button">
+        Search
+      </button>
+            <button nz-button nzSize="small" (click)="resetAlbumTypesSearch()">
+        Reset
+      </button>
         </div>
     </div>
 </nz-dropdown-menu>
