@@ -9,10 +9,10 @@
         <nz-layout class="inner-layout">
             <nz-sider nzWidth="200px" nzTheme="light" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
                 <ul nz-menu nzMode="inline" class="sider-menu">
-                    <li nz-menu-item [nzSelected]="true">
+                    <li nz-menu-item>
                         <span nz-icon nzType="pie-chart"></span>
                         <span>
-                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['genres-management']}}]" #genresManagementLink>Genres</a>
+                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['genres-management']}}]">Genres</a>
                         </span>
                     </li>
                     <li nz-menu-item>

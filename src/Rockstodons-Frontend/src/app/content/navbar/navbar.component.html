@@ -6,11 +6,8 @@
     </div>
     <ul nz-menu nzTheme="dark" nzMode="horizontal" class="header-menu">
         <li nz-menu-item nzSelected [routerLink]="['/home']">Home</li>
-        <li nz-menu-item *ngIf="role == 'Administrator'" [routerLink]="['/dashboard']">Dashboard</li>
+        <li nz-menu-item *ngIf="role == 'Administrator'" [routerLink]="['/dashboard', { outlets: { dashboard: ['genres-management']}}]">Dashboard</li>
         <li nz-menu-item>Albums</li>
-        <li nz-menu-item>Performers</li>
-        <li nz-menu-item>Genres</li>
-        <li nz-menu-item>Tracks</li>
         <li nz-menu-item>Playlists</li>
         <li nz-menu-item *ngIf="username">{{ username }}'s Profile</li>
         <li nz-menu-item *ngIf="applicationUser$ | async as user" (click)="logout()">

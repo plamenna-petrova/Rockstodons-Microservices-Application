@@ -1,1 +1,49 @@
-<p>performers-management works!</p>
+<button nz-button class="load-performers-data-button" [nzType]="'primary'" (click)="onLoadPerformersDataClick()">
+  Load Performers
+</button>
+
+<nz-table #sortTable [nzData]="performersDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
+    <thead>
+        <tr>
+            <th *ngFor="let column of listOfPerformersColumns" [nzSortFn]="column.compare" [nzSortPriority]="column.priority" nzCustomFilter="">
+                {{ column.title }}
+                <div [ngSwitch]="column.title" class="search-trigger-container">
+                    <div *ngSwitchCase="'Name'">
+                        <nz-filter-trigger [(nzVisible)]="column.isSearchTriggerVisible" [nzActive]="column.searchValue.length > 0" [nzDropdownMenu]="searchByNameMenu">
+                            <span nz-icon nzType="search"></span>
+                        </nz-filter-trigger>
+                    </div>
+                    <div *ngSwitchCase="'Country'">
+                        <nz-filter-trigger [(nzVisible)]="column.isSearchTriggerVisible" [nzActive]="column.searchValue.length > 0" [nzDropdownMenu]="searchByCountryMenu">
+                            <span nz-icon nzType="search"></span>
+                        </nz-filter-trigger>
+                    </div>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of sortTable.data">
+            <td>{{ data.name }}</td>
+            <td>{{ data.country }}</td>
+        </tr>
+    </tbody>
+</nz-table>
+<nz-dropdown-menu #searchByNameMenu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchByNameValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForPerformersByName()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="resetPerformersSearch()">Reset</button>
+        </div>
+    </div>
+</nz-dropdown-menu>
+<nz-dropdown-menu #searchByCountryMenu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search country" [(ngModel)]="searchByCountryValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForPerformersByCountry()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="resetPerformersSearch()">Reset</button>
+        </div>
+    </div>
+</nz-dropdown-menu>

@@ -19,6 +19,7 @@ import { PerformersService } from 'src/app/core/services/performers.service';
 })
 export class AlbumsManagementComponent {
   albumsManagementTableSettingsForm!: FormGroup;
+  isLoading = false;
   performersForAlbums!: IPerformer[];
   genresForAlbums!: IGenre[];
   typesForAlbums!: IAlbumType[];
@@ -38,7 +39,6 @@ export class AlbumsManagementComponent {
 
   listOfSwitches = [
     { name: 'Bordered', formControlName: 'isBordered' },
-    { name: 'Loading', formControlName: 'withLoading' },
     { name: 'Pagination', formControlName: 'hasPagination' },
     { name: 'PageSizeChanger', formControlName: 'hasSizeChanger' },
     { name: 'Title', formControlName: 'hasTitle' },
@@ -206,7 +206,6 @@ export class AlbumsManagementComponent {
   ngOnInit(): void {
     this.albumsManagementTableSettingsForm = new FormGroup<IAlbumsManagementTableSettingsForm>({
       isBordered: new FormControl(false, { nonNullable: true }),
-      withLoading: new FormControl(false, { nonNullable: true }),
       hasPagination: new FormControl(true, { nonNullable: true }),
       hasSizeChanger: new FormControl(false, { nonNullable: true }),
       hasTitle: new FormControl(true, { nonNullable: true }),
@@ -238,7 +237,7 @@ export class AlbumsManagementComponent {
     });
   }
 
-  onGetAlbumsDataClick(): void {
+  onLoadAlbumsDataClick(): void {
     this.retriveAlbumsData();
   }
 
@@ -286,21 +285,20 @@ export class AlbumsManagementComponent {
     this.isVisible = false;
   }
 
-  retriveAlbumsData(): void {
-    this.performersService.getAllPerformers().subscribe(performersData => {
-      this.performersForAlbums = performersData;
+  private retriveAlbumsData(): void {
+    this.isLoading = true;
+    this.performersService.getAllPerformers().subscribe(data => {
+      this.performersForAlbums = data;
     });
-    this.genresService.getAllGenres().subscribe(genresData => {
-      this.genresForAlbums = genresData;
+    this.genresService.getAllGenres().subscribe(data => {
+      this.genresForAlbums = data;
     });
-    this.albumTypesService.getAllAlbumTypes().subscribe(albumTypesData => {
-      this.typesForAlbums = albumTypesData;
+    this.albumTypesService.getAllAlbumTypes().subscribe(data => {
+      this.typesForAlbums = data;
     });
-    this.albumsService.getAlbumsWithFullDetails().subscribe(albumsData => {
+    this.albumsService.getAlbumsWithFullDetails().subscribe(data => {
       this.albumsToManage = [];
-      console.log('albums data');
-      console.log(albumsData);
-      albumsData.filter(album => !album.isDeleted).map(retrievedAlbum => {
+      data.filter(album => !album.isDeleted).map(retrievedAlbum => {
         this.albumsToManage.push({
           album: {
             id: retrievedAlbum.id,
@@ -318,6 +316,7 @@ export class AlbumsManagementComponent {
           expanded: false
         } as IAlbumTableData)
       });
+      this.isLoading = false;
     });
   }
 }
@@ -331,7 +330,6 @@ export interface IAlbumTableData {
 
 export interface IAlbumsManagementTableSetting {
   isBordered: boolean;
-  withLoading: boolean;
   hasPagination: boolean;
   hasSizeChanger: boolean;
   hasTitle: boolean;
@@ -352,7 +350,6 @@ export interface IAlbumsManagementTableSetting {
 
 export interface IAlbumsManagementTableSettingsForm {
   isBordered: FormControl<boolean>;
-  withLoading: FormControl<boolean>;
   hasPagination: FormControl<boolean>;
   hasSizeChanger: FormControl<boolean>;
   hasTitle: FormControl<boolean>;

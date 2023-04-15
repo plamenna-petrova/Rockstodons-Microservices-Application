@@ -1,1 +1,35 @@
-<p>album-types-management works!</p>
+<button nz-button class="load-album-types-data-button" [nzType]="'primary'" (click)="onLoadAlbumTypesDataClick()">
+  Load Album Types
+</button>
+
+<nz-table #nzTable [nzData]="albumTypesData" nzTableLayout="fixed" [nzLoading]="isLoading">
+    <thead>
+        <tr>
+            <th nzCustomFilter>
+                Name
+                <nz-filter-trigger [(nzVisible)]="isAlbumTypesSearchTriggerVisible" [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+                    <span nz-icon nzType="search"></span>
+                </nz-filter-trigger>
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of nzTable.data">
+            <td>{{ data.name }}</td>
+            <td>
+                <button nz-button>Edit</button>
+                <button nz-button>Delete</button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForalbumTypes()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="resetAlbumTypesSearch()">Reset</button>
+        </div>
+    </div>
+</nz-dropdown-menu>

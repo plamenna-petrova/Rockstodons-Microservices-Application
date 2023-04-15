@@ -6,8 +6,6 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
   styleUrls: ['./dashboard.component.less']
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-  @ViewChild('genresManagementLink') genresManagementLink!: ElementRef<HTMLAnchorElement>;
-
   isCollapsed = false;
   currentYear = new Date().getFullYear();
 
@@ -20,7 +18,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.genresManagementLink.nativeElement.click();
+
   }
 
 }

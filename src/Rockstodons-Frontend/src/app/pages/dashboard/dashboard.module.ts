@@ -22,6 +22,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
@@ -59,6 +60,7 @@ registerLocaleData(en);
     NzCheckboxModule,
     NzPaginationModule,
     NzModalModule,
+    NzDropDownModule,
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,

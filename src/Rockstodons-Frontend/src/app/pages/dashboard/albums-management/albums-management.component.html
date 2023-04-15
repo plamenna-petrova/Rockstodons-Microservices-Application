@@ -17,16 +17,12 @@
     </form>
 </div>
 
-<button nz-button class="get-albums-data-button" [nzType]="'primary'" (click)="onGetAlbumsDataClick()">
-  Get Albums
-</button>
-
-<button nz-button nzType="primary" (click)="showModal()">
-  <span>Show Modal</span>
+<button nz-button class="load-albums-data-button" [nzType]="'primary'" (click)="onLoadAlbumsDataClick()">
+  Load Albums
 </button>
 
 <nz-table #albumsManagementDynamicTable [nzScroll]="{ x: scrollX, y: scrollY }" [nzData]="albumsToManage" [nzTableLayout]="albumsManagementTableSetting.tableLayout" [nzBordered]="albumsManagementTableSetting.isBordered" [nzSimple]="albumsManagementTableSetting.isSimple"
-    [nzLoading]="albumsManagementTableSetting.withLoading" [nzPaginationType]="albumsManagementTableSetting.paginationType" [nzPaginationPosition]="albumsManagementTableSetting.position" [nzShowSizeChanger]="albumsManagementTableSetting.hasSizeChanger" [nzFrontPagination]="albumsManagementTableSetting.hasPagination"
+    [nzLoading]="isLoading" [nzPaginationType]="albumsManagementTableSetting.paginationType" [nzPaginationPosition]="albumsManagementTableSetting.position" [nzShowSizeChanger]="albumsManagementTableSetting.hasSizeChanger" [nzFrontPagination]="albumsManagementTableSetting.hasPagination"
     [nzShowPagination]="albumsManagementTableSetting.hasPagination" [nzFooter]="
     albumsManagementTableSetting.hasFooter ? 'Albums Management' : null
   " [nzTitle]="albumsManagementTableSetting.hasTitle ? 'Manage Albums' : null" [nzSize]="albumsManagementTableSetting.tableSize" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
