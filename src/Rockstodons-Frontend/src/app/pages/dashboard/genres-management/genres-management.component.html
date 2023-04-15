@@ -2,6 +2,27 @@
   Load Genres
 </button>
 
+<button nz-button class="create-new-genre-button" [nzType]="'dashed'" (click)="showGenreCreationModal()">
+  Create New Genre
+</button>
+<nz-modal [(nzVisible)]="isGenreCreationModalVisible" nzTitle="Create New Genre" (nzOnOk)="handleOkGenreCreationModal()" (nzOnCancel)="handleCancelGenreCreationModal()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="genresCreationForm" (ngSubmit)="onGenresCreationFormSubmit()">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineGenreCreationNameValidationTemplate">
+                    <input nz-input formControlName="genreName" minlength="3" maxlength="20" required />
+                    <ng-template #combineGenreCreationNameValidationTemplate let-control>
+                        <ng-container *ngIf="control.hasError('maxlength')">The genre name cannot be longer than 20 characters</ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The genre name must be at least 3 character long</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">The genre name is required</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
 <nz-table #nzTable [nzData]="genresDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
     <thead>
         <tr>
@@ -16,10 +37,27 @@
     </thead>
     <tbody>
         <tr *ngFor="let data of nzTable.data">
-            <td>{{ data.name }}</td>
+            <td>{{ data.genre.name }}</td>
             <td>
-                <button nz-button>Edit</button>
-                <button nz-button>Delete</button>
+                <button nz-button class="edit-genre-button" (click)="showGenreEditModal(data)">Edit</button>
+                <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Genre" (nzOnOk)="handleOkGenreEditModal(data)" (nzOnCancel)="handleCancelGenreEditModal(data)">
+                    <ng-container *nzModalContent>
+                        <form nz-form [formGroup]="genresEditForm">
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineGenreEditNameValidationTemplate">
+                                    <input nz-input formControlName="genreName" minlength="3" maxlength="20" required />
+                                    <ng-template #combineGenreEditNameValidationTemplate let-control>
+                                        <ng-container *ngIf="control.hasError('maxlength')">The genre name cannot be longer than 20 characters</ng-container>
+                                        <ng-container *ngIf="control.hasError('minlength')">The genre name must be at least 3 character long</ng-container>
+                                        <ng-container *ngIf="control.hasError('required')">The genre name is required</ng-container>
+                                    </ng-template>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+                <button nz-button (click)="showGenreRemovalModal(data.genre)" nzDanger>Delete</button>
             </td>
         </tr>
     </tbody>

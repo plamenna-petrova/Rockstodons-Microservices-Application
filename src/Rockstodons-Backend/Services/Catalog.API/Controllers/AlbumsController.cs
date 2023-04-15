@@ -16,7 +16,6 @@ namespace Catalog.API.Controllers
 {
     [Route("api/v1/albums")]
     [ApiController]
-    [Authorize(Roles = "Administrator")]
     public class AlbumsController : ControllerBase
     {
         private const string AlbumsName = "Albums";
@@ -33,6 +32,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(List<AlbumDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<AlbumDTO>>> GetAllAlbums()
         {
@@ -69,6 +69,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         public async Task<ActionResult<List<Album>>> GetAlbumsWithDeletedRecords()
         {
             try
@@ -104,6 +105,8 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
+        [Authorize]
         public async Task<ActionResult<List<AlbumDTO>>> GetPaginatedAlbums([FromQuery] AlbumParameters albumParameters)
         {
             try
@@ -153,6 +156,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("search/{term}")]
         public async Task<ActionResult<AlbumDetailsDTO>> SearchForAlbums(string term)
         {
@@ -188,6 +192,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("search")]
         public async Task<ActionResult<AlbumDetailsDTO>> PaginateSearchedAlbums([FromQuery] AlbumParameters albumParameters)
         {
@@ -237,6 +242,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Album>> GetalbumById(string id)
         {
             try
@@ -260,6 +266,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("details/{id}", Name = AlbumDetailsRouteName)]
         [ProducesResponseType(typeof(AlbumDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<AlbumDetailsDTO>> GetalbumDetails(string id)
@@ -285,6 +292,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("create")]
         public async Task<ActionResult> CreateAlbum([FromBody] CreateAlbumDTO createAlbumDTO)
         {
@@ -312,6 +320,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateAlbum(string id, [FromBody] UpdateAlbumDTO updateAlbumDTO)
         {
@@ -346,6 +355,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateAlbum(string id, [FromBody] JsonPatchDocument<UpdateAlbumDTO> albumJsonPatchDocument)
         {
@@ -380,6 +390,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteAlbum(string id)
         {
@@ -409,6 +420,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteAlbum(string id)
         {
@@ -438,6 +450,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreAlbum(string id)
         {

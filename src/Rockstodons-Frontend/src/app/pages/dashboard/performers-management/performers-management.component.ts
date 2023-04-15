@@ -13,8 +13,8 @@ export class PerformersManagementComponent {
   isLoading = false;
   isPerformersNameSearchTriggerVisible = false;
   isPerformersCountrySearchTriggerVisible = false;
-  performersData!: IPerformer[];
-  performersDisplayData!: IPerformer[];
+  performersData!: IPerformerTableData[];
+  performersDisplayData!: IPerformerTableData[];
 
   listOfPerformersColumns = [
     {
@@ -31,7 +31,7 @@ export class PerformersManagementComponent {
       priority: 2,
       isSearchTriggerVisible: this.isPerformersCountrySearchTriggerVisible,
       searchValue: this.searchByCountryValue,
-    },
+    }
   ];
 
   constructor(private performersService: PerformersService) {}
@@ -51,8 +51,8 @@ export class PerformersManagementComponent {
   searchForPerformersByName(): void {
     this.isPerformersNameSearchTriggerVisible = false;
     this.performersDisplayData = this.performersData.filter(
-      (performer: IPerformer) =>
-        performer.name
+      (data: IPerformerTableData) =>
+        data.performer.name
           .toLowerCase()
           .indexOf(this.searchByNameValue.toLowerCase()) !== -1
     );
@@ -61,8 +61,8 @@ export class PerformersManagementComponent {
   searchForPerformersByCountry(): void {
     this.isPerformersCountrySearchTriggerVisible = false;
     this.performersDisplayData = this.performersData.filter(
-      (performer: IPerformer) =>
-        performer.country
+      (data: IPerformerTableData) =>
+        data.performer.country
           .toLowerCase()
           .indexOf(this.searchByCountryValue.toLowerCase()) !== -1
     );
@@ -75,9 +75,20 @@ export class PerformersManagementComponent {
   private retrievePerformersData(): void {
     this.isLoading = true;
     this.performersService.getPerformersWithFullDetails().subscribe((data) => {
-      this.performersData = data;
+      this.performersData = [];
+      data.map(performer => {
+        this.performersData.push({
+          performer: { ...performer },
+          expanded: false
+        })
+      });
       this.performersDisplayData = [...this.performersData];
       this.isLoading = false;
     });
   }
+}
+
+export interface IPerformerTableData {
+  performer: IPerformer;
+  expanded: boolean;
 }

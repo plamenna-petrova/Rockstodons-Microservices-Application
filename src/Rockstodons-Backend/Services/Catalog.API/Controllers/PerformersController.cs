@@ -38,15 +38,6 @@ namespace Catalog.API.Controllers
 
                 if (allPerformers != null)
                 {
-                    allPerformers.ForEach(p =>
-                    {
-                        if (p != null)
-                        {
-                            p.Name = HtmlEncoder.Default.Encode(p.Name);
-                            p.Country = HtmlEncoder.Default.Encode(p.Country);
-                        }
-                    });
-
                     return Ok(allPerformers);
                 }
 

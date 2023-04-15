@@ -24,8 +24,8 @@
 <nz-table #albumsManagementDynamicTable [nzScroll]="{ x: scrollX, y: scrollY }" [nzData]="albumsToManage" [nzTableLayout]="albumsManagementTableSetting.tableLayout" [nzBordered]="albumsManagementTableSetting.isBordered" [nzSimple]="albumsManagementTableSetting.isSimple"
     [nzLoading]="isLoading" [nzPaginationType]="albumsManagementTableSetting.paginationType" [nzPaginationPosition]="albumsManagementTableSetting.position" [nzShowSizeChanger]="albumsManagementTableSetting.hasSizeChanger" [nzFrontPagination]="albumsManagementTableSetting.hasPagination"
     [nzShowPagination]="albumsManagementTableSetting.hasPagination" [nzFooter]="
-    albumsManagementTableSetting.hasFooter ? 'Albums Management' : null
-  " [nzTitle]="albumsManagementTableSetting.hasTitle ? 'Manage Albums' : null" [nzSize]="albumsManagementTableSetting.tableSize" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
+    albumsManagementTableSetting.hasFooter ? 'Albums Management Footer' : null
+  " [nzTitle]="albumsManagementTableSetting.hasTitle ? 'Customizable Table' : null" [nzSize]="albumsManagementTableSetting.tableSize" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
     <thead>
         <tr *ngIf="albumsManagementTableSetting.hasHeader">
             <th nzWidth="40px" *ngIf="albumsManagementTableSetting.isExpandable" [nzLeft]="fixedColumn"></th>
@@ -62,8 +62,8 @@
                     {{ data.album.genre.name }}
                 </td>
                 <td [nzRight]="fixedColumn" [nzEllipsis]="albumsManagementTableSetting.withEllipsis">
-                    <button nz-button>Edit</button>
-                    <button nz-button (click)="showAlbumRemovalModal(data.album)">Delete</button>
+                    <button nz-button class="edit-album-button">Edit</button>
+                    <button nz-button (click)="showAlbumRemovalModal(data.album)" nzDanger>Delete</button>
                     <nz-divider nzType="vertical"></nz-divider>
                 </td>
             </tr>

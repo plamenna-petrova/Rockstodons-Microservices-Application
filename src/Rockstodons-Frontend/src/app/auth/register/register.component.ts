@@ -78,20 +78,15 @@ export class RegisterComponent {
 
   onRegisterFormSubmit(): void {
     if (this.registerForm.valid) {
-      this.router.navigate(['login']);
       const userToRegister = {
         userName: this.registerForm.value.username,
         email: this.registerForm.value.email,
         password: this.registerForm.value.matchingPasswords.password,
         confirmPassword: this.registerForm.value.matchingPasswords.confirmPassword,
       } as IRegisterRequestDTO;
-      console.log('user to register');
-      console.log(userToRegister);
-      console.log(this.registerForm.value);
       this.authService.register(userToRegister).subscribe(() => {
-        console.log('successful registration?');
+        this.router.navigate(['login']);
       });
-      this.router.navigate(['login']);
     } else {
       Object.values(this.registerForm.controls).forEach((controlValue) => {
         if (controlValue.invalid) {

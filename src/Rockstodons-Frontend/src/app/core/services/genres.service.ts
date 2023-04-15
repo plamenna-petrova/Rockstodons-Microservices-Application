@@ -1,8 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IGenre } from '../interfaces/genre';
+import { IGenreCreateDTO } from '../interfaces/genre-create-dto';
+import { IGenreUpdateDTO } from '../interfaces/genre-update-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -30,13 +32,17 @@ export class GenresService {
     return this.httpClient.get<IGenre>(`${this.genresAPIUrl}/details/${genreDetailsId}`);
   }
 
-  createNewGenre(genreToCreate: IGenre): Observable<IGenre> {
-    return this.httpClient.post<IGenre>(`${this.genresAPIUrl}/create`, genreToCreate);
+  createNewGenre(genreToCreate: IGenreCreateDTO): Observable<IGenreCreateDTO> {
+    return this.httpClient.post<IGenreCreateDTO>(`${this.genresAPIUrl}/create`, genreToCreate);
   }
 
-  updateGenre(genreToUpdate: IGenre): Observable<IGenre> {
-    return this.httpClient.post<IGenre>(`
-      ${this.genresAPIUrl}/update/${genreToUpdate.id}`, genreToUpdate
+  updateGenre(genreToUpdate: IGenreUpdateDTO): Observable<IGenreUpdateDTO> {
+    const genreUpdateRequestBody = {
+      name: genreToUpdate.name
+    };
+
+    return this.httpClient.put<any>(`
+      ${this.genresAPIUrl}/update/${genreToUpdate.id}`, genreUpdateRequestBody
     );
   }
 

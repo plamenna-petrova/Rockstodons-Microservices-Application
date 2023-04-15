@@ -223,7 +223,7 @@ export class AlbumsManagementComponent {
       tableLayout: new FormControl('auto', { nonNullable: true }),
       position: new FormControl('bottom', { nonNullable: true })
     });
-    this.retriveAlbumsData();
+    this.retrieveAlbumsData();
     this.albumsManagementTableSetting = this.albumsManagementTableSettingsForm?.value;
     this.albumsManagementTableSettingsForm?.valueChanges.subscribe(value => {
       this.albumsManagementTableSetting = value;
@@ -238,7 +238,7 @@ export class AlbumsManagementComponent {
   }
 
   onLoadAlbumsDataClick(): void {
-    this.retriveAlbumsData();
+    this.retrieveAlbumsData();
   }
 
   showAlbumRemovalModal(albumToRemove: IAlbum): void {
@@ -254,14 +254,12 @@ export class AlbumsManagementComponent {
   }
 
   handleOkAlbumRemovalModal(albumToRemove: IAlbum) {
-    console.log('album to remove');
-    console.log(albumToRemove);
     this.albumsService.deleteAlbum(albumToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
         'Successful Operation',
         `The album ${albumToRemove.name} has been removed!`
       );
-      this.retriveAlbumsData();
+      this.retrieveAlbumsData();
     });
   }
 
@@ -269,23 +267,7 @@ export class AlbumsManagementComponent {
     this.nzNotificationService.info(`Aborted operation`, `Album removal cancelled`);
   }
 
-  showModal(): void {
-    this.isVisible = true;
-  }
-
-  handleOk(): void {
-    this.isConfirmLoading = true;
-    setTimeout(() => {
-      this.isVisible = false;
-      this.isConfirmLoading = false;
-    }, 1000);
-  }
-
-  handleCancel(): void {
-    this.isVisible = false;
-  }
-
-  private retriveAlbumsData(): void {
+  private retrieveAlbumsData(): void {
     this.isLoading = true;
     this.performersService.getAllPerformers().subscribe(data => {
       this.performersForAlbums = data;

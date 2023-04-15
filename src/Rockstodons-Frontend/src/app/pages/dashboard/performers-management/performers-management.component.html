@@ -5,6 +5,7 @@
 <nz-table #sortTable [nzData]="performersDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
     <thead>
         <tr>
+            <th nzWidth="60px"></th>
             <th *ngFor="let column of listOfPerformersColumns" [nzSortFn]="column.compare" [nzSortPriority]="column.priority" nzCustomFilter="">
                 {{ column.title }}
                 <div [ngSwitch]="column.title" class="search-trigger-container">
@@ -23,10 +24,16 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let data of sortTable.data">
-            <td>{{ data.name }}</td>
-            <td>{{ data.country }}</td>
-        </tr>
+        <ng-container *ngFor="let data of sortTable.data">
+            <tr>
+                <td [(nzExpand)]="data.expanded"></td>
+                <td>{{ data.performer.name }}</td>
+                <td>{{ data.performer.country }}</td>
+            </tr>
+            <tr [nzExpand]="data.expanded">
+                <span>Description: {{ data.performer.history }}</span>
+            </tr>
+        </ng-container>
     </tbody>
 </nz-table>
 <nz-dropdown-menu #searchByNameMenu="nzDropdownMenu">
