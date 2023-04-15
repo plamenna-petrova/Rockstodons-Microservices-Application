@@ -49,14 +49,14 @@ export class AlbumTypesService {
   }
 
   deleteAlbumTypePermanently(albumTypeToDeletePermanentlyId: string): Observable<void> {
-    return this.httpClient.delete<void>(`
-      ${this.albumTypesAPIUrl}/confirm-deletion/${albumTypeToDeletePermanentlyId}`
+    return this.httpClient.delete<void>(
+      `${this.albumTypesAPIUrl}/confirm-deletion/${albumTypeToDeletePermanentlyId}`
     );
   }
 
   restoreAlbumType(albumTypeToRestoreId: string): Observable<void> {
-    return this.httpClient.delete<void>(`
-      ${this.albumTypesAPIUrl}/restore/${albumTypeToRestoreId}`
+    return this.httpClient.delete<void>(
+      `${this.albumTypesAPIUrl}/restore/${albumTypeToRestoreId}`
     );
   }
 }

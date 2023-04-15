@@ -6,6 +6,7 @@ import { GenresManagementComponent } from './genres-management/genres-management
 import { AlbumTypesManagementComponent } from './album-types-management/album-types-management.component';
 import { PerformersManagementComponent } from './performers-management/performers-management.component';
 import { UsersManagementComponent } from './users-management/users-management.component';
+import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 
 const routes: Routes = [
   {
@@ -35,6 +36,11 @@ const routes: Routes = [
       {
         path: 'users-management',
         component: UsersManagementComponent,
+        outlet: 'dashboard'
+      },
+      {
+        path: 'recycle-bin',
+        component: RecycleBinComponent,
         outlet: 'dashboard'
       }
     ]

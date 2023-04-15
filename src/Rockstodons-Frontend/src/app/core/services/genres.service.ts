@@ -48,8 +48,8 @@ export class GenresService {
   }
 
   deleteGenrePermanently(genreToDeletePermanentlyId: string): Observable<void> {
-    return this.httpClient.delete<void>(`
-      ${this.genresAPIUrl}/confirm-deletion/${genreToDeletePermanentlyId}`
+    return this.httpClient.delete<void>(
+      `${this.genresAPIUrl}/confirm-deletion/${genreToDeletePermanentlyId}`
     );
   }
 

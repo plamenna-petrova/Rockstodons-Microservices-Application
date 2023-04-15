@@ -25,6 +25,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzListModule } from 'ng-zorro-antd/list';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
@@ -67,6 +69,8 @@ registerLocaleData(en);
     NzDropDownModule,
     NzAutocompleteModule,
     NzInputNumberModule,
+    NzCollapseModule,
+    NzListModule,
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,

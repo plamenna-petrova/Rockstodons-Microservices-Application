@@ -48,14 +48,14 @@ export class PerformersService {
   }
 
   deletePerformerPermanently(performerToDeletePermanentlyId: string): Observable<void> {
-    return this.httpClient.delete<void>(`
-      ${this.performersAPIUrl}/confirm-deletion/${performerToDeletePermanentlyId}`
+    return this.httpClient.delete<void>(
+      `${this.performersAPIUrl}/confirm-deletion/${performerToDeletePermanentlyId}`
     );
   }
 
   restorePerformer(performerToRestoreId: string): Observable<void> {
-    return this.httpClient.delete<void>(`
-      ${this.performersAPIUrl}/restore/${performerToRestoreId}`
+    return this.httpClient.delete<void>(
+      `${this.performersAPIUrl}/restore/${performerToRestoreId}`
     );
   }
  }

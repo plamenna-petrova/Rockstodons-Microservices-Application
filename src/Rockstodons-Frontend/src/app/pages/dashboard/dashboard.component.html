@@ -39,6 +39,12 @@
                           <a [routerLink]="['/dashboard', { outlets: { dashboard: ['users-management']}}]">Users</a>
                         </span>
                     </li>
+                    <li nz-menu-item>
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
+                        <span>
+                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['recycle-bin']}}]">Recycle Bin</a>
+                        </span>
+                    </li>
                 </ul>
             </nz-sider>
             <nz-layout>

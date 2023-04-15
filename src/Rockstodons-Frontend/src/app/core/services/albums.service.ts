@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IAlbum } from '../interfaces/album';
 import { environment } from 'src/environments/environment';
-import { IAlbumDetails } from '../interfaces/album-details';
 import { IAlbumCreateDTO } from '../interfaces/album-create-dto';
 import { IAlbumUpdateDTO } from '../interfaces/album-update-dto';
+import { IAlbumDetails } from '../interfaces/album-details';
 
 @Injectable({
   providedIn: 'root'
@@ -49,19 +49,14 @@ export class AlbumsService {
   }
 
   deleteAlbumPermanently(albumToDeletePermanentlyId: string): Observable<void> {
-    console.log('invoked');
-    console.log(albumToDeletePermanentlyId);
-    console.log('route');
-    const test = `${this.albumsAPIUrl}/confirm-deletion/${albumToDeletePermanentlyId}`;
-    console.log(test);
     return this.httpClient.delete<void>(
       `${this.albumsAPIUrl}/confirm-deletion/${albumToDeletePermanentlyId}`
     );
   }
 
   restoreAlbum(albumToRestoreId: string): Observable<void> {
-    return this.httpClient.delete<void>(`
-      ${this.albumsAPIUrl}/restore/${albumToRestoreId}`
+    return this.httpClient.delete<void>(
+      `${this.albumsAPIUrl}/restore/${albumToRestoreId}`
     );
   }
 }
