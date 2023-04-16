@@ -46,7 +46,7 @@ export class TracksManagementComponent {
   }
 
   buildTracksActionForms(): void {
-    const tracksActionFormGroup = new FormGroup<ITrackActionForm>({
+    this.tracksCreationForm = new FormGroup<ITrackActionForm>({
       name: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -60,7 +60,20 @@ export class TracksManagementComponent {
         nonNullable: true,
       }),
     });
-    this.tracksCreationForm = this.tracksEditForm = tracksActionFormGroup;
+    this.tracksEditForm = new FormGroup<ITrackActionForm>({
+      name: new FormControl('', {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(40),
+        ]),
+        nonNullable: true,
+      }),
+      album: new FormControl('', {
+        validators: Validators.compose([Validators.required]),
+        nonNullable: true,
+      }),
+    });
   }
 
   get name(): AbstractControl {

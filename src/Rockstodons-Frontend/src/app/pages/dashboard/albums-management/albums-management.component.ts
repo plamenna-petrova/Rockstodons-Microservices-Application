@@ -30,6 +30,7 @@ import { GenresService } from 'src/app/core/services/genres.service';
 import { PerformersService } from 'src/app/core/services/performers.service';
 import { TracksService } from 'src/app/core/services/tracks.service';
 import { ITrackCreateDTO } from 'src/app/core/interfaces/tracks/track-create-dto';
+import { ITrack } from 'src/app/core/interfaces/tracks/track';
 
 @Component({
   selector: 'app-albums-management',
@@ -64,6 +65,7 @@ export class AlbumsManagementComponent {
   currentYear = new Date().getFullYear();
 
   listOfTrackControls: Array<{ id: number; controlInstance: string }> = [];
+  listOfTrackEditControls: Array<{ id: number; controlInstance: string }> = [];
 
   listOfSwitches = [
     { name: 'Bordered', formControlName: 'isBordered' },
@@ -147,7 +149,7 @@ export class AlbumsManagementComponent {
   }
 
   buildAlbumsActionForms(): void {
-    const albumActionFormGroup = new FormGroup<IAlbumActionForm>({
+    this.albumsCreationForm = new FormGroup<IAlbumActionForm>({
       name: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -186,7 +188,45 @@ export class AlbumsManagementComponent {
       }),
       tracksActionFormGroup: new UntypedFormGroup({}),
     });
-    this.albumsCreationForm = this.albumsEditForm = albumActionFormGroup;
+    this.albumsEditForm = new FormGroup<IAlbumActionForm>({
+      name: new FormControl('', {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(25),
+        ]),
+        nonNullable: true,
+      }),
+      yearOfRelease: new FormControl(this.currentYear, {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.min(1960),
+          Validators.max(2023),
+        ]),
+        nonNullable: true,
+      }),
+      description: new FormControl('', {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.minLength(20),
+          Validators.maxLength(500),
+        ]),
+        nonNullable: true,
+      }),
+      albumType: new FormControl('', {
+        validators: Validators.compose([Validators.required]),
+        nonNullable: true,
+      }),
+      genre: new FormControl('', {
+        validators: Validators.compose([Validators.required]),
+        nonNullable: true,
+      }),
+      performer: new FormControl('', {
+        validators: Validators.compose([Validators.required]),
+        nonNullable: true,
+      }),
+      tracksActionFormGroup: new UntypedFormGroup({}),
+    });
   }
 
   get isBordered(): AbstractControl {
@@ -289,6 +329,10 @@ export class AlbumsManagementComponent {
     return this.albumsCreationForm.get('tracksActionFormGroup')!;
   }
 
+  get tracksEditActionFormGroup(): any {
+    return this.albumsEditForm.get('tracksActionFormGroup')!;
+  }
+
   onCurrentPageDataChange($event: readonly IAlbumTableData[]): void {
     this.albumsDisplayData = $event;
     this.refreshAlbumsManagementSettingsStatus();
@@ -330,13 +374,46 @@ export class AlbumsManagementComponent {
 
   showAlbumEditModal(albumTableDatum: IAlbumTableData): void {
     albumTableDatum.isEditingModalVisible = true;
-    this.albumsEditForm.setValue({
+    this.albumsEditForm.patchValue({
       name: albumTableDatum.album.name,
       yearOfRelease: albumTableDatum.album.yearOfRelease,
       description: albumTableDatum.album.description,
       albumType: albumTableDatum.album.albumType.name,
       genre: albumTableDatum.album.genre.name,
       performer: albumTableDatum.album.performer.name,
+    });
+
+    console.log('check for tracks');
+    console.log(albumTableDatum.album.tracks);
+
+    const albumTracksNames = albumTableDatum.album.tracks
+      .map(track => track.name);
+
+    if (this.listOfTrackEditControls.length !== 0) {
+      this.listOfTrackEditControls = [];
+    }
+
+    albumTracksNames.forEach((trackName, i) => {
+      const control = {
+        id: i,
+        controlInstance: `editTrack${i}`
+      };
+
+      this.listOfTrackEditControls.push(control);
+
+      this.tracksEditActionFormGroup.addControl(
+        control.controlInstance,
+        new UntypedFormControl(
+          trackName,
+          Validators.compose([
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(20)
+          ])
+        )
+      );
+
+      console.log(this.tracksEditActionFormGroup);
     });
   }
 
@@ -400,6 +477,7 @@ export class AlbumsManagementComponent {
       genreId: genre.id,
       performerId: performer.id,
     };
+
 
     if (this.albumsCreationForm.valid) {
       this.albumsService
@@ -666,7 +744,7 @@ export class AlbumsManagementComponent {
       this.filteredAlbumTypesNamesForAutocomplete =
         this.albumTypesNamesForAutocomplete;
     });
-    this.albumsService.getAlbumsWithFullDetails().subscribe((data) => {
+    this.albumsService.getAllAlbums().subscribe((data) => {
       this.albumsToManage = [];
       data
         .filter((album) => !album.isDeleted)
@@ -674,13 +752,13 @@ export class AlbumsManagementComponent {
           const performerForAlbum: IPerformer | undefined =
             this.performersForAlbums.find(
               (albumPerformer) =>
-                albumPerformer.id === retrievedAlbum.performerId
+                albumPerformer.id === retrievedAlbum.performer.id
             );
           const genreForAlbum: IGenre | undefined = this.genresForAlbums.find(
-            (albumGenre) => albumGenre.id === retrievedAlbum.genreId
+            (albumGenre) => albumGenre.id === retrievedAlbum.genre.id
           );
           const typeForAlbum: IAlbumType | undefined = this.typesForAlbums.find(
-            (type) => type.id === retrievedAlbum.albumTypeId
+            (type) => type.id === retrievedAlbum.albumType.id
           );
 
           this.albumsToManage.push({
@@ -692,11 +770,14 @@ export class AlbumsManagementComponent {
               performer: performerForAlbum ? performerForAlbum : null,
               genre: genreForAlbum ? genreForAlbum : null,
               albumType: typeForAlbum ? typeForAlbum : null,
+              tracks: retrievedAlbum.tracks
             },
             checked: false,
             expanded: false,
           } as IAlbumTableData);
         });
+      console.log('albums to manage');
+      console.log(this.albumsToManage);
       this.isLoading = false;
     });
   }
@@ -757,5 +838,5 @@ export interface IAlbumActionForm {
   albumType: FormControl<string>;
   genre: FormControl<string>;
   performer: FormControl<string>;
-  tracksActionFormGroup: UntypedFormGroup;
+  tracksActionFormGroup?: UntypedFormGroup;
 }

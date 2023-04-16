@@ -199,11 +199,6 @@
             </button>
           </nz-form-control>
         </nz-form-item>
-        <nz-form-item>
-          <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
-            <button nz-button nzType="primary">Submit</button>
-          </nz-form-control>
-        </nz-form-item>
       </form>
     </form>
   </ng-container>
@@ -467,6 +462,40 @@
                     ></nz-autocomplete>
                   </nz-form-control>
                 </nz-form-item>
+                <form nz-form [formGroup]="tracksEditActionFormGroup">
+                  <nz-form-item *ngFor="let control of listOfTrackEditControls; let i = index">
+                    <nz-form-label [nzXs]="24" [nzSm]="4" *ngIf="i === 0" [nzFor]="control.controlInstance">
+                      Tracks
+                    </nz-form-label>
+                    <nz-form-control
+                      [nzXs]="24"
+                      [nzSm]="20"
+                      [nzOffset]="i === 0 ? 0 : 4"
+                      nzErrorTip="Please enter the tracks's name or delete this field."
+                    >
+                      <input
+                        class="track-input"
+                        nz-input
+                        placeholder="Track name"
+                        [attr.id]="control.id"
+                        [formControlName]="control.controlInstance"
+                      />
+                      <span
+                        nz-icon
+                        nzType="minus-circle-o"
+                        class="dynamic-delete-button"
+                      ></span>
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
+                      <button nz-button nzType="dashed" class="add-button">
+                        <span nz-icon nzType="plus"></span>
+                        Add field
+                      </button>
+                    </nz-form-control>
+                  </nz-form-item>
+                </form>
               </form>
             </ng-container>
           </nz-modal>

@@ -310,7 +310,7 @@ export class PerformersManagementComponent {
   }
 
   buildPerformersActionForms(): void {
-    const performersActionFormGroup = new FormGroup<IPerformerActionForm>({
+    this.performersCreationForm = new FormGroup<IPerformerActionForm>({
       name: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -336,7 +336,32 @@ export class PerformersManagementComponent {
         nonNullable: true,
       }),
     });
-    this.performersCreationForm = this.performersEditForm = performersActionFormGroup;
+    this.performersEditForm = new FormGroup<IPerformerActionForm>({
+      name: new FormControl('', {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(30),
+        ]),
+        nonNullable: true,
+      }),
+      country: new FormControl('', {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(58),
+        ]),
+        nonNullable: true,
+      }),
+      history: new FormControl('', {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.minLength(20),
+          Validators.maxLength(500),
+        ]),
+        nonNullable: true,
+      }),
+    });
   }
 
   get name(): AbstractControl {

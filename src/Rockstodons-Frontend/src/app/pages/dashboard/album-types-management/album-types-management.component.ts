@@ -38,7 +38,7 @@ export class AlbumTypesManagementComponent {
   }
 
   buildAlbumTypesActionForms(): void {
-    const albumTypesActionFormGroup = new FormGroup<IAlbumTypeActionForm>({
+    this.albumTypesCreationForm = new FormGroup<IAlbumTypeActionForm>({
       albumTypeName: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
@@ -48,7 +48,16 @@ export class AlbumTypesManagementComponent {
         nonNullable: true,
       }),
     });
-    this.albumTypesCreationForm = this.albumTypesEditForm = albumTypesActionFormGroup;
+    this.albumTypesEditForm = new FormGroup<IAlbumTypeActionForm>({
+      albumTypeName: new FormControl('', {
+        validators: Validators.compose([
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(20),
+        ]),
+        nonNullable: true,
+      }),
+    });
   }
 
   get albumTypeName(): AbstractControl {
