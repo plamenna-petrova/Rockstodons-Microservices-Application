@@ -18,15 +18,17 @@ namespace Catalog.API.Services.Data.Implementation
 
         private readonly IMapper _mapper;
 
-        public AlbumsService(IDeletableEntityRepository<Album> AlbumsRepository, IMapper mapper)
+        public AlbumsService(IDeletableEntityRepository<Album> albumsRepository, IMapper mapper)
         {
-            _albumsRepository = AlbumsRepository;
+            _albumsRepository = albumsRepository;
             _mapper = mapper;
         }
 
         public async Task<List<AlbumDTO>> GetAllAlbums()
         {
-            return await _albumsRepository.GetAll().MapTo<AlbumDTO>().ToListAsync();
+            var albumsWithTracks = await _albumsRepository.GetAll().MapTo<AlbumDTO>().ToListAsync();
+
+            return await _albumsRepository.GetAll().Include(a => a.Tracks).MapTo<AlbumDTO>().ToListAsync();
         }
 
         public async Task<List<Album>> GetAllAlbumsWithDeletedRecords()

@@ -10,209 +10,482 @@
             <nz-form-label>{{ radio.name }}</nz-form-label>
             <nz-form-control>
                 <nz-radio-group [formControlName]="radio.formControlName">
-                    <label *ngFor="let option of radio.listOfOptions" nz-radio-button [nzValue]="option.value">{{ option.label }}</label>
-                </nz-radio-group>
-            </nz-form-control>
-        </nz-form-item>
-    </form>
+                    <label *ngFor="let option of radio.listOfOptions" nz-radio-button [nzValue]="option.value">{{ option.label }}</label
+          >
+        </nz-radio-group>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
 </div>
 
-<button nz-button class="load-albums-data-button" [nzType]="'primary'" (click)="onLoadAlbumsDataClick()">
+<button
+  nz-button
+  class="load-albums-data-button"
+  [nzType]="'primary'"
+  (click)="onLoadAlbumsDataClick()"
+>
   Load Albums
 </button>
 
-<button nz-button class="create-new-album-button" [nzType]="'dashed'" (click)="showAlbumCreationModal()">
+<button
+  nz-button
+  class="create-new-album-button"
+  [nzType]="'dashed'"
+  (click)="showAlbumCreationModal()"
+>
   Create New Album
 </button>
-<nz-modal [(nzVisible)]="isAlbumCreationModalVisible" nzTitle="Create New Album" (nzOnOk)="handleOkAlbumCreationModal()" (nzOnCancel)="handleCancelAlbumCreationModal()">
-    <ng-container *nzModalContent>
-        <form nz-form [formGroup]="albumsCreationForm" (ngSubmit)="onAlbumsCreationFormSubmit()">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="8">Name</nz-form-label>
-                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumCreationNameValidationTemplate">
-                    <input nz-input formControlName="name" minlength="2" maxlength="25" required />
-                    <ng-template #combineAlbumCreationNameValidationTemplate let-control>
-                        <ng-container *ngIf="control.hasError('maxlength')">The albums's name cannot be longer than 20 characters</ng-container>
-                        <ng-container *ngIf="control.hasError('minlength')">The albums's name must be at least 3 character long</ng-container>
-                        <ng-container *ngIf="control.hasError('required')">The albums's name is required</ng-container>
-                    </ng-template>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSpan]="8">Year Of Release</nz-form-label>
-                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumCreationYearOfReleaseValidationTemplate">
-                    <nz-input-number formControlName="yearOfRelease" min="1960" max="2023"></nz-input-number>
-                    <ng-template #combineAlbumCreationYearOfReleaseValidationTemplate let-control>
-                        <ng-container *ngIf="control.hasError('max')">The year of release cannot be greater than 2023</ng-container>
-                        <ng-container *ngIf="control.hasError('min')">The year of release cannot preceed 1960</ng-container>
-                        <ng-container *ngIf="control.hasError('required')">The year of release is required</ng-container>
-                    </ng-template>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSpan]="8">Description</nz-form-label>
-                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumCreationDescriptionValidationTemplate">
-                    <nz-textarea-count [nzMaxCharacterCount]="500">
-                        <textarea rows="4" formControlName="description" nz-input></textarea>
-                    </nz-textarea-count>
-                    <ng-template #combineAlbumCreationDescriptionValidationTemplate let-control>
-                        <ng-container *ngIf="control.hasError('maxlength')">The albums's description cannot be longer than 500 characters</ng-container>
-                        <ng-container *ngIf="control.hasError('minlength')">The albums's description must be at least 20 character long</ng-container>
-                        <ng-container *ngIf="control.hasError('required')">The albums's description is required</ng-container>
-                    </ng-template>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSpan]="8">Album Type</nz-form-label>
-                <nz-form-control nzHasFeedback [nzSpan]="12">
-                    <input placeholder='Start typing to filter album types' nz-input formControlName="albumType" (ngModelChange)="onAlbumTypeAutocompleteChange($event)" [nzAutocomplete]="albumTypeAutocomplete" />
-                    <nz-autocomplete [nzDataSource]="filteredAlbumTypesNamesForAutocomplete!" #albumTypeAutocomplete></nz-autocomplete>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSpan]="8">Genre</nz-form-label>
-                <nz-form-control nzHasFeedback [nzSpan]="12">
-                    <input placeholder='Start typing to filter genres' nz-input formControlName="genre" (ngModelChange)="onGenreAutocompleteChange($event)" [nzAutocomplete]="genreAutocomplete" />
-                    <nz-autocomplete [nzDataSource]="filteredGenresNamesForAutocomplete!" #genreAutocomplete></nz-autocomplete>
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSpan]="8">Performer</nz-form-label>
-                <nz-form-control nzHasFeedback [nzSpan]="12">
-                    <input placeholder='Start typing to filter performers' nz-input formControlName="performer" (ngModelChange)="onPerformerAutocompleteChange($event)" [nzAutocomplete]="performerAutocomplete" />
-                    <nz-autocomplete [nzDataSource]="filteredPerformersNamesForAutocomplete!" #performerAutocomplete></nz-autocomplete>
-                </nz-form-control>
-            </nz-form-item>
-        </form>
-    </ng-container>
+<nz-modal
+  [(nzVisible)]="isAlbumCreationModalVisible"
+  nzTitle="Create New Album"
+  (nzOnOk)="handleOkAlbumCreationModal()"
+  (nzOnCancel)="handleCancelAlbumCreationModal()"
+>
+  <ng-container *nzModalContent>
+    <form
+      nz-form
+      [formGroup]="albumsCreationForm"
+      (ngSubmit)="onAlbumsCreationFormSubmit()"
+    >
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">Name</nz-form-label>
+        <nz-form-control
+          nzHasFeedback
+          [nzSpan]="12"
+          [nzErrorTip]="combineAlbumCreationNameValidationTemplate"
+        >
+          <input
+            nz-input
+            formControlName="name"
+            minlength="2"
+            maxlength="25"
+            required
+          />
+          <ng-template #combineAlbumCreationNameValidationTemplate let-control>
+            <ng-container *ngIf="control.hasError('maxlength')"
+              >The albums's name cannot be longer than 20
+              characters</ng-container
+            >
+            <ng-container *ngIf="control.hasError('minlength')"
+              >The albums's name must be at least 3 character long</ng-container
+            >
+            <ng-container *ngIf="control.hasError('required')"
+              >The albums's name is required</ng-container
+            >
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">Year Of Release</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+          <nz-input-number
+            formControlName="yearOfRelease"
+            [nzMin]="1960"
+            [nzMax]="2023"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">Description</nz-form-label>
+        <nz-form-control
+          nzHasFeedback
+          [nzSpan]="12"
+          [nzErrorTip]="combineAlbumCreationDescriptionValidationTemplate"
+        >
+          <nz-textarea-count [nzMaxCharacterCount]="500">
+            <textarea
+              rows="4"
+              formControlName="description"
+              nz-input
+            ></textarea>
+          </nz-textarea-count>
+          <ng-template
+            #combineAlbumCreationDescriptionValidationTemplate
+            let-control
+          >
+            <ng-container *ngIf="control.hasError('maxlength')"
+              >The albums's description cannot be longer than 500
+              characters</ng-container
+            >
+            <ng-container *ngIf="control.hasError('minlength')"
+              >The albums's description must be at least 20 character
+              long</ng-container
+            >
+            <ng-container *ngIf="control.hasError('required')"
+              >The albums's description is required</ng-container
+            >
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">Album Type</nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input
+            placeholder="Start typing to filter album types"
+            nz-input
+            formControlName="albumType"
+            (ngModelChange)="onAlbumTypeAutocompleteChange($event)"
+            [nzAutocomplete]="albumTypeAutocomplete"
+          />
+          <nz-autocomplete
+            [nzDataSource]="filteredAlbumTypesNamesForAutocomplete!"
+            #albumTypeAutocomplete
+          ></nz-autocomplete>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">Genre</nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input
+            placeholder="Start typing to filter genres"
+            nz-input
+            formControlName="genre"
+            (ngModelChange)="onGenreAutocompleteChange($event)"
+            [nzAutocomplete]="genreAutocomplete"
+          />
+          <nz-autocomplete
+            [nzDataSource]="filteredGenresNamesForAutocomplete!"
+            #genreAutocomplete
+          ></nz-autocomplete>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">Performer</nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input
+            placeholder="Start typing to filter performers"
+            nz-input
+            formControlName="performer"
+            (ngModelChange)="onPerformerAutocompleteChange($event)"
+            [nzAutocomplete]="performerAutocomplete"
+          />
+          <nz-autocomplete
+            [nzDataSource]="filteredPerformersNamesForAutocomplete!"
+            #performerAutocomplete
+          ></nz-autocomplete>
+        </nz-form-control>
+      </nz-form-item>
+      <form nz-form [formGroup]="tracksActionFormGroup">
+        <nz-form-item *ngFor="let control of listOfTrackControls; let i = index">
+          <nz-form-label [nzXs]="24" [nzSm]="4" *ngIf="i === 0" [nzFor]="control.controlInstance">
+            Tracks
+          </nz-form-label>
+          <nz-form-control
+            [nzXs]="24"
+            [nzSm]="20"
+            [nzOffset]="i === 0 ? 0 : 4"
+            nzErrorTip="Please enter the tracks's name or delete this field."
+          >
+            <input
+              class="track-input"
+              nz-input
+              placeholder="Track name"
+              [attr.id]="control.id"
+              [formControlName]="control.controlInstance"
+            />
+            <span
+              nz-icon
+              nzType="minus-circle-o"
+              class="dynamic-delete-button"
+              (click)="removeTrackField(control, $event)"
+            ></span>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
+            <button nz-button nzType="dashed" class="add-button" (click)="addTrackField($event)">
+              <span nz-icon nzType="plus"></span>
+              Add field
+            </button>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
+            <button nz-button nzType="primary">Submit</button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </form>
+  </ng-container>
 </nz-modal>
 
-<nz-table #albumsManagementDynamicTable [nzScroll]="{ x: scrollX, y: scrollY }" [nzData]="albumsToManage" [nzTableLayout]="albumsManagementTableSetting.tableLayout" [nzBordered]="albumsManagementTableSetting.isBordered" [nzSimple]="albumsManagementTableSetting.isSimple"
-    [nzLoading]="isLoading" [nzPaginationType]="albumsManagementTableSetting.paginationType" [nzPaginationPosition]="albumsManagementTableSetting.position" [nzShowSizeChanger]="albumsManagementTableSetting.hasSizeChanger" [nzFrontPagination]="albumsManagementTableSetting.hasPagination"
-    [nzShowPagination]="albumsManagementTableSetting.hasPagination" [nzFooter]="
+<nz-select
+  class="export-albums-data-select"
+  nzShowSearch
+  nzAllowClear
+  nzPlaceHolder="Select export format"
+  [(ngModel)]="selectedExportFormatValue"
+>
+  <nz-option nzLabel=".pdf" nzValue="pdf"></nz-option>
+  <nz-option nzLabel=".csv" nzValue="csv"></nz-option>
+  <nz-option nzLabel=".xlsx" nzValue="xlsx"></nz-option>
+</nz-select>
+
+<button
+  nz-button
+  class="export-albums-data-button"
+  [nzType]="'primary'"
+  (click)="onExportAlbumsDataClick()"
+>
+  Export Albums
+</button>
+
+<nz-table
+  #albumsManagementDynamicTable
+  [nzScroll]="{ x: scrollX, y: scrollY }"
+  [nzData]="albumsToManage"
+  [nzTableLayout]="albumsManagementTableSetting.tableLayout"
+  [nzBordered]="albumsManagementTableSetting.isBordered"
+  [nzSimple]="albumsManagementTableSetting.isSimple"
+  [nzLoading]="isLoading"
+  [nzPaginationType]="albumsManagementTableSetting.paginationType"
+  [nzPaginationPosition]="albumsManagementTableSetting.position"
+  [nzShowSizeChanger]="albumsManagementTableSetting.hasSizeChanger"
+  [nzFrontPagination]="albumsManagementTableSetting.hasPagination"
+  [nzShowPagination]="albumsManagementTableSetting.hasPagination"
+  [nzFooter]="
     albumsManagementTableSetting.hasFooter ? 'Albums Management Footer' : null
-  " [nzTitle]="albumsManagementTableSetting.hasTitle ? 'Customizable Table' : null" [nzSize]="albumsManagementTableSetting.tableSize" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
-    <thead>
-        <tr *ngIf="albumsManagementTableSetting.hasHeader">
-            <th nzWidth="40px" *ngIf="albumsManagementTableSetting.isExpandable" [nzLeft]="fixedColumn"></th>
-            <th *ngIf="albumsManagementTableSetting.withCheckbox" nzWidth="60px" [(nzChecked)]="allSettingsChecked" [nzLeft]="fixedColumn" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
-            <th [nzLeft]="fixedColumn">Name</th>
-            <th>Year Of Release</th>
-            <td>Album Type</td>
-            <td>Performer</td>
-            <td>Genre</td>
-            <th [nzRight]="fixedColumn">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <ng-container *ngFor="let data of albumsManagementDynamicTable.data">
-            <tr>
-                <td [nzLeft]="fixedColumn" *ngIf="albumsManagementTableSetting.isExpandable" [(nzExpand)]="data.expanded"></td>
-                <td [nzLeft]="fixedColumn" *ngIf="albumsManagementTableSetting.withCheckbox" [(nzChecked)]="data.checked" (nzCheckedChange)="refreshAlbumsManagementSettingsStatus()"></td>
-                <td [nzLeft]="fixedColumn">{{ data.album.name }}</td>
-                <td>
-                    <ng-container *ngIf="data.album.yearOfRelease; else yearOfReleaseDefaultValue">
-                        {{ data.album.yearOfRelease }}
-                    </ng-container>
-                    <ng-template #yearOfReleaseDefaultValue>
-                        -
+  "
+  [nzTitle]="
+    albumsManagementTableSetting.hasTitle ? 'Customizable Table' : null
+  "
+  [nzSize]="albumsManagementTableSetting.tableSize"
+  (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+>
+  <thead>
+    <tr *ngIf="albumsManagementTableSetting.hasHeader">
+      <th
+        nzWidth="40px"
+        *ngIf="albumsManagementTableSetting.isExpandable"
+        [nzLeft]="fixedColumn"
+      ></th>
+      <th
+        *ngIf="albumsManagementTableSetting.withCheckbox"
+        nzWidth="60px"
+        [(nzChecked)]="allSettingsChecked"
+        [nzLeft]="fixedColumn"
+        [nzIndeterminate]="indeterminate"
+        (nzCheckedChange)="checkAll($event)"
+      ></th>
+      <th [nzLeft]="fixedColumn">Name</th>
+      <th>Year Of Release</th>
+      <td>Album Type</td>
+      <td>Performer</td>
+      <td>Genre</td>
+      <th [nzRight]="fixedColumn">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let data of albumsManagementDynamicTable.data">
+      <tr>
+        <td
+          [nzLeft]="fixedColumn"
+          *ngIf="albumsManagementTableSetting.isExpandable"
+          [(nzExpand)]="data.expanded"
+        ></td>
+        <td
+          [nzLeft]="fixedColumn"
+          *ngIf="albumsManagementTableSetting.withCheckbox"
+          [(nzChecked)]="data.checked"
+          (nzCheckedChange)="refreshAlbumsManagementSettingsStatus()"
+        ></td>
+        <td [nzLeft]="fixedColumn">{{ data.album.name }}</td>
+        <td>
+          <ng-container
+            *ngIf="data.album.yearOfRelease; else yearOfReleaseDefaultValue"
+          >
+            {{ data.album.yearOfRelease }}
+          </ng-container>
+          <ng-template #yearOfReleaseDefaultValue> - </ng-template>
+        </td>
+        <td>
+          <ng-container
+            *ngIf="data.album.albumType; else albumTypeDefaultValue"
+          >
+            {{ data.album.albumType.name }}
+          </ng-container>
+          <ng-template #albumTypeDefaultValue> - </ng-template>
+        </td>
+        <td>
+          <ng-container
+            *ngIf="data.album.performer; else performerDefaultValue"
+          >
+            {{ data.album.performer.name }}
+          </ng-container>
+          <ng-template #performerDefaultValue> - </ng-template>
+        </td>
+        <td>
+          <ng-container *ngIf="data.album.genre; else genreDefaultValue">
+            {{ data.album.genre.name }}
+          </ng-container>
+          <ng-template #genreDefaultValue> - </ng-template>
+        </td>
+        <td
+          [nzRight]="fixedColumn"
+          [nzEllipsis]="albumsManagementTableSetting.withEllipsis"
+        >
+          <button
+            nz-button
+            class="edit-album-button"
+            (click)="showAlbumEditModal(data)"
+          >
+            Edit
+          </button>
+          <nz-modal
+            [(nzVisible)]="data.isEditingModalVisible"
+            nzTitle="Edit Album"
+            (nzOnOk)="handleOkAlbumEditModal(data)"
+            (nzOnCancel)="handleCancelAlbumEditModal(data)"
+          >
+            <ng-container *nzModalContent>
+              <form
+                nz-form
+                [formGroup]="albumsEditForm"
+                (ngSubmit)="onAlbumsEditFormSubmit(data.album.id)"
+              >
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">Name</nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    [nzSpan]="12"
+                    [nzErrorTip]="combineAlbumCreationNameValidationTemplate"
+                  >
+                    <input
+                      nz-input
+                      formControlName="name"
+                      minlength="2"
+                      maxlength="25"
+                      required
+                    />
+                    <ng-template
+                      #combineAlbumCreationNameValidationTemplate
+                      let-control
+                    >
+                      <ng-container *ngIf="control.hasError('maxlength')"
+                        >The albums's name cannot be longer than 20
+                        characters</ng-container
+                      >
+                      <ng-container *ngIf="control.hasError('minlength')"
+                        >The albums's name must be at least 3 character
+                        long</ng-container
+                      >
+                      <ng-container *ngIf="control.hasError('required')"
+                        >The albums's name is required</ng-container
+                      >
                     </ng-template>
-                </td>
-                <td>
-                    <ng-container *ngIf="data.album.albumType; else albumTypeDefaultValue">
-                        {{ data.album.albumType.name }}
-                    </ng-container>
-                    <ng-template #albumTypeDefaultValue>
-                        -
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">Year Of Release</nz-form-label>
+                  <nz-form-control [nzSpan]="12">
+                    <nz-input-number
+                      formControlName="yearOfRelease"
+                      [nzMin]="1960"
+                      [nzMax]="2023"
+                    ></nz-input-number>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">Description</nz-form-label>
+                  <nz-form-control
+                    nzHasFeedback
+                    [nzSpan]="12"
+                    [nzErrorTip]="
+                      combineAlbumCreationDescriptionValidationTemplate
+                    "
+                  >
+                    <nz-textarea-count [nzMaxCharacterCount]="500">
+                      <textarea
+                        rows="4"
+                        formControlName="description"
+                        nz-input
+                      ></textarea>
+                    </nz-textarea-count>
+                    <ng-template
+                      #combineAlbumCreationDescriptionValidationTemplate
+                      let-control
+                    >
+                      <ng-container *ngIf="control.hasError('maxlength')"
+                        >The albums's description cannot be longer than 500
+                        characters</ng-container
+                      >
+                      <ng-container *ngIf="control.hasError('minlength')"
+                        >The albums's description must be at least 20 character
+                        long</ng-container
+                      >
+                      <ng-container *ngIf="control.hasError('required')"
+                        >The albums's description is required</ng-container
+                      >
                     </ng-template>
-                </td>
-                <td>
-                    <ng-container *ngIf="data.album.performer; else performerDefaultValue">
-                        {{ data.album.performer.name }}
-                    </ng-container>
-                    <ng-template #performerDefaultValue>
-                        -
-                    </ng-template>
-                </td>
-                <td>
-                    <ng-container *ngIf="data.album.genre; else genreDefaultValue">
-                        {{ data.album.genre.name }}
-                    </ng-container>
-                    <ng-template #genreDefaultValue>
-                        -
-                    </ng-template>
-                </td>
-                <td [nzRight]="fixedColumn" [nzEllipsis]="albumsManagementTableSetting.withEllipsis">
-                    <button nz-button class="edit-album-button" (click)="showAlbumEditModal(data)">Edit</button>
-                    <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Album" (nzOnOk)="handleOkAlbumEditModal(data)" (nzOnCancel)="handleCancelAlbumEditModal(data)">
-                        <ng-container *nzModalContent>
-                            <form nz-form [formGroup]="albumsEditForm" (ngSubmit)="onAlbumsEditFormSubmit(data.album.id)">
-                                <nz-form-item>
-                                    <nz-form-label [nzSpan]="8">Name</nz-form-label>
-                                    <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumCreationNameValidationTemplate">
-                                        <input nz-input formControlName="name" minlength="2" maxlength="25" required />
-                                        <ng-template #combineAlbumCreationNameValidationTemplate let-control>
-                                            <ng-container *ngIf="control.hasError('maxlength')">The albums's name cannot be longer than 20 characters</ng-container>
-                                            <ng-container *ngIf="control.hasError('minlength')">The albums's name must be at least 3 character long</ng-container>
-                                            <ng-container *ngIf="control.hasError('required')">The albums's name is required</ng-container>
-                                        </ng-template>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSpan]="8">Year Of Release</nz-form-label>
-                                    <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumCreationYearOfReleaseValidationTemplate">
-                                        <nz-input-number formControlName="yearOfRelease" min="1960" max="2023"></nz-input-number>
-                                        <ng-template #combineAlbumCreationYearOfReleaseValidationTemplate let-control>
-                                            <ng-container *ngIf="control.hasError('max')">The year of release cannot be greater than 2023</ng-container>
-                                            <ng-container *ngIf="control.hasError('min')">The year of release cannot preceed 1960</ng-container>
-                                            <ng-container *ngIf="control.hasError('required')">The year of release is required</ng-container>
-                                        </ng-template>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSpan]="8">Description</nz-form-label>
-                                    <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumCreationDescriptionValidationTemplate">
-                                        <nz-textarea-count [nzMaxCharacterCount]="500">
-                                            <textarea rows="4" formControlName="description" nz-input></textarea>
-                                        </nz-textarea-count>
-                                        <ng-template #combineAlbumCreationDescriptionValidationTemplate let-control>
-                                            <ng-container *ngIf="control.hasError('maxlength')">The albums's description cannot be longer than 500 characters</ng-container>
-                                            <ng-container *ngIf="control.hasError('minlength')">The albums's description must be at least 20 character long</ng-container>
-                                            <ng-container *ngIf="control.hasError('required')">The albums's description is required</ng-container>
-                                        </ng-template>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSpan]="8">Album Type</nz-form-label>
-                                    <nz-form-control nzHasFeedback [nzSpan]="12">
-                                        <input placeholder='Start typing to filter album types' nz-input formControlName="albumType" (ngModelChange)="onAlbumTypeAutocompleteChange($event)" [nzAutocomplete]="albumTypeAutocomplete" />
-                                        <nz-autocomplete [nzDataSource]="filteredAlbumTypesNamesForAutocomplete!" #albumTypeAutocomplete></nz-autocomplete>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSpan]="8">Genre</nz-form-label>
-                                    <nz-form-control nzHasFeedback [nzSpan]="12">
-                                        <input placeholder='Start typing to filter genres' nz-input formControlName="genre" (ngModelChange)="onGenreAutocompleteChange($event)" [nzAutocomplete]="genreAutocomplete" />
-                                        <nz-autocomplete [nzDataSource]="filteredGenresNamesForAutocomplete!" #genreAutocomplete></nz-autocomplete>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSpan]="8">Performer</nz-form-label>
-                                    <nz-form-control nzHasFeedback [nzSpan]="12">
-                                        <input placeholder='Start typing to filter performers' nz-input formControlName="performer" (ngModelChange)="onPerformerAutocompleteChange($event)" [nzAutocomplete]="performerAutocomplete" />
-                                        <nz-autocomplete [nzDataSource]="filteredPerformersNamesForAutocomplete!" #performerAutocomplete></nz-autocomplete>
-                                    </nz-form-control>
-                                </nz-form-item>
-                            </form>
-                        </ng-container>
-                    </nz-modal>
-                    <button nz-button (click)="showAlbumRemovalModal(data.album)" nzDanger>Delete</button>
-                    <nz-divider nzType="vertical"></nz-divider>
-                </td>
-            </tr>
-            <tr *ngIf="albumsManagementTableSetting.isExpandable" [nzExpand]="data.expanded">
-                <span>Description: {{ data.album.description }}</span>
-            </tr>
-        </ng-container>
-    </tbody>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">Album Type</nz-form-label>
+                  <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input
+                      placeholder="Start typing to filter album types"
+                      nz-input
+                      formControlName="albumType"
+                      (ngModelChange)="onAlbumTypeAutocompleteChange($event)"
+                      [nzAutocomplete]="albumTypeAutocomplete"
+                    />
+                    <nz-autocomplete
+                      [nzDataSource]="filteredAlbumTypesNamesForAutocomplete!"
+                      #albumTypeAutocomplete
+                    ></nz-autocomplete>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">Genre</nz-form-label>
+                  <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input
+                      placeholder="Start typing to filter genres"
+                      nz-input
+                      formControlName="genre"
+                      (ngModelChange)="onGenreAutocompleteChange($event)"
+                      [nzAutocomplete]="genreAutocomplete"
+                    />
+                    <nz-autocomplete
+                      [nzDataSource]="filteredGenresNamesForAutocomplete!"
+                      #genreAutocomplete
+                    ></nz-autocomplete>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">Performer</nz-form-label>
+                  <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input
+                      placeholder="Start typing to filter performers"
+                      nz-input
+                      formControlName="performer"
+                      (ngModelChange)="onPerformerAutocompleteChange($event)"
+                      [nzAutocomplete]="performerAutocomplete"
+                    />
+                    <nz-autocomplete
+                      [nzDataSource]="filteredPerformersNamesForAutocomplete!"
+                      #performerAutocomplete
+                    ></nz-autocomplete>
+                  </nz-form-control>
+                </nz-form-item>
+              </form>
+            </ng-container>
+          </nz-modal>
+          <button
+            nz-button
+            (click)="showAlbumRemovalModal(data.album)"
+            nzDanger
+          >
+            Delete
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+        </td>
+      </tr>
+      <tr
+        *ngIf="albumsManagementTableSetting.isExpandable"
+        [nzExpand]="data.expanded"
+      >
+        <span>Description: {{ data.album.description }}</span>
+      </tr>
+    </ng-container>
+  </tbody>
 </nz-table>

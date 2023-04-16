@@ -70,7 +70,7 @@ export class GenresManagementComponent {
       (data: IGenreTableData) =>
         data.genre.name
           .toLowerCase()
-          .indexOf(this.searchValue.toLocaleLowerCase()) !== -1
+          .indexOf(this.searchValue.toLowerCase()) !== -1
     );
   }
 

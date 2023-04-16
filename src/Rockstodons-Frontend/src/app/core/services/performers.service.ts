@@ -38,7 +38,7 @@ export class PerformersService {
 
   updatePerformer(performerToUpdate: IPerformerUpdateDTO): Observable<IPerformerUpdateDTO> {
     const updatePerformerRequestBody = (({ id, ...prtu }) => prtu)(performerToUpdate);
-    return this.httpClient.put<IPerformer>(
+    return this.httpClient.put<IPerformerUpdateDTO>(
       `${this.performersAPIUrl}/update/${performerToUpdate.id}`, updatePerformerRequestBody
     );
   }

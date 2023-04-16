@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import {
   AbstractControl,
+  FormArray,
   FormControl,
   FormGroup,
+  FormRecord,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -24,6 +28,8 @@ import { AlbumTypesService } from 'src/app/core/services/album-types.service';
 import { AlbumsService } from 'src/app/core/services/albums.service';
 import { GenresService } from 'src/app/core/services/genres.service';
 import { PerformersService } from 'src/app/core/services/performers.service';
+import { TracksService } from 'src/app/core/services/tracks.service';
+import { ITrackCreateDTO } from 'src/app/core/interfaces/tracks/track-create-dto';
 
 @Component({
   selector: 'app-albums-management',
@@ -45,16 +51,19 @@ export class AlbumsManagementComponent {
   scrollY: string | null = null;
   albumsManagementTableSetting!: IAlbumsManagementTableSetting;
 
-  isAlbumRemovalModalVisible = false;
-
   isVisible = false;
   isConfirmLoading = false;
   isAlbumCreationModalVisible = false;
+  isAlbumRemovalModalVisible = false;
 
   albumsCreationForm!: FormGroup;
   albumsEditForm!: FormGroup;
 
+  selectedExportFormatValue = null;
+
   currentYear = new Date().getFullYear();
+
+  listOfTrackControls: Array<{ id: number; controlInstance: string }> = [];
 
   listOfSwitches = [
     { name: 'Bordered', formControlName: 'isBordered' },
@@ -130,6 +139,7 @@ export class AlbumsManagementComponent {
     private albumsService: AlbumsService,
     private genresService: GenresService,
     private albumTypesService: AlbumTypesService,
+    private tracksService: TracksService,
     private nzNotificationService: NzNotificationService,
     private nzModalService: NzModalService
   ) {
@@ -174,6 +184,7 @@ export class AlbumsManagementComponent {
         validators: Validators.compose([Validators.required]),
         nonNullable: true,
       }),
+      tracksActionFormGroup: new UntypedFormGroup({}),
     });
     this.albumsCreationForm = this.albumsEditForm = albumActionFormGroup;
   }
@@ -274,6 +285,10 @@ export class AlbumsManagementComponent {
     return this.albumsCreationForm.get('performer')!;
   }
 
+  get tracksActionFormGroup(): any {
+    return this.albumsCreationForm.get('tracksActionFormGroup')!;
+  }
+
   onCurrentPageDataChange($event: readonly IAlbumTableData[]): void {
     this.albumsDisplayData = $event;
     this.refreshAlbumsManagementSettingsStatus();
@@ -349,6 +364,24 @@ export class AlbumsManagementComponent {
       return;
     }
 
+    let hasInvalidTracksControls = false;
+
+    Object.values(this.tracksActionFormGroup.controls).forEach((control: any) => {
+      if (control.invalid) {
+        control.markAsDirty();
+        control.updateValueAndValidity({ onlySelf: true });
+        hasInvalidTracksControls = true;
+      }
+    });
+
+    if (hasInvalidTracksControls) {
+      this.nzNotificationService.error(
+        'Error',
+        'Please, validate the tracks before continuing'
+      );
+      return;
+    }
+
     const albumType = this.typesForAlbums.find(
       (albumType) => albumType.name === this.albumsCreationForm.value.albumType
     )!;
@@ -368,20 +401,41 @@ export class AlbumsManagementComponent {
       performerId: performer.id,
     };
 
-    console.log('album to create');
-    console.log(albumToCreate);
-
     if (this.albumsCreationForm.valid) {
       this.albumsService
         .createNewAlbum(albumToCreate)
         .pipe(take(1))
-        .subscribe((response) => {
-          let newAlbum = response;
-          this.nzNotificationService.success(
-            `Successful Operation`,
-            `The album ${newAlbum.name} is created successfully!`
-          );
-          this.retrieveAlbumsData();
+        .subscribe({
+          next: (response) => {
+            let newAlbum = response;
+            this.nzNotificationService.success(
+              `Successful Operation`,
+              `The album ${newAlbum.name} is created successfully!`
+            );
+
+            console.log('new album');
+            console.log(newAlbum);
+
+            Object.values(this.tracksActionFormGroup.controls).forEach((control: any) => {
+              const trackToCreate: ITrackCreateDTO = {
+                name: control.value,
+                albumId: newAlbum.id
+              };
+
+              this.tracksService.createNewTrack(trackToCreate).subscribe((response) => {
+                let newTrack = response;
+                this.nzNotificationService.success(
+                  `Successful Operation`,
+                  `The track ${newTrack.name} is created successfully`
+                )
+              });
+            });
+
+            this.retrieveAlbumsData();
+          },
+          error: (error) => {
+            console.log(error);
+          }
         });
     } else {
       Object.values(this.albumsCreationForm.controls).forEach((control) => {
@@ -473,19 +527,81 @@ export class AlbumsManagementComponent {
   }
 
   onAlbumTypeAutocompleteChange(value: string): void {
-    this.filteredAlbumTypesNamesForAutocomplete = this.albumTypesNamesForAutocomplete
-      .filter(albumTypeName =>
-        albumTypeName.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    this.filteredAlbumTypesNamesForAutocomplete =
+      this.albumTypesNamesForAutocomplete.filter(
+        (albumTypeName) =>
+          albumTypeName.toLowerCase().indexOf(value.toLowerCase()) !== -1
+      );
   }
 
   onGenreAutocompleteChange(value: string): void {
-    this.filteredGenresNamesForAutocomplete = this.genresNamesForAutocomplete
-      .filter(genreName => genreName.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    this.filteredGenresNamesForAutocomplete =
+      this.genresNamesForAutocomplete.filter(
+        (genreName) =>
+          genreName.toLowerCase().indexOf(value.toLowerCase()) !== -1
+      );
   }
 
   onPerformerAutocompleteChange(value: string): void {
-    this.filteredPerformersNamesForAutocomplete = this.performersNamesForAutocomplete
-      .filter(performerName => performerName.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    this.filteredPerformersNamesForAutocomplete =
+      this.performersNamesForAutocomplete.filter(
+        (performerName) =>
+          performerName.toLowerCase().indexOf(value.toLowerCase()) !== -1
+      );
+  }
+
+  onExportAlbumsDataClick(): void {
+    switch (this.selectedExportFormatValue!) {
+      case 'pdf':
+        break;
+      case 'csv':
+        break;
+      case 'xlsx':
+        break;
+    }
+  }
+
+  addTrackField(mouseEvent?: MouseEvent): void {
+    if (mouseEvent) {
+      mouseEvent.preventDefault();
+    }
+    const id =
+      this.listOfTrackControls.length > 0
+        ? this.listOfTrackControls[this.listOfTrackControls.length - 1].id + 1
+        : 0;
+
+    const control = {
+      id,
+      controlInstance: `track${id}`,
+    };
+
+    const index = this.listOfTrackControls.push(control);
+    console.log(this.listOfTrackControls[this.listOfTrackControls.length - 1]);
+
+    this.tracksActionFormGroup.addControl(
+      this.listOfTrackControls[index - 1].controlInstance,
+      new UntypedFormControl(
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(20)
+        ])
+      )
+    );
+  }
+
+  removeTrackField(
+    trackEntry: { id: number; controlInstance: string },
+    mouseEvent: MouseEvent
+  ): void {
+    mouseEvent.preventDefault();
+    if (this.listOfTrackControls.length > 1) {
+      const index = this.listOfTrackControls.indexOf(trackEntry);
+      this.listOfTrackControls.splice(index, 1);
+      console.log(this.listOfTrackControls);
+      this.tracksActionFormGroup.removeControl(trackEntry.controlInstance);
+    }
   }
 
   ngOnInit(): void {
@@ -522,27 +638,33 @@ export class AlbumsManagementComponent {
     this.hasFixedHeader.valueChanges.subscribe((isFixed) => {
       this.scrollY = isFixed ? '240px' : null;
     });
+    this.addTrackField();
   }
 
   private retrieveAlbumsData(): void {
     this.isLoading = true;
     this.performersService.getAllPerformers().subscribe((data) => {
       this.performersForAlbums = data;
-      this.performersNamesForAutocomplete = this.performersForAlbums
-      .map(performer => performer.name);
-    this.filteredPerformersNamesForAutocomplete = this.performersNamesForAutocomplete;
+      this.performersNamesForAutocomplete = this.performersForAlbums.map(
+        (performer) => performer.name
+      );
+      this.filteredPerformersNamesForAutocomplete =
+        this.performersNamesForAutocomplete;
     });
     this.genresService.getAllGenres().subscribe((data) => {
       this.genresForAlbums = data;
-      this.genresNamesForAutocomplete = this.genresForAlbums
-      .map(genre => genre.name);
+      this.genresNamesForAutocomplete = this.genresForAlbums.map(
+        (genre) => genre.name
+      );
       this.filteredGenresNamesForAutocomplete = this.genresNamesForAutocomplete;
     });
     this.albumTypesService.getAllAlbumTypes().subscribe((data) => {
       this.typesForAlbums = data;
-      this.albumTypesNamesForAutocomplete = this.typesForAlbums
-      .map(albumType => albumType.name);
-      this.filteredAlbumTypesNamesForAutocomplete = this.albumTypesNamesForAutocomplete;
+      this.albumTypesNamesForAutocomplete = this.typesForAlbums.map(
+        (albumType) => albumType.name
+      );
+      this.filteredAlbumTypesNamesForAutocomplete =
+        this.albumTypesNamesForAutocomplete;
     });
     this.albumsService.getAlbumsWithFullDetails().subscribe((data) => {
       this.albumsToManage = [];
@@ -635,4 +757,5 @@ export interface IAlbumActionForm {
   albumType: FormControl<string>;
   genre: FormControl<string>;
   performer: FormControl<string>;
+  tracksActionFormGroup: UntypedFormGroup;
 }

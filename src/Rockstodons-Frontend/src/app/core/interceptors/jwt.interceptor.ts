@@ -48,7 +48,6 @@ export class JwtInterceptor implements HttpInterceptor {
                   console.log('This is server side error');
                   errorMessage = `Error Code: ${error.status},  Message: ${error.message}`;
                   this.authService.clearLocalStorage();
-                  this.router.navigate(['login']);
                 }
                 return throwError(errorMessage);
             })

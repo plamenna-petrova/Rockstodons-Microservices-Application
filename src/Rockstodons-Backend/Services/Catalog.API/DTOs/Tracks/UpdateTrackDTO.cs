@@ -9,5 +9,8 @@ namespace Catalog.API.DTOs.Tracks
         [Required]
         [StringLength(30, MinimumLength = 2)]
         public string Name { get; set; }
+
+        [Required]
+        public string AlbumId { get; set; }
     }
 }

@@ -8,6 +8,8 @@ import { AlbumTypesService } from 'src/app/core/services/album-types.service';
 import { AlbumsService } from 'src/app/core/services/albums.service';
 import { GenresService } from 'src/app/core/services/genres.service';
 import { PerformersService } from 'src/app/core/services/performers.service';
+import { TracksService } from 'src/app/core/services/tracks.service';
+import { ITrack } from 'src/app/core/interfaces/tracks/track';
 
 @Component({
   selector: 'app-recycle-bin',
@@ -19,6 +21,7 @@ export class RecycleBinComponent {
   recycledAlbumTypes!: IAlbumType[];
   recycledPerformers!: IPerformer[];
   recycledAlbums!: IAlbumDetails[];
+  recycledTracks!: ITrack[];
 
   recycleBinPanels = [
     {
@@ -49,6 +52,13 @@ export class RecycleBinComponent {
       group: 'albums',
       list: [] as any[],
     },
+    {
+      active: false,
+      name: 'Tracks',
+      disabled: false,
+      group: 'tracks',
+      list: [] as any[]
+    }
   ];
 
   constructor(
@@ -56,8 +66,11 @@ export class RecycleBinComponent {
     private albumTypesService: AlbumTypesService,
     private performersService: PerformersService,
     private albumsService: AlbumsService,
+    private tracksService: TracksService,
     private nzNotificationService: NzNotificationService
-  ) {}
+  ) {
+
+  }
 
   deleteRecycledItemPermanently(item: any, group: string): void {
     switch (group) {
@@ -75,7 +88,7 @@ export class RecycleBinComponent {
           .deleteAlbumTypePermanently(item.id)
           .subscribe(() => {
             this.nzNotificationService.success(
-              'Success Operation',
+              'Successful Operation',
               `The album type ${item.name} has been deleted permanently!`
             );
             this.retrieveRecycledData();
@@ -86,7 +99,7 @@ export class RecycleBinComponent {
           .deletePerformerPermanently(item.id)
           .subscribe(() => {
             this.nzNotificationService.success(
-              'Success Operation',
+              'Successful Operation',
               `The performer ${item.name} has been deleted permanently!`
             );
             this.retrieveRecycledData();
@@ -95,8 +108,17 @@ export class RecycleBinComponent {
       case 'albums':
         this.albumsService.deleteAlbumPermanently(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Success Operation',
+            'Successful Operation',
             `The album ${item.name} has been deleted permanently!`
+          );
+          this.retrieveRecycledData();
+        });
+        break;
+      case 'tracks':
+        this.tracksService.deleteTrackPermanently(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Successful Operation',
+            `The track ${item.name} has been deleted permanently!`
           );
           this.retrieveRecycledData();
         });
@@ -116,34 +138,38 @@ export class RecycleBinComponent {
         });
         break;
       case 'albumTypes':
-        this.albumTypesService
-          .restoreAlbumType(item.id)
-          .subscribe(() => {
-            this.nzNotificationService.success(
-              'Success Operation',
-              `The album type ${item.name} has been restored!`
-            );
-            this.retrieveRecycledData();
-          });
+        this.albumTypesService.restoreAlbumType(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Successful Operation',
+            `The album type ${item.name} has been restored!`
+          );
+          this.retrieveRecycledData();
+        });
         break;
       case 'performers':
-        this.performersService
-          .restorePerformer(item.id)
-          .subscribe(() => {
-            this.nzNotificationService.success(
-              'Success Operation',
-              `The performer ${item.name} has been restored!`
-            );
-            this.retrieveRecycledData();
-          });
+        this.performersService.restorePerformer(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Successful Operation',
+            `The performer ${item.name} has been restored!`
+          );
+          this.retrieveRecycledData();
+        });
         break;
       case 'albums':
         this.albumsService.restoreAlbum(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Success Operation',
+            'Successful Operation',
             `The album ${item.name} has been restored!`
           );
           this.retrieveRecycledData();
+        });
+        break;
+      case 'tracks':
+        this.tracksService.restoreTrack(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Successful Operation',
+            `The track ${item.name} has been restored!`
+          )
         });
         break;
     }
@@ -169,6 +195,10 @@ export class RecycleBinComponent {
     this.albumsService.getAlbumsWithFullDetails().subscribe((data) => {
       this.recycledAlbums = data.filter((album) => album.isDeleted);
       this.recycleBinPanels[3].list = this.recycledAlbums;
+    });
+    this.tracksService.getTracksWithFullDetails().subscribe((data) => {
+      this.recycledTracks = data.filter((track) => track.isDeleted);
+      this.recycleBinPanels[4].list = this.recycledTracks;
     });
   }
 }

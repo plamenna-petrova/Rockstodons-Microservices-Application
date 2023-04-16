@@ -28,6 +28,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
@@ -40,6 +41,8 @@ import { UsersManagementComponent } from './users-management/users-management.co
 import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 import { AddOrEditGenreFormComponent } from './forms/add-or-edit-genre-form/add-or-edit-genre-form.component';
 import { AddOrEditAlbumTypeFormComponent } from './forms/add-or-edit-album-type-form/add-or-edit-album-type-form.component';
+import { TracksManagementComponent } from './tracks-management/tracks-management.component';
+import { RolesManagementComponent } from './roles-management/roles-management.component';
 
 registerLocaleData(en);
 
@@ -54,6 +57,8 @@ registerLocaleData(en);
     RecycleBinComponent,
     AddOrEditGenreFormComponent,
     AddOrEditAlbumTypeFormComponent,
+    TracksManagementComponent,
+    RolesManagementComponent
   ],
   imports: [
     DashboardRoutingModule,
@@ -77,6 +82,7 @@ registerLocaleData(en);
     NzCollapseModule,
     NzListModule,
     NzSpinModule,
+    NzSelectModule,
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,

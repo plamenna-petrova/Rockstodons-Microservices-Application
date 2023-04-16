@@ -1,6 +1,7 @@
 import { IAlbumType } from "../album-types/album-type";
 import { IGenre } from "../genres/genre";
 import { IPerformer } from "../performers/performer";
+import { ITrack } from "../tracks/track";
 
 export interface IAlbum {
   id: string;

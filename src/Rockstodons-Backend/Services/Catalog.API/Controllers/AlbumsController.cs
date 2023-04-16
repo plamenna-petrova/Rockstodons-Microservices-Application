@@ -269,7 +269,7 @@ namespace Catalog.API.Controllers
         [Authorize]
         [Route("details/{id}", Name = AlbumDetailsRouteName)]
         [ProducesResponseType(typeof(AlbumDetailsDTO), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<AlbumDetailsDTO>> GetalbumDetails(string id)
+        public async Task<ActionResult<AlbumDetailsDTO>> GetAlbumDetails(string id)
         {
             try
             {

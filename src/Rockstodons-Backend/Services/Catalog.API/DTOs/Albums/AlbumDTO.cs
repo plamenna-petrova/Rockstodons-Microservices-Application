@@ -3,6 +3,7 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.DTOs.Performers;
+using Catalog.API.DTOs.Tracks;
 using Catalog.API.Services.Mapping;
 
 namespace Catalog.API.DTOs.Albums
@@ -24,5 +25,7 @@ namespace Catalog.API.DTOs.Albums
         public PerformerDTO Performer { get; set; }
 
         public DateTime CreatedOn { get; set; }
+
+        public ICollection<TrackDTO> Tracks { get; set; }
     }
 }

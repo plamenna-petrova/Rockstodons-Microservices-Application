@@ -518,8 +518,6 @@ export class PerformersManagementComponent {
   onCountryAutocompleteChange(value: string): void {
     this.filteredCountriesList = this.countryList
       .filter(country => country.toLowerCase().indexOf(value.toLowerCase()) !== -1);
-    console.log('filtered');
-    console.log(this.filteredCountriesList);
   }
 
   ngOnInit(): void {

@@ -33,8 +33,8 @@ export class AlbumsService {
     return this.httpClient.get<IAlbum>(`${this.albumsAPIUrl}/details/${albumDetailsId}`)
   }
 
-  createNewAlbum(albumToCreate: IAlbumCreateDTO): Observable<IAlbumCreateDTO> {
-    return this.httpClient.post<IAlbumCreateDTO>(`${this.albumsAPIUrl}/create`, albumToCreate);
+  createNewAlbum(albumToCreate: IAlbumCreateDTO): Observable<IAlbum> {
+    return this.httpClient.post<IAlbum>(`${this.albumsAPIUrl}/create`, albumToCreate);
   }
 
   updateAlbum(albumToUpdate: IAlbumUpdateDTO): Observable<IAlbumUpdateDTO> {

@@ -1,0 +1,108 @@
+<button nz-button class="load-tracks-data-button" [nzType]="'primary'" (click)="onLoadTracksDataClick()">
+  Load Tracks
+</button>
+
+<button nz-button class="create-new-track-button" [nzType]="'dashed'" (click)="showTrackCreationModal()">
+  Create New Track
+</button>
+
+<nz-modal [(nzVisible)]="isTrackCreationModalVisible" nzTitle="Create New Track" (nzOnOk)="handleOkTrackCreationModal()" (nzOnCancel)="handleCancelTrackCreationModal()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="tracksCreationForm" (ngSubmit)="onTracksCreationFormSubmit()">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="8">Name</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineTrackCreationNameValidationTemplate">
+                    <input nz-input formControlName="name" minlength="2" maxlength="40" required />
+                    <ng-template #combineTrackCreationNameValidationTemplate let-control>
+                        <ng-container *ngIf="control.hasError('maxlength')">The tracks's name cannot be longer than 40 characters
+                        </ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The tracks's name must be at least 2 character long</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">The tracks's name is required</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="8">Albums</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input placeholder="Start typing to filter albums" nz-input formControlName="album" (ngModelChange)="onAlbumsAutocompleteChange($event)" [nzAutocomplete]="albumAutocomplete" />
+                    <nz-autocomplete [nzDataSource]="filteredAlbumsNamesForAutocomplete!" #albumAutocomplete></nz-autocomplete>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<nz-table #nzTable [nzData]="tracksDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
+    <thead>
+        <tr>
+            <th nzCustomFilter>
+                Name
+                <nz-filter-trigger [(nzVisible)]="isTracksSearchTriggerVisible" [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+                    <span nz-icon nzType="search"></span>
+                </nz-filter-trigger>
+            </th>
+            <th>
+                Album
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of nzTable.data">
+            <td>{{ data.track.name }}</td>
+            <td>
+                <ng-container *ngIf="data.track.album; else albumDefaultValue">
+                    {{ data.track.album.name }}
+                </ng-container>
+                <ng-template #albumDefaultValue> - </ng-template>
+            </td>
+            <td>
+                <button nz-button class="edit-track-button" (click)="showTrackEditModal(data)">
+          Edit
+        </button>
+                <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Track" (nzOnOk)="handleOkTrackEditModal(data)" (nzOnCancel)="handleCancelTrackEditModal(data)">
+                    <ng-container *nzModalContent>
+                        <form nz-form [formGroup]="tracksEditForm" (ngSubmit)="onTracksEditFormSubmit(data.track.id)">
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="8">Name</nz-form-label>
+                                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumCreationNameValidationTemplate">
+                                    <input nz-input formControlName="name" minlength="2" maxlength="40" required />
+                                    <ng-template #combineAlbumCreationNameValidationTemplate let-control>
+                                        <ng-container *ngIf="control.hasError('maxlength')">The tracks's name cannot be longer than 40 characters
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('minlength')">The tracks's name must be at least 2 character long
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('required')">The tracks's name is required</ng-container>
+                                    </ng-template>
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="8">Album</nz-form-label>
+                                <nz-form-control nzHasFeedback [nzSpan]="12">
+                                    <input placeholder="Start typing to filter albums" nz-input formControlName="album" (ngModelChange)="onAlbumsAutocompleteChange($event)" [nzAutocomplete]="albumAutocomplete" />
+                                    <nz-autocomplete [nzDataSource]="filteredAlbumsNamesForAutocomplete!" #albumAutocomplete></nz-autocomplete>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+                <button nz-button (click)="showTrackRemovalModal(data.track)" nzDanger>
+          Delete
+        </button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForTracks()" class="search-button">
+        Search
+      </button>
+            <button nz-button nzSize="small" (click)="resetTracksSearch()">
+        Reset
+      </button>
+        </div>
+    </div>
+</nz-dropdown-menu>

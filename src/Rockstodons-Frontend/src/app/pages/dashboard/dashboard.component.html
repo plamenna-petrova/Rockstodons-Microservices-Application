@@ -34,6 +34,12 @@
                         </span>
                     </li>
                     <li nz-menu-item>
+                        <span nz-icon nzType="laptop"></span>
+                        <span>
+                        <a [routerLink]="['/dashboard', { outlets: { dashboard: ['tracks-management']}}]">Tracks</a>
+                      </span>
+                    </li>
+                    <li nz-menu-item>
                         <span nz-icon nzType="user"></span>
                         <span>
                           <a [routerLink]="['/dashboard', { outlets: { dashboard: ['users-management']}}]">Users</a>

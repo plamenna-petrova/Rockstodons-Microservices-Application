@@ -27,13 +27,17 @@
         <tr *ngFor="let data of nzTable.data">
             <td>{{ data.genre.name }}</td>
             <td>
-                <button nz-button class="edit-genre-button" (click)="showGenreEditModal(data)">Edit</button>
+                <button nz-button class="edit-genre-button" (click)="showGenreEditModal(data)">
+          Edit
+        </button>
                 <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Genre" (nzOnOk)="handleOkGenreEditModal(data)" (nzOnCancel)="handleCancelGenreEditModal(data)">
                     <ng-container *nzModalContent>
                         <app-add-or-edit-genre-form [genreActionFormGroup]="genresEditForm"></app-add-or-edit-genre-form>
                     </ng-container>
                 </nz-modal>
-                <button nz-button (click)="showGenreRemovalModal(data.genre)" nzDanger>Delete</button>
+                <button nz-button (click)="showGenreRemovalModal(data.genre)" nzDanger>
+          Delete
+        </button>
             </td>
         </tr>
     </tbody>
@@ -42,8 +46,12 @@
     <div class="ant-table-filter-dropdown">
         <div class="search-box">
             <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
-            <button nz-button nzSize="small" nzType="primary" (click)="searchForGenres()" class="search-button">Search</button>
-            <button nz-button nzSize="small" (click)="resetGenresSearch()">Reset</button>
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForGenres()" class="search-button">
+        Search
+      </button>
+            <button nz-button nzSize="small" (click)="resetGenresSearch()">
+        Reset
+      </button>
         </div>
     </div>
 </nz-dropdown-menu>
