@@ -10,7 +10,7 @@ namespace Catalog.API.Infrastructure.EntityConfigurations
         {
             trackEntityTypeBuilder
                 .HasOne(t => t.Album)
-                .WithMany()
+                .WithMany(a => a.Tracks)
                 .HasForeignKey(t => t.AlbumId);
         }
     }

@@ -33,6 +33,9 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task<List<Album>> GetAllAlbumsWithDeletedRecords()
         {
+            var albums = await _albumsRepository.GetAllWithDeletedRecords().ToListAsync();
+            var allTest = await _albumsRepository.GetAll().ToListAsync();
+
             return await _albumsRepository.GetAllWithDeletedRecords().ToListAsync();
         }
 

@@ -31,8 +31,9 @@ namespace Catalog.API.Data.Models
         public string PerformerId { get; set; }
 
         [JsonIgnore]
-        public virtual Performer Performer { get; set; } 
+        public virtual Performer Performer { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Track> Tracks { get; set; }  
     }
 }

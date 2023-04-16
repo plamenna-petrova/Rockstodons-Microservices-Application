@@ -13,5 +13,4 @@ export interface IAlbumDetails {
   genreId: string;
   performerId: string;
   isDeleted: boolean;
-  tracks: ITrack[];
 }

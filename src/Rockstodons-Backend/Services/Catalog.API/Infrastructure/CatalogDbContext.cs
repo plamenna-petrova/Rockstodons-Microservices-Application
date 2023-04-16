@@ -71,6 +71,11 @@ namespace Catalog.API.Infrastructure
             }
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
+        }
+
         private static void SetIsDeletedQueryFilter<T>(ModelBuilder modelBuilder)
             where T : class, IDeletableEntity
         {

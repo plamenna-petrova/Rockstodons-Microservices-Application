@@ -29,7 +29,7 @@ export class TracksManagementComponent {
   tracksDisplayData!: ITrackTableData[];
   isTrackCreationModalVisible = false;
 
-  albumsForTracks!: IAlbumDetails[];
+  albumsForTracks!: IAlbum[];
   albumsNamesForAutocomplete: string[] = [];
   filteredAlbumsNamesForAutocomplete: string[] = [];
 
@@ -239,9 +239,10 @@ export class TracksManagementComponent {
 
   private retrieveTracksData(): void {
     this.isLoading = true;
-    this.albumsService.getAlbumsWithFullDetails().subscribe((data) => {
+    this.albumsService.getAllAlbums().subscribe((data) => {
       this.albumsForTracks = data;
-      this.albumsNamesForAutocomplete = this.albumsForTracks.map(
+      this.albumsNamesForAutocomplete = this.albumsForTracks
+        .filter(album => !album.isDeleted).map(
         (album) => album.name
       );
       this.filteredAlbumsNamesForAutocomplete = this.albumsNamesForAutocomplete;

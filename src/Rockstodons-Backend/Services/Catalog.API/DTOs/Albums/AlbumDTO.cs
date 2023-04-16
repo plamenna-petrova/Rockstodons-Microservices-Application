@@ -26,6 +26,6 @@ namespace Catalog.API.DTOs.Albums
 
         public DateTime CreatedOn { get; set; }
 
-        public ICollection<TrackDTO> Tracks { get; set; }
+        public List<TrackDTO> Tracks { get; set; }
     }
 }

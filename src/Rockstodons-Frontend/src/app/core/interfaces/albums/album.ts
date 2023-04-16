@@ -12,4 +12,5 @@ export interface IAlbum {
   genre: IGenre;
   performer: IPerformer;
   isDeleted: boolean;
+  tracks: ITrack[];
 }
