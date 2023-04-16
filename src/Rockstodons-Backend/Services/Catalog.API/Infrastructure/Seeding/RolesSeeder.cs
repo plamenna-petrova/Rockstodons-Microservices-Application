@@ -14,6 +14,7 @@ namespace Catalog.API.Infrastructure.Seeding
             List<string> roles = new List<string>
             {
                 GlobalConstants.AdministratorRoleName,
+                GlobalConstants.EditorRoleName,
                 GlobalConstants.NormalUserRoleName
             };
 

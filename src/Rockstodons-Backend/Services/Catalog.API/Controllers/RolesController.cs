@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Catalog.API.Controllers
 {
-    [Route("api/roles")]
+    [Route("api/v1/roles")]
     [ApiController]
     public class RolesController : ControllerBase
     {

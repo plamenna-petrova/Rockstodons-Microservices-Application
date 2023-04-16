@@ -8,6 +8,7 @@ import { PerformersManagementComponent } from './performers-management/performer
 import { UsersManagementComponent } from './users-management/users-management.component';
 import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 import { TracksManagementComponent } from './tracks-management/tracks-management.component';
+import { RolesManagementComponent } from './roles-management/roles-management.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,11 @@ const routes: Routes = [
       {
         path: 'tracks-management',
         component: TracksManagementComponent,
+        outlet: 'dashboard'
+      },
+      {
+        path: 'roles-management',
+        component: RolesManagementComponent,
         outlet: 'dashboard'
       },
       {

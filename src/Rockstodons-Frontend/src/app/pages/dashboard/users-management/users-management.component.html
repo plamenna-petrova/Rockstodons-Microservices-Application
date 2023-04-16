@@ -1,1 +1,42 @@
-<p>users-management works!</p>
+<button nz-button class="load-genres-data-button" [nzType]="'primary'" (click)="onLoadUsersDataClick()">
+  Load Users
+</button>
+
+<nz-table #nzTable [nzData]="usersDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
+    <thead>
+        <tr>
+            <th nzCustomFilter>
+                Username
+                <nz-filter-trigger [(nzVisible)]="isUsersSearchTriggerVisible" [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+                    <span nz-icon nzType="search"></span>
+                </nz-filter-trigger>
+            </th>
+            <th>Email</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of nzTable.data">
+            <td>{{ data.applicationUser.userName }}</td>
+            <td>{{ data.applicationUser.email }}</td>
+            <td>
+                <div *ngFor="let role of data.applicationUser.roles">
+                    <span>{{ role.name }}</span>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForUsers()" class="search-button">
+      Search
+    </button>
+            <button nz-button nzSize="small" (click)="resetUsersSearch()">
+      Reset
+    </button>
+        </div>
+    </div>
+</nz-dropdown-menu>
