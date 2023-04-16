@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { IAlbumType } from '../interfaces/album-type';
+import { IAlbumType } from '../interfaces/album-types/album-type';
 import { Observable } from 'rxjs';
-import { IAlbum } from '../interfaces/album';
-import { IAlbumTypeCreateDTO } from '../interfaces/album-type-create-dto';
-import { IAlbumTypeUpdateDTO } from '../interfaces/album-type-update-dto';
+import { IAlbum } from '../interfaces/albums/album';
+import { IAlbumTypeCreateDTO } from '../interfaces/album-types/album-type-create-dto';
+import { IAlbumTypeUpdateDTO } from '../interfaces/album-types/album-type-update-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -55,8 +55,8 @@ export class AlbumTypesService {
   }
 
   restoreAlbumType(albumTypeToRestoreId: string): Observable<void> {
-    return this.httpClient.delete<void>(
-      `${this.albumTypesAPIUrl}/restore/${albumTypeToRestoreId}`
+    return this.httpClient.post<void>(
+      `${this.albumTypesAPIUrl}/restore/${albumTypeToRestoreId}`, null
     );
   }
 }

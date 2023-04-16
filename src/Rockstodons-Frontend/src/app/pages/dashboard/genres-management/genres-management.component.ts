@@ -8,9 +8,9 @@ import {
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { retry, take } from 'rxjs';
-import { IGenre } from 'src/app/core/interfaces/genre';
-import { IGenreCreateDTO } from 'src/app/core/interfaces/genre-create-dto';
-import { IGenreUpdateDTO } from 'src/app/core/interfaces/genre-update-dto';
+import { IGenre } from 'src/app/core/interfaces/genres/genre';
+import { IGenreCreateDTO } from 'src/app/core/interfaces/genres/genre-create-dto';
+import { IGenreUpdateDTO } from 'src/app/core/interfaces/genres/genre-update-dto';
 import { GenresService } from 'src/app/core/services/genres.service';
 
 @Component({

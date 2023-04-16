@@ -2,9 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IGenre } from '../interfaces/genre';
-import { IGenreCreateDTO } from '../interfaces/genre-create-dto';
-import { IGenreUpdateDTO } from '../interfaces/genre-update-dto';
+import { IGenre } from '../interfaces/genres/genre';
+import { IGenreCreateDTO } from '../interfaces/genres/genre-create-dto';
+import { IGenreUpdateDTO } from '../interfaces/genres/genre-update-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +54,8 @@ export class GenresService {
   }
 
   restoreGenre(genreToRestoreId: string): Observable<void> {
-    return this.httpClient.delete<void>(`${this.genresAPIUrl}/restore/${genreToRestoreId}`);
+    return this.httpClient.post<void>(
+      `${this.genresAPIUrl}/restore/${genreToRestoreId}`, null
+    );
   }
 }

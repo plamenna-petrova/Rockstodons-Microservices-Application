@@ -1,13 +1,18 @@
 <nz-collapse>
     <nz-collapse-panel *ngFor="let panel of recycleBinPanels" [nzHeader]="panel.name" [nzActive]="panel.active" [nzDisabled]="panel.disabled">
         <nz-list nzBordered [nzHeader]="panel.name" nzFooter="Footer">
-            <nz-list-item *ngFor="let item of panel.list">
-                <span nz-typography><mark>[DELETED]</mark></span> {{ item.name }}
-                <ul nz-list-item-actions>
-                    <nz-list-item-action><a (click)="deleteRecycledItemPermanently(item, panel.group)">Delete Permanently</a></nz-list-item-action>
-                    <nz-list-item-action><a>Restore</a></nz-list-item-action>
-                </ul>
-            </nz-list-item>
+            <ng-container *ngIf="panel.list.length !== 0; else noRecycledItemsForGroup">
+                <nz-list-item *ngFor="let item of panel.list">
+                    <span nz-typography><mark>[DELETED]</mark></span> {{ item.name }}
+                    <ul nz-list-item-actions>
+                        <nz-list-item-action><a (click)="deleteRecycledItemPermanently(item, panel.group)">Delete Permanently</a></nz-list-item-action>
+                        <nz-list-item-action><a (click)="restoreRecycledItem(item, panel.group)">Restore</a></nz-list-item-action>
+                    </ul>
+                </nz-list-item>
+            </ng-container>
+            <ng-template #noRecycledItemsForGroup>
+                <span nz-typography class="no-recycled-items"><mark>[NO ITEMS]</mark></span>
+            </ng-template>
         </nz-list>
     </nz-collapse-panel>
 </nz-collapse>

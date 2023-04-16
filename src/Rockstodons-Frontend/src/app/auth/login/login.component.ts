@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ToastrService } from 'ngx-toastr';
 import { finalize, Subscription } from 'rxjs';
-import { ILoginRequestDTO } from 'src/app/core/interfaces/login-request-dto';
+import { ILoginRequestDTO } from 'src/app/core/interfaces/auth/login-request-dto';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({

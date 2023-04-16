@@ -7,21 +7,7 @@
 </button>
 <nz-modal [(nzVisible)]="isAlbumTypeCreationModalVisible" nzTitle="Create New Album Type" (nzOnOk)="handleOkAlbumTypeCreationModal()" (nzOnCancel)="handleCancelAlbumTypeCreationModal()">
     <ng-container *nzModalContent>
-        <form nz-form [formGroup]="albumTypesCreationForm" (ngSubmit)="onAlbumTypesCreationFormSubmit()">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="5">Name</nz-form-label>
-                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumTypeCreationNameValidationTemplate">
-                    <input nz-input formControlName="albumTypeName" minlength="3" maxlength="20" required />
-                    <ng-template #combineAlbumTypeCreationNameValidationTemplate let-control>
-                        <ng-container *ngIf="control.hasError('maxlength')">The album type name cannot be longer than 20 characters
-                        </ng-container>
-                        <ng-container *ngIf="control.hasError('minlength')">The album type name must be at least 3 character long
-                        </ng-container>
-                        <ng-container *ngIf="control.hasError('required')">The album type name is required</ng-container>
-                    </ng-template>
-                </nz-form-control>
-            </nz-form-item>
-        </form>
+        <app-add-or-edit-album-type-form [albumTypeActionForm]="albumTypesCreationForm"></app-add-or-edit-album-type-form>
     </ng-container>
 </nz-modal>
 
@@ -46,21 +32,7 @@
         </button>
                 <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Album Type" (nzOnOk)="handleOkAlbumTypeEditModal(data)" (nzOnCancel)="handleCancelAlbumTypeEditModal(data)">
                     <ng-container *nzModalContent>
-                        <form nz-form [formGroup]="albumTypesEditForm" (ngSubmit)="onAlbumTypesEditFormSubmit(data.albumType.id)">
-                            <nz-form-item>
-                                <nz-form-label [nzSpan]="5">Name</nz-form-label>
-                                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumTypeEditNameValidationTemplate">
-                                    <input nz-input formControlName="albumTypeName" minlength="3" maxlength="20" required />
-                                    <ng-template #combineAlbumTypeEditNameValidationTemplate let-control>
-                                        <ng-container *ngIf="control.hasError('maxlength')">The album type name cannot be longer than 20 characters
-                                        </ng-container>
-                                        <ng-container *ngIf="control.hasError('minlength')">The album type name must be at least 3 character long
-                                        </ng-container>
-                                        <ng-container *ngIf="control.hasError('required')">The album type name is required</ng-container>
-                                    </ng-template>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </form>
+                        <app-add-or-edit-album-type-form [albumTypeActionForm]="albumTypesEditForm"></app-add-or-edit-album-type-form>
                     </ng-container>
                 </nz-modal>
                 <button nz-button (click)="showAlbumTypeRemovalModal(data.albumType)" nzDanger>

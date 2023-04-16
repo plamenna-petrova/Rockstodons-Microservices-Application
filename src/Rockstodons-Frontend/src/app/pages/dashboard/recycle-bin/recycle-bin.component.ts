@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { IAlbum } from 'src/app/core/interfaces/album';
-import { IAlbumDetails } from 'src/app/core/interfaces/album-details';
-import { IAlbumType } from 'src/app/core/interfaces/album-type';
-import { IGenre } from 'src/app/core/interfaces/genre';
-import { IPerformer } from 'src/app/core/interfaces/performer';
+import { IAlbumDetails } from 'src/app/core/interfaces/albums/album-details';
+import { IAlbumType } from 'src/app/core/interfaces/album-types/album-type';
+import { IGenre } from 'src/app/core/interfaces/genres/genre';
+import { IPerformer } from 'src/app/core/interfaces/performers/performer';
 import { AlbumTypesService } from 'src/app/core/services/album-types.service';
 import { AlbumsService } from 'src/app/core/services/albums.service';
 import { GenresService } from 'src/app/core/services/genres.service';
@@ -61,8 +60,6 @@ export class RecycleBinComponent {
   ) {}
 
   deleteRecycledItemPermanently(item: any, group: string): void {
-    console.log(item);
-    console.log(group);
     switch (group) {
       case 'genres':
         this.genresService.deleteGenrePermanently(item.id).subscribe(() => {
@@ -100,6 +97,51 @@ export class RecycleBinComponent {
           this.nzNotificationService.success(
             'Success Operation',
             `The album ${item.name} has been deleted permanently!`
+          );
+          this.retrieveRecycledData();
+        });
+        break;
+    }
+  }
+
+  restoreRecycledItem(item: any, group: string): void {
+    switch (group) {
+      case 'genres':
+        this.genresService.restoreGenre(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Successful Operation',
+            `The genre ${item.name} has been restored!`
+          );
+          this.retrieveRecycledData();
+        });
+        break;
+      case 'albumTypes':
+        this.albumTypesService
+          .restoreAlbumType(item.id)
+          .subscribe(() => {
+            this.nzNotificationService.success(
+              'Success Operation',
+              `The album type ${item.name} has been restored!`
+            );
+            this.retrieveRecycledData();
+          });
+        break;
+      case 'performers':
+        this.performersService
+          .restorePerformer(item.id)
+          .subscribe(() => {
+            this.nzNotificationService.success(
+              'Success Operation',
+              `The performer ${item.name} has been restored!`
+            );
+            this.retrieveRecycledData();
+          });
+        break;
+      case 'albums':
+        this.albumsService.restoreAlbum(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Success Operation',
+            `The album ${item.name} has been restored!`
           );
           this.retrieveRecycledData();
         });

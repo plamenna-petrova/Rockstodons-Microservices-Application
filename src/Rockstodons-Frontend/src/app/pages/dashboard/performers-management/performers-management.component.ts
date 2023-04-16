@@ -8,9 +8,9 @@ import {
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { take } from 'rxjs';
-import { IPerformer } from 'src/app/core/interfaces/performer';
-import { IPerformerCreateDTO } from 'src/app/core/interfaces/performer-create-dto';
-import { IPerformerUpdateDTO } from 'src/app/core/interfaces/performer-update-dto';
+import { IPerformer } from 'src/app/core/interfaces/performers/performer';
+import { IPerformerCreateDTO } from 'src/app/core/interfaces/performers/performer-create-dto';
+import { IPerformerUpdateDTO } from 'src/app/core/interfaces/performers/performer-update-dto';
 import { PerformersService } from 'src/app/core/services/performers.service';
 
 @Component({
@@ -517,7 +517,9 @@ export class PerformersManagementComponent {
 
   onCountryAutocompleteChange(value: string): void {
     this.filteredCountriesList = this.countryList
-      .filter(country => country.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+      .filter(country => country.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    console.log('filtered');
+    console.log(this.filteredCountriesList);
   }
 
   ngOnInit(): void {

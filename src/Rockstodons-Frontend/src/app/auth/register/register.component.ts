@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IRegisterRequestDTO } from 'src/app/core/interfaces/register-request-dto';
+import { IRegisterRequestDTO } from 'src/app/core/interfaces/auth/register-request-dto';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { comparePasswords } from 'src/app/core/validators/password-match';
 

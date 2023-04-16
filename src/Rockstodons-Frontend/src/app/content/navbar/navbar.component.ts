@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IApplicationUser } from 'src/app/core/interfaces/application-user';
+import { IApplicationUser } from 'src/app/core/interfaces/users/application-user';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({

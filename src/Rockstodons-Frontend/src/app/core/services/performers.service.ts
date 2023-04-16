@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IPerformer } from '../interfaces/performer';
-import { IPerformerCreateDTO } from '../interfaces/performer-create-dto';
-import { IPerformerUpdateDTO } from '../interfaces/performer-update-dto';
+import { IPerformer } from '../interfaces/performers/performer';
+import { IPerformerCreateDTO } from '../interfaces/performers/performer-create-dto';
+import { IPerformerUpdateDTO } from '../interfaces/performers/performer-update-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -54,8 +54,7 @@ export class PerformersService {
   }
 
   restorePerformer(performerToRestoreId: string): Observable<void> {
-    return this.httpClient.delete<void>(
-      `${this.performersAPIUrl}/restore/${performerToRestoreId}`
-    );
+    return this.httpClient.post<void>(
+      `${this.performersAPIUrl}/restore/${performerToRestoreId}`, null);
   }
  }

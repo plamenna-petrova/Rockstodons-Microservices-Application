@@ -5,7 +5,6 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { TaobaoSquareFill } from '@ant-design/icons-angular/icons';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import {
@@ -15,12 +14,12 @@ import {
   NzTableSize,
 } from 'ng-zorro-antd/table';
 import { take } from 'rxjs';
-import { IAlbum } from 'src/app/core/interfaces/album';
-import { IAlbumCreateDTO } from 'src/app/core/interfaces/album-create-dto';
-import { IAlbumType } from 'src/app/core/interfaces/album-type';
-import { IAlbumUpdateDTO } from 'src/app/core/interfaces/album-update-dto';
-import { IGenre } from 'src/app/core/interfaces/genre';
-import { IPerformer } from 'src/app/core/interfaces/performer';
+import { IAlbum } from 'src/app/core/interfaces/albums/album';
+import { IAlbumCreateDTO } from 'src/app/core/interfaces/albums/album-create-dto';
+import { IAlbumType } from 'src/app/core/interfaces/album-types/album-type';
+import { IAlbumUpdateDTO } from 'src/app/core/interfaces/albums/album-update-dto';
+import { IGenre } from 'src/app/core/interfaces/genres/genre';
+import { IPerformer } from 'src/app/core/interfaces/performers/performer';
 import { AlbumTypesService } from 'src/app/core/services/album-types.service';
 import { AlbumsService } from 'src/app/core/services/albums.service';
 import { GenresService } from 'src/app/core/services/genres.service';

@@ -7,11 +7,11 @@ import {
 } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { IAlbumType } from 'src/app/core/interfaces/album-type';
+import { IAlbumType } from 'src/app/core/interfaces/album-types/album-type';
 import { AlbumTypesService } from 'src/app/core/services/album-types.service';
-import { IAlbumTypeCreateDTO } from 'src/app/core/interfaces/album-type-create-dto';
+import { IAlbumTypeCreateDTO } from 'src/app/core/interfaces/album-types/album-type-create-dto';
 import { take } from 'rxjs';
-import { IAlbumTypeUpdateDTO } from 'src/app/core/interfaces/album-type-update-dto';
+import { IAlbumTypeUpdateDTO } from 'src/app/core/interfaces/album-types/album-type-update-dto';
 
 @Component({
   selector: 'app-album-types-management',

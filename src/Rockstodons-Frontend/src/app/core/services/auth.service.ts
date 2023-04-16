@@ -12,10 +12,10 @@ import {
   tap,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IApplicationUser } from '../interfaces/application-user';
-import { ILoginResponseDTO } from '../interfaces/login-response-dto';
-import { ILoginRequestDTO } from '../interfaces/login-request-dto';
-import { IRegisterRequestDTO } from '../interfaces/register-request-dto';
+import { IApplicationUser } from '../interfaces/users/application-user';
+import { ILoginResponseDTO } from '../interfaces/auth/login-response-dto';
+import { ILoginRequestDTO } from '../interfaces/auth/login-request-dto';
+import { IRegisterRequestDTO } from '../interfaces/auth/register-request-dto';
 
 @Injectable({
   providedIn: 'root',
