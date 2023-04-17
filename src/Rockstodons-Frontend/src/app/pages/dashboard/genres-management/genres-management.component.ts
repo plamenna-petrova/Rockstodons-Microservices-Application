@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { retry, take } from 'rxjs';
+import { Observable, of, retry, take } from 'rxjs';
 import { IGenre } from 'src/app/core/interfaces/genres/genre';
 import { IGenreCreateDTO } from 'src/app/core/interfaces/genres/genre-create-dto';
 import { IGenreUpdateDTO } from 'src/app/core/interfaces/genres/genre-update-dto';
@@ -89,7 +89,6 @@ export class GenresManagementComponent {
   }
 
   handleOkGenreCreationModal(): void {
-    this.isGenreCreationModalVisible = false;
     this.onGenresCreationFormSubmit();
   }
 
@@ -105,8 +104,11 @@ export class GenresManagementComponent {
   }
 
   handleOkGenreEditModal(genreTableDatum: IGenreTableData): void {
-    genreTableDatum.isEditingModalVisible = false;
-    this.onGenresEditFormSubmit(genreTableDatum.genre.id);
+    this.onGenresEditFormSubmit(genreTableDatum.genre.id).subscribe((success) => {
+      if (success) {
+        genreTableDatum.isEditingModalVisible = false;
+      }
+    });
   }
 
   handleCancelGenreEditModal(genreTableDatum: IGenreTableData): void {
@@ -127,7 +129,10 @@ export class GenresManagementComponent {
     if (isGenreExisting) {
       this.nzNotificationService.error(
         `Error`,
-        `The genre ${genreName} already exists!`
+        `The genre ${genreName} already exists!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       return;
     }
@@ -140,8 +145,13 @@ export class GenresManagementComponent {
           let newGenre = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The genre ${newGenre.name} is created successfully!`
+            `The genre ${newGenre.name} is created successfully!`,
+            {
+              nzPauseOnHover: true
+            }
           );
+
+          this.isGenreCreationModalVisible = false;
           this.retrieveGenresData();
         });
     } else {
@@ -154,7 +164,9 @@ export class GenresManagementComponent {
     }
   }
 
-  onGenresEditFormSubmit(genreId: string): void {
+  onGenresEditFormSubmit(genreId: string): Observable<boolean> {
+    let isGenresEditFormSubmitSuccessful: boolean = true;
+
     const genreToEdit: IGenreUpdateDTO = {
       id: genreId,
       name: this.genresEditForm.value.genreName,
@@ -168,11 +180,15 @@ export class GenresManagementComponent {
           let editedGenre = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The genre ${editedGenre.name} is edited successfully!`
+            `The genre ${editedGenre.name} is edited successfully!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveGenresData();
         });
     } else {
+      isGenresEditFormSubmitSuccessful = false;
       Object.values(this.genresEditForm.controls).forEach((control) => {
         if (control.invalid) {
           control.markAsDirty();
@@ -180,6 +196,8 @@ export class GenresManagementComponent {
         }
       });
     }
+
+    return of(isGenresEditFormSubmitSuccessful);
   }
 
   showGenreRemovalModal(genreToRemove: IGenre): void {
@@ -198,7 +216,10 @@ export class GenresManagementComponent {
     this.genresService.deleteGenre(genreToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
         'Successful Operation',
-        `The genre ${genreToRemove.name} has been removed!`
+        `The genre ${genreToRemove.name} has been removed!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       this.retrieveGenresData();
     });

@@ -17,7 +17,7 @@ import {
   NzTablePaginationType,
   NzTableSize,
 } from 'ng-zorro-antd/table';
-import { take } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { IAlbumCreateDTO } from 'src/app/core/interfaces/albums/album-create-dto';
 import { IAlbumType } from 'src/app/core/interfaces/album-types/album-type';
@@ -79,7 +79,6 @@ export class AlbumsManagementComponent {
     { name: 'Expandable', formControlName: 'isExpandable' },
     { name: 'Checkbox', formControlName: 'withCheckbox' },
     { name: 'Fixed Header', formControlName: 'hasFixedHeader' },
-    { name: 'No Result', formControlName: 'noResult' },
     { name: 'Ellipsis', formControlName: 'withEllipsis' },
     { name: 'Simple Pagination', formControlName: 'isSimple' },
   ];
@@ -287,10 +286,6 @@ export class AlbumsManagementComponent {
     return this.albumsManagementTableSettingsForm.get('hasFixedHeader')!;
   }
 
-  get noResult(): AbstractControl {
-    return this.albumsManagementTableSettingsForm.get('noResult')!;
-  }
-
   get withEllipsis(): AbstractControl {
     return this.albumsManagementTableSettingsForm.get('withEllipsis')!;
   }
@@ -383,7 +378,8 @@ export class AlbumsManagementComponent {
 
     this.listOfTrackControls.forEach((control, i) => {
       if (i === 0) {
-        const controlToErase = this.tracksActionFormGroup.controls[control.controlInstance];
+        const controlToErase = this.tracksActionFormGroup
+          .controls[control.controlInstance];
         controlToErase.setValue(null);
       } else {
         const index = this.listOfTrackControls.indexOf(control);
@@ -396,7 +392,6 @@ export class AlbumsManagementComponent {
   }
 
   handleOkAlbumCreationModal(): void {
-    this.isAlbumCreationModalVisible = false;
     this.onAlbumsCreationFormSubmit();
   }
 
@@ -479,8 +474,6 @@ export class AlbumsManagementComponent {
 
   handleOkAlbumEditModal(albumTableDatum: IAlbumTableData): void {
     albumTableDatum.isEditingModalVisible = false;
-    console.log('existing tracks');
-    console.log(albumTableDatum.album.tracks);
     this.onAlbumsEditFormSubmit(
       albumTableDatum.album.id,
       albumTableDatum.album.tracks
@@ -563,7 +556,10 @@ export class AlbumsManagementComponent {
             let newAlbum = response;
             this.nzNotificationService.success(
               `Successful Operation`,
-              `The album ${newAlbum.name} is created successfully!`
+              `The album ${newAlbum.name} is created successfully!`,
+              {
+                nzPauseOnHover: true
+              }
             );
 
             Object.values(this.tracksActionFormGroup.controls).forEach(
@@ -579,12 +575,16 @@ export class AlbumsManagementComponent {
                     let newTrack = response;
                     this.nzNotificationService.success(
                       `Successful Operation`,
-                      `The track ${newTrack.name} is created successfully`
+                      `The track ${newTrack.name} is created successfully`,
+                      {
+                        nzPauseOnHover: true
+                      }
                     );
                   });
               }
             );
 
+            this.isAlbumCreationModalVisible = false;
             this.retrieveAlbumsData();
           },
           error: (error) => {
@@ -601,7 +601,9 @@ export class AlbumsManagementComponent {
     }
   }
 
-  onAlbumsEditFormSubmit(albumId: string, tracks: ITrack[]): void {
+  onAlbumsEditFormSubmit(albumId: string, tracks: ITrack[]): Observable<boolean> {
+    let isAlbumsEditFormSubmitSuccessful = true;
+
     const albumType = this.typesForAlbums.find(
       (albumType) => albumType.name === this.albumsEditForm.value.albumType
     )!;
@@ -627,6 +629,7 @@ export class AlbumsManagementComponent {
     const originalTracksNames = originalTracks.map(
       (orginalTrack) => orginalTrack.name
     );
+
     const tracksToCreateOnAlbumEdit: ITrackCreateDTO[] = [];
     const existingTracksIds: string[] = [];
     const tracksToRemoveOnAlbumEdit: ITrack[] = [];
@@ -636,8 +639,12 @@ export class AlbumsManagementComponent {
         if (!control.value) {
           this.nzNotificationService.error(
             `Error`,
-            `Please enter valid data for tracks`
+            `Please enter valid data for tracks`,
+            {
+              nzPauseOnHover: true
+            }
           );
+          isAlbumsEditFormSubmitSuccessful = false;
           return;
         }
 
@@ -661,9 +668,6 @@ export class AlbumsManagementComponent {
       }
     }
 
-    console.log('tracks to create');
-    console.log(tracksToCreateOnAlbumEdit);
-
     if (this.albumsEditForm.valid) {
       this.albumsService
         .updateAlbum(albumToEdit)
@@ -672,7 +676,10 @@ export class AlbumsManagementComponent {
           let editedAlbum = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The album ${editedAlbum.name} is edited successfully`
+            `The album ${editedAlbum.name} is edited successfully`,
+            {
+              nzPauseOnHover: true
+            }
           );
 
           if (tracksToCreateOnAlbumEdit.length !== 0) {
@@ -683,7 +690,10 @@ export class AlbumsManagementComponent {
                   let newTrack = response;
                   this.nzNotificationService.success(
                     `Successful Operation`,
-                    `The track ${newTrack.name} is created successfully!`
+                    `The track ${newTrack.name} is created successfully!`,
+                    {
+                      nzPauseOnHover: true
+                    }
                   );
                 });
             }
@@ -694,7 +704,10 @@ export class AlbumsManagementComponent {
               this.tracksService.deleteTrack(trackToRemove.id).subscribe(() => {
                 this.nzNotificationService.success(
                   'Successful Operation',
-                  `The track ${trackToRemove.name} has been removed!`
+                  `The track ${trackToRemove.name} has been removed!`,
+                  {
+                    nzPauseOnHover: true
+                  }
                 );
               });
             }
@@ -703,6 +716,7 @@ export class AlbumsManagementComponent {
           this.retrieveAlbumsData();
         });
     } else {
+      isAlbumsEditFormSubmitSuccessful = false;
       Object.values(this.albumsEditForm.controls).forEach((control) => {
         if (control.invalid) {
           control.markAsDirty();
@@ -710,6 +724,8 @@ export class AlbumsManagementComponent {
         }
       });
     }
+
+    return of(isAlbumsEditFormSubmitSuccessful);
   }
 
   onLoadAlbumsDataClick(): void {
@@ -732,7 +748,10 @@ export class AlbumsManagementComponent {
     this.albumsService.deleteAlbum(albumToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
         'Successful Operation',
-        `The album ${albumToRemove.name} has been removed!`
+        `The album ${albumToRemove.name} has been removed!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       this.retrieveAlbumsData();
     });
@@ -889,7 +908,6 @@ export class AlbumsManagementComponent {
         isExpandable: new FormControl(true, { nonNullable: true }),
         withCheckbox: new FormControl(true, { nonNullable: true }),
         hasFixedHeader: new FormControl(false, { nonNullable: true }),
-        noResult: new FormControl(false, { nonNullable: true }),
         withEllipsis: new FormControl(false, { nonNullable: true }),
         isSimple: new FormControl(false, { nonNullable: true }),
         tableSize: new FormControl('small', { nonNullable: true }),
@@ -989,7 +1007,6 @@ export interface IAlbumsManagementTableSetting {
   isExpandable: boolean;
   withCheckbox: boolean;
   hasFixedHeader: boolean;
-  noResult: boolean;
   withEllipsis: boolean;
   isSimple: boolean;
   tableSize: NzTableSize;
@@ -1009,7 +1026,6 @@ export interface IAlbumsManagementTableSettingsForm {
   isExpandable: FormControl<boolean>;
   withCheckbox: FormControl<boolean>;
   hasFixedHeader: FormControl<boolean>;
-  noResult: FormControl<boolean>;
   withEllipsis: FormControl<boolean>;
   isSimple: FormControl<boolean>;
   tableSize: FormControl<string>;

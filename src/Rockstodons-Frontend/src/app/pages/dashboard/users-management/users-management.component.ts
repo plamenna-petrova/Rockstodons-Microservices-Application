@@ -80,7 +80,10 @@ export class UsersManagementComponent {
     this.usersService.deleteUserPermanently(userToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
         'Successful Operation',
-        `The user ${userToRemove.userName} has been removed!`
+        `The user ${userToRemove.userName} has been removed!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       this.retrieveUsersData();
     });
@@ -89,7 +92,10 @@ export class UsersManagementComponent {
   handleCancelUserRemovalModal(): void {
     this.nzNotificationService.info(
       `Aborted operation`,
-      `User removal cancelled`
+      `User removal cancelled`,
+      {
+        nzPauseOnHover: true
+      }
     );
   }
 

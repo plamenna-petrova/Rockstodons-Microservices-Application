@@ -78,7 +78,10 @@ export class RecycleBinComponent {
         this.genresService.deleteGenrePermanently(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The genre ${item.name} has been deleted permanently!`
+            `The genre ${item.name} has been deleted permanently!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveRecycledData();
         });
@@ -89,7 +92,10 @@ export class RecycleBinComponent {
           .subscribe(() => {
             this.nzNotificationService.success(
               'Successful Operation',
-              `The album type ${item.name} has been deleted permanently!`
+              `The album type ${item.name} has been deleted permanently!`,
+              {
+                nzPauseOnHover: true
+              }
             );
             this.retrieveRecycledData();
           });
@@ -100,7 +106,10 @@ export class RecycleBinComponent {
           .subscribe(() => {
             this.nzNotificationService.success(
               'Successful Operation',
-              `The performer ${item.name} has been deleted permanently!`
+              `The performer ${item.name} has been deleted permanently!`,
+              {
+                nzPauseOnHover: true
+              }
             );
             this.retrieveRecycledData();
           });
@@ -109,7 +118,10 @@ export class RecycleBinComponent {
         this.albumsService.deleteAlbumPermanently(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The album ${item.name} has been deleted permanently!`
+            `The album ${item.name} has been deleted permanently!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveRecycledData();
         });
@@ -118,7 +130,10 @@ export class RecycleBinComponent {
         this.tracksService.deleteTrackPermanently(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The track ${item.name} has been deleted permanently!`
+            `The track ${item.name} has been deleted permanently!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveRecycledData();
         });
@@ -132,7 +147,10 @@ export class RecycleBinComponent {
         this.genresService.restoreGenre(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The genre ${item.name} has been restored!`
+            `The genre ${item.name} has been restored!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveRecycledData();
         });
@@ -141,7 +159,10 @@ export class RecycleBinComponent {
         this.albumTypesService.restoreAlbumType(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The album type ${item.name} has been restored!`
+            `The album type ${item.name} has been restored!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveRecycledData();
         });
@@ -150,7 +171,10 @@ export class RecycleBinComponent {
         this.performersService.restorePerformer(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The performer ${item.name} has been restored!`
+            `The performer ${item.name} has been restored!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveRecycledData();
         });
@@ -159,7 +183,10 @@ export class RecycleBinComponent {
         this.albumsService.restoreAlbum(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The album ${item.name} has been restored!`
+            `The album ${item.name} has been restored!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveRecycledData();
         });
@@ -168,7 +195,10 @@ export class RecycleBinComponent {
         this.tracksService.restoreTrack(item.id).subscribe(() => {
           this.nzNotificationService.success(
             'Successful Operation',
-            `The track ${item.name} has been restored!`
+            `The track ${item.name} has been restored!`,
+            {
+              nzPauseOnHover: true
+            }
           )
         });
         break;

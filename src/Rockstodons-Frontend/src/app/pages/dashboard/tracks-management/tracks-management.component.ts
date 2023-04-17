@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { take } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { ITrack } from 'src/app/core/interfaces/tracks/track';
 import { ITrackCreateDTO } from 'src/app/core/interfaces/tracks/track-create-dto';
@@ -104,7 +104,6 @@ export class TracksManagementComponent {
   }
 
   handleOkTrackCreationModal(): void {
-    this.isTrackCreationModalVisible = false;
     this.onTracksCreationFormSubmit();
   }
 
@@ -121,15 +120,73 @@ export class TracksManagementComponent {
   }
 
   handleOkTrackEditModal(trackTableDatum: ITrackTableData): void {
-    trackTableDatum.isEditingModalVisible = false;
-    this.onTracksEditFormSubmit(trackTableDatum.track.id);
+    this.onTracksEditFormSubmit(trackTableDatum.track.id).subscribe((success) => {
+      if (success) {
+        trackTableDatum.isEditingModalVisible = false;
+      }
+    });
   }
 
   handleCancelTrackEditModal(trackTableDatum: ITrackTableData): void {
     trackTableDatum.isEditingModalVisible = false;
   }
 
-  onTracksEditFormSubmit(trackId: string): void {
+  onTracksCreationFormSubmit(): void {
+    const trackName: string = this.tracksCreationForm.value.name;
+    const album = this.albumsForTracks.find(
+      (album) => album.name === this.tracksCreationForm.value.album
+    )!;
+
+    const isTrackExisting = album.tracks.some(
+      (track) => track.name === trackName
+    );
+
+    if (isTrackExisting) {
+      this.nzNotificationService.error(
+        `Error`,
+        `The track ${trackName} already exists under the album ${album.name}!`,
+        {
+          nzPauseOnHover: true
+        }
+      );
+      return;
+    }
+
+    const trackToCreate: ITrackCreateDTO = {
+      name: trackName,
+      albumId: album.id,
+    };
+
+    if (this.tracksCreationForm.valid) {
+      this.tracksService
+        .createNewTrack(trackToCreate)
+        .pipe(take(1))
+        .subscribe((response) => {
+          let newTrack = response;
+          this.nzNotificationService.success(
+            `Successful Operation`,
+            `The track ${newTrack.name} is created successfully!`,
+            {
+              nzPauseOnHover: true
+            }
+          );
+
+          this.isTrackCreationModalVisible = false;
+          this.retrieveTracksData();
+        });
+    } else {
+      Object.values(this.tracksCreationForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
+  onTracksEditFormSubmit(trackId: string): Observable<boolean> {
+    let isTracksEditFormSubmitSuccessful: boolean = true;
+
     const album = this.albumsForTracks.find(
       (album) => album.name === this.tracksEditForm.value.album
     )!;
@@ -151,11 +208,16 @@ export class TracksManagementComponent {
           let editedTrack = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The track ${editedTrack.name} is edited successfully!`
+            `The track ${editedTrack.name} is edited successfully!`,
+            {
+              nzPauseOnHover: true
+            }
           );
+
           this.retrieveTracksData();
         });
     } else {
+      isTracksEditFormSubmitSuccessful = false;
       Object.values(this.tracksEditForm.controls).forEach((control) => {
         if (control.invalid) {
           control.markAsDirty();
@@ -163,51 +225,8 @@ export class TracksManagementComponent {
         }
       });
     }
-  }
 
-  onTracksCreationFormSubmit(): void {
-    const trackName: string = this.tracksCreationForm.value.name;
-    const album = this.albumsForTracks.find(
-      (album) => album.name === this.tracksCreationForm.value.album
-    )!;
-
-    const isTrackExisting = album.tracks.some(
-      (track) => track.name === trackName
-    );
-
-    if (isTrackExisting) {
-      this.nzNotificationService.error(
-        `Error`,
-        `The track ${trackName} already exists under the album ${album.name}!`
-      );
-      return;
-    }
-
-    const trackToCreate: ITrackCreateDTO = {
-      name: trackName,
-      albumId: album.id,
-    };
-
-    if (this.tracksCreationForm.valid) {
-      this.tracksService
-        .createNewTrack(trackToCreate)
-        .pipe(take(1))
-        .subscribe((response) => {
-          let newTrack = response;
-          this.nzNotificationService.success(
-            `Successful Operation`,
-            `The track ${newTrack.name} is created successfully!`
-          );
-          this.retrieveTracksData();
-        });
-    } else {
-      Object.values(this.tracksCreationForm.controls).forEach((control) => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
-        }
-      });
-    }
+    return of(isTracksEditFormSubmitSuccessful);
   }
 
   showTrackRemovalModal(trackToRemove: ITrack): void {
@@ -226,7 +245,10 @@ export class TracksManagementComponent {
     this.tracksService.deleteTrack(trackToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
         'Successful Operation',
-        `The track ${trackToRemove.name} has been removed!`
+        `The track ${trackToRemove.name} has been removed!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       this.retrieveTracksData();
     });
@@ -252,6 +274,7 @@ export class TracksManagementComponent {
 
   private retrieveTracksData(): void {
     this.isLoading = true;
+
     this.albumsService.getAllAlbums().subscribe((data) => {
       this.albumsForTracks = data;
       this.albumsNamesForAutocomplete = this.albumsForTracks
@@ -262,6 +285,7 @@ export class TracksManagementComponent {
       console.log('albums for tracks');
       console.log(this.albumsForTracks);
     });
+
     this.tracksService.getTracksWithFullDetails().subscribe((data) => {
       this.tracksData = [];
       console.log('data');

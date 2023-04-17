@@ -1,11 +1,5 @@
-﻿using Catalog.API.Data.Data.Common.Repositories;
-using Catalog.API.Data.Data.Models;
-using Catalog.API.DTOs.Identity;
+﻿using Catalog.API.DTOs.Identity;
 using Catalog.API.Services.Data.Interfaces;
-using Catalog.API.Utils;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;

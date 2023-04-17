@@ -20,6 +20,8 @@ namespace Catalog.API.Data.Models
 
         public int? YearOfRelease { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public string AlbumTypeId { get; set; }
 
         [JsonIgnore]

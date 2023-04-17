@@ -135,6 +135,7 @@ internal class Program
         services.AddSingleton<IIdentityService, IdentityService>();
         services.AddTransient<IUsersService, UsersService>();
         services.AddTransient<IEmailSender, SendGridEmailSender>();
+        services.AddTransient<IFileStorageService, FileStorageService>();
 
         services.AddHostedService<JWTRefreshTokenCache>();
 

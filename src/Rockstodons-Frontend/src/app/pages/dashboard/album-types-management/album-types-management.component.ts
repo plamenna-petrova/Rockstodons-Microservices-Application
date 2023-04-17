@@ -10,7 +10,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { IAlbumType } from 'src/app/core/interfaces/album-types/album-type';
 import { AlbumTypesService } from 'src/app/core/services/album-types.service';
 import { IAlbumTypeCreateDTO } from 'src/app/core/interfaces/album-types/album-type-create-dto';
-import { take } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { IAlbumTypeUpdateDTO } from 'src/app/core/interfaces/album-types/album-type-update-dto';
 
 @Component({
@@ -89,7 +89,6 @@ export class AlbumTypesManagementComponent {
   }
 
   handleOkAlbumTypeCreationModal(): void {
-    this.isAlbumTypeCreationModalVisible = false;
     this.onAlbumTypesCreationFormSubmit();
   }
 
@@ -105,8 +104,12 @@ export class AlbumTypesManagementComponent {
   }
 
   handleOkAlbumTypeEditModal(albumTypeTableDatum: IAlbumTypeTableData): void {
-    albumTypeTableDatum.isEditingModalVisible = false;
-    this.onAlbumTypesEditFormSubmit(albumTypeTableDatum.albumType.id);
+    this.onAlbumTypesEditFormSubmit(albumTypeTableDatum.albumType.id)
+      .subscribe((success) => {
+      if (success) {
+        albumTypeTableDatum.isEditingModalVisible = false;
+      }
+    });
   }
 
   handleCancelAlbumTypeEditModal(
@@ -130,7 +133,10 @@ export class AlbumTypesManagementComponent {
     if (isAlbumTypeExisting) {
       this.nzNotificationService.error(
         `Error`,
-        `The album type ${albumTypeName} already exists!`
+        `The album type ${albumTypeName} already exists!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       return;
     }
@@ -143,8 +149,13 @@ export class AlbumTypesManagementComponent {
           let newAlbumType = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The album type ${newAlbumType.name} is created successfully!`
+            `The album type ${newAlbumType.name} is created successfully!`,
+            {
+              nzPauseOnHover: true
+            }
           );
+
+          this.isAlbumTypeCreationModalVisible = false;
           this.retrieveAlbumTypesData();
         });
     } else {
@@ -157,7 +168,9 @@ export class AlbumTypesManagementComponent {
     }
   }
 
-  onAlbumTypesEditFormSubmit(albumTypeId: string): void {
+  onAlbumTypesEditFormSubmit(albumTypeId: string): Observable<boolean> {
+    let isAlbumTypesEditFormSubmitSuccessful: boolean = true;
+
     const albumTypeToEdit: IAlbumTypeUpdateDTO = {
       id: albumTypeId,
       name: this.albumTypesEditForm.value.albumTypeName,
@@ -171,11 +184,15 @@ export class AlbumTypesManagementComponent {
           let editedAlbumType = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The album type ${editedAlbumType.name} is edited successfully!`
+            `The album type ${editedAlbumType.name} is edited successfully!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrieveAlbumTypesData();
         });
     } else {
+      isAlbumTypesEditFormSubmitSuccessful = false;
       Object.values(this.albumTypesEditForm.controls).forEach((control) => {
         if (control.invalid) {
           control.markAsDirty();
@@ -183,6 +200,8 @@ export class AlbumTypesManagementComponent {
         }
       });
     }
+
+    return of(isAlbumTypesEditFormSubmitSuccessful);
   }
 
   showAlbumTypeRemovalModal(albumTypeToRemove: IAlbumType): void {
@@ -203,7 +222,10 @@ export class AlbumTypesManagementComponent {
       .subscribe(() => {
         this.nzNotificationService.success(
           'Successful Operation',
-          `The album type ${albumTypeToRemove.name} has been removed!`
+          `The album type ${albumTypeToRemove.name} has been removed!`,
+          {
+            nzPauseOnHover: true
+          }
         );
         this.retrieveAlbumTypesData();
       });

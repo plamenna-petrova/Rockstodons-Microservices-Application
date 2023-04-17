@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { take } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { IPerformer } from 'src/app/core/interfaces/performers/performer';
 import { IPerformerCreateDTO } from 'src/app/core/interfaces/performers/performer-create-dto';
 import { IPerformerUpdateDTO } from 'src/app/core/interfaces/performers/performer-update-dto';
@@ -414,7 +414,6 @@ export class PerformersManagementComponent {
   }
 
   handleOkPerformerCreationModal(): void {
-    this.isPerformersCreationModalVisible = false;
     this.onPerformersCreationFormSubmit();
   }
 
@@ -432,13 +431,14 @@ export class PerformersManagementComponent {
   }
 
   handleOkPerformerEditModal(performerTableDatum: IPerformerTableData): void {
-    performerTableDatum.isEditingModalVisible = false;
-    this.onPerformersEditFormSubmit(performerTableDatum.performer.id);
+    this.onPerformersEditFormSubmit(performerTableDatum.performer.id).subscribe((success) => {
+      if (success) {
+        performerTableDatum.isEditingModalVisible = false;
+      }
+    });
   }
 
-  handleCancelPerformerEditModal(
-    performerTableDatum: IPerformerTableData
-  ): void {
+  handleCancelPerformerEditModal(performerTableDatum: IPerformerTableData): void {
     performerTableDatum.isEditingModalVisible = false;
   }
 
@@ -457,7 +457,10 @@ export class PerformersManagementComponent {
     if (isPerformerExisting) {
       this.nzNotificationService.error(
         `Error`,
-        `The performer ${name} already exists!`
+        `The performer ${name} already exists!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       return;
     }
@@ -470,8 +473,13 @@ export class PerformersManagementComponent {
           let newPerformer = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The performer ${newPerformer.name} is created successfully!`
+            `The performer ${newPerformer.name} is created successfully!`,
+            {
+              nzPauseOnHover: true
+            }
           );
+
+          this.isPerformersCreationModalVisible = false;
           this.retrievePerformersData();
         });
     } else {
@@ -484,7 +492,9 @@ export class PerformersManagementComponent {
     }
   }
 
-  onPerformersEditFormSubmit(performerId: string): void {
+  onPerformersEditFormSubmit(performerId: string): Observable<boolean> {
+    let isPerformersEditFormSubmitSuccessful: boolean = true;
+
     const performerToEdit: IPerformerUpdateDTO = {
       id: performerId,
       ...this.performersEditForm.value,
@@ -498,11 +508,15 @@ export class PerformersManagementComponent {
           let editedPerformer = response;
           this.nzNotificationService.success(
             `Successful Operation`,
-            `The performer ${editedPerformer.name} is edited successfully!`
+            `The performer ${editedPerformer.name} is edited successfully!`,
+            {
+              nzPauseOnHover: true
+            }
           );
           this.retrievePerformersData();
         });
     } else {
+      isPerformersEditFormSubmitSuccessful = false;
       Object.values(this.performersEditForm.controls).forEach((control) => {
         if (control.invalid) {
           control.markAsDirty();
@@ -510,6 +524,8 @@ export class PerformersManagementComponent {
         }
       });
     }
+
+    return of(isPerformersEditFormSubmitSuccessful);
   }
 
   showPerformerRemovalModal(performerToRemove: IPerformer): void {
@@ -528,7 +544,10 @@ export class PerformersManagementComponent {
     this.performersService.deletePerformer(performerToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
         'Successful Operation',
-        `The performer ${performerToRemove.name} has been removed!`
+        `The performer ${performerToRemove.name} has been removed!`,
+        {
+          nzPauseOnHover: true
+        }
       );
       this.retrievePerformersData();
     });
