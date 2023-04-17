@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { Observable } from 'rxjs';
 import { IRole } from 'src/app/core/interfaces/roles/roles';
 import { IApplicationUser } from 'src/app/core/interfaces/users/application-user';
 import { IApplicationUserDetails } from 'src/app/core/interfaces/users/application-user-details';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { RolesService } from 'src/app/core/services/roles.service';
 import { UsersService } from 'src/app/core/services/users.service';
 
@@ -18,11 +22,22 @@ export class UsersManagementComponent {
   usersData!: IUserTableData[];
   usersDisplayData!: IUserTableData[];
 
+  applicationUser$: Observable<IApplicationUser | null>;
+  username?: string;
+  role?: string;
+
   constructor(
     private usersService: UsersService,
-    private rolesService: RolesService
+    private rolesService: RolesService,
+    private authService: AuthService,
+    private nzNotificationService: NzNotificationService,
+    private nzModalService: NzModalService
   ) {
-
+    this.applicationUser$ = this.authService.currentUser$;
+    this.applicationUser$.subscribe(user => {
+      this.username = user?.username;
+      this.role = user?.role;
+    });
   }
 
   onLoadUsersDataClick(): void {
@@ -44,6 +59,40 @@ export class UsersManagementComponent {
       );
   }
 
+  isCurrentUser(user: IApplicationUserDetails): boolean {
+    return user.userName === this.username &&
+      user.roles.map(role => role.name).includes(this.role!);
+  }
+
+  showUserRemovalModal(userToRemove: IApplicationUserDetails): void {
+    this.nzModalService.confirm({
+      nzTitle: `Do you really wish to remove ${userToRemove.userName}?`,
+      nzOkText: 'Yes',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzOnOk: () => this.handleOkUserRemovalModal(userToRemove),
+      nzCancelText: 'No',
+      nzOnCancel: () => this.handleCancelUserRemovalModal()
+    })
+  }
+
+  handleOkUserRemovalModal(userToRemove: IApplicationUserDetails): void {
+    this.usersService.deleteUserPermanently(userToRemove.id).subscribe(() => {
+      this.nzNotificationService.success(
+        'Successful Operation',
+        `The user ${userToRemove.userName} has been removed!`
+      );
+      this.retrieveUsersData();
+    });
+  }
+
+  handleCancelUserRemovalModal(): void {
+    this.nzNotificationService.info(
+      `Aborted operation`,
+      `User removal cancelled`
+    );
+  }
+
   ngOnInit(): void {
     this.retrieveUsersData();
   }
@@ -58,10 +107,9 @@ export class UsersManagementComponent {
     this.usersService.getAllUsers().subscribe((data) => {
       this.usersData = [];
       const mappedRoles = this.rolesData.map(({ id, name }) => ({ id, name }));
-      console.log('mapped role');
-      console.log(mappedRoles);
+
       data.map((user: any) => {
-        const { userName, email, roles } = user;
+        const { id, userName, email, roles } = user;
         const userRoles: IRole[] = [];
         const userAssignedRolesIds = roles.map((role: any) => role.roleId);
 
@@ -72,6 +120,7 @@ export class UsersManagementComponent {
         }
 
         const mappedUser: IApplicationUserDetails = {
+          id: id,
           userName: userName,
           email: email,
           roles: userRoles

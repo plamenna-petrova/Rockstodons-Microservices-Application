@@ -367,7 +367,7 @@
             <span>{{ data.album.name }}'s Details</span>
           </ng-template>
           <ng-template #albumDetailsTemplateContent>
-            <p>Created On: {{ data.album.createdOn }}</p>
+            <p>Created On: {{ data.album.createdOn | date: 'dd.MM.yyyy hh:mm' }}</p>
             <nz-list nzBordered nzSize="small">
               <nz-list-header>Tracks</nz-list-header>
               <ng-container *ngIf="data.album.tracks.length !== 0; else noTracks">
@@ -377,6 +377,7 @@
                 <nz-list-item>There are currently no tracks under this album</nz-list-item>
               </ng-template>
             </nz-list>
+            <nz-divider></nz-divider>
             <nz-list nzBordered nzSize="small">
                <nz-list-header>Performer</nz-list-header>
                <ng-container *ngIf="data.album.performer; else noPerformer">

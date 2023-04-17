@@ -13,6 +13,7 @@
             </th>
             <th>Email</th>
             <th>Role</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,11 @@
                 <div *ngFor="let role of data.applicationUser.roles">
                     <span>{{ role.name }}</span>
                 </div>
+            </td>
+            <td>
+                <button nz-button (click)="showUserRemovalModal(data.applicationUser)" [disabled]="isCurrentUser(data.applicationUser)" nzDanger>
+              Delete
+            </button>
             </td>
         </tr>
     </tbody>
