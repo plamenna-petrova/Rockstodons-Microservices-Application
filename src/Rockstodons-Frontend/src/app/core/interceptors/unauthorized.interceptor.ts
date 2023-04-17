@@ -38,10 +38,10 @@ export class UnauthorizedInterceptor implements HttpInterceptor {
               }
             )
           }
+          this.router.navigate(['login']);
           this.authService.ngOnDestroy();
           this.authService.clearLocalStorage();
           console.clear();
-          this.router.navigate(['login']);
         }
 
         const error = (err && err.error && err.error.message) || err.statusText;
