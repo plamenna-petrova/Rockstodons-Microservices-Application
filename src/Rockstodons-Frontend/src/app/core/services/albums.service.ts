@@ -5,7 +5,6 @@ import { IAlbum } from '../interfaces/albums/album';
 import { environment } from 'src/environments/environment';
 import { IAlbumCreateDTO } from '../interfaces/albums/album-create-dto';
 import { IAlbumUpdateDTO } from '../interfaces/albums/album-update-dto';
-import { IAlbumDetails } from '../interfaces/albums/album-details';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +20,8 @@ export class AlbumsService {
     return this.httpClient.get<IAlbum[]>(this.albumsAPIUrl);
   }
 
-  getAlbumsWithFullDetails(): Observable<IAlbumDetails[]> {
-    return this.httpClient.get<IAlbumDetails[]>(`${this.albumsAPIUrl}/all`);
+  getAlbumsWithFullDetails(): Observable<IAlbum[]> {
+    return this.httpClient.get<IAlbum[]>(`${this.albumsAPIUrl}/all`);
   }
 
   getAlbumById(albumId: string): Observable<IAlbum> {

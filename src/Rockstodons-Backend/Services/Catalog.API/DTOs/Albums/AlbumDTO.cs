@@ -18,13 +18,15 @@ namespace Catalog.API.DTOs.Albums
 
         public int YearOfRelease { get; set; }
 
+        public int NumberOfTracks { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
         public AlbumTypeDTO AlbumType { get; set; }
 
         public GenreDTO Genre { get; set; }
 
         public PerformerDTO Performer { get; set; }
-
-        public DateTime CreatedOn { get; set; }
 
         public List<TrackDTO> Tracks { get; set; }
     }

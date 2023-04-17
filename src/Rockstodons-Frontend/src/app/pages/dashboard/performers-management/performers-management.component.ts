@@ -410,6 +410,7 @@ export class PerformersManagementComponent {
 
   showPerformerCreationModal(): void {
     this.isPerformersCreationModalVisible = true;
+    this.performersCreationForm.reset();
   }
 
   handleOkPerformerCreationModal(): void {

@@ -85,6 +85,7 @@ export class GenresManagementComponent {
 
   showGenreCreationModal(): void {
     this.isGenreCreationModalVisible = true;
+    this.genresCreationForm.reset();
   }
 
   handleOkGenreCreationModal(): void {

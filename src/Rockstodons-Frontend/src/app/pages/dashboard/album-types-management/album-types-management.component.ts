@@ -85,6 +85,7 @@ export class AlbumTypesManagementComponent {
 
   showAlbumTypeCreationModal(): void {
     this.isAlbumTypeCreationModalVisible = true;
+    this.albumTypesCreationForm.reset();
   }
 
   handleOkAlbumTypeCreationModal(): void {

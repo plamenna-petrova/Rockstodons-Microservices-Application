@@ -9,7 +9,6 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { take } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
-import { IAlbumDetails } from 'src/app/core/interfaces/albums/album-details';
 import { ITrack } from 'src/app/core/interfaces/tracks/track';
 import { ITrackCreateDTO } from 'src/app/core/interfaces/tracks/track-create-dto';
 import { ITrackUpdateDTO } from 'src/app/core/interfaces/tracks/track-update-dto';
@@ -101,6 +100,7 @@ export class TracksManagementComponent {
 
   showTrackCreationModal(): void {
     this.isTrackCreationModalVisible = true;
+    this.tracksCreationForm.reset();
   }
 
   handleOkTrackCreationModal(): void {

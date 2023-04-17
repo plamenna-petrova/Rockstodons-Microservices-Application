@@ -13,9 +13,9 @@ namespace Catalog.API.DTOs.Albums
 
         public string? Description { get; set; }
 
-        public decimal? Price { get; set; }
-
         public int? YearOfRelease { get; set; }
+
+        public int? NumberOfTracks { get; set; }
 
         [Required]
         public string AlbumTypeId { get; set; }

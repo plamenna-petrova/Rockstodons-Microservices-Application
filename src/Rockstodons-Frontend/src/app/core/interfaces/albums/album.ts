@@ -8,9 +8,11 @@ export interface IAlbum {
   name: string;
   description: string;
   yearOfRelease: number;
+  numberOfTracks: number;
   albumType: IAlbumType;
   genre: IGenre;
   performer: IPerformer;
   isDeleted: boolean;
+  createdOn: Date;
   tracks: ITrack[];
 }

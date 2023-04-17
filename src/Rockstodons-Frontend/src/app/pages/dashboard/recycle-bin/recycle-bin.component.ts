@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { IAlbumDetails } from 'src/app/core/interfaces/albums/album-details';
 import { IAlbumType } from 'src/app/core/interfaces/album-types/album-type';
 import { IGenre } from 'src/app/core/interfaces/genres/genre';
 import { IPerformer } from 'src/app/core/interfaces/performers/performer';
@@ -10,6 +9,7 @@ import { GenresService } from 'src/app/core/services/genres.service';
 import { PerformersService } from 'src/app/core/services/performers.service';
 import { TracksService } from 'src/app/core/services/tracks.service';
 import { ITrack } from 'src/app/core/interfaces/tracks/track';
+import { IAlbum } from 'src/app/core/interfaces/albums/album';
 
 @Component({
   selector: 'app-recycle-bin',
@@ -20,7 +20,7 @@ export class RecycleBinComponent {
   recycledGenres!: IGenre[];
   recycledAlbumTypes!: IAlbumType[];
   recycledPerformers!: IPerformer[];
-  recycledAlbums!: IAlbumDetails[];
+  recycledAlbums!: IAlbum[];
   recycledTracks!: ITrack[];
 
   recycleBinPanels = [

@@ -16,6 +16,8 @@ namespace Catalog.API.Data.Models
 
         public string Description { get; set; } = default!;
 
+        public int? NumberOfTracks { get; set;  }
+
         public int? YearOfRelease { get; set; }
 
         public string AlbumTypeId { get; set; }

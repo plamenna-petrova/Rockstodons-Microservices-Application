@@ -86,6 +86,16 @@
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
+        <nz-form-label [nzSpan]="8">Number Of Tracks</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+          <nz-input-number
+            formControlName="numberOfTracks"
+            [nzMin]="1"
+            [nzMax]="20"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
         <nz-form-label [nzSpan]="8">Description</nz-form-label>
         <nz-form-control
           nzHasFeedback
@@ -166,8 +176,15 @@
         </nz-form-control>
       </nz-form-item>
       <form nz-form [formGroup]="tracksActionFormGroup">
-        <nz-form-item *ngFor="let control of listOfTrackControls; let i = index">
-          <nz-form-label [nzXs]="24" [nzSm]="4" *ngIf="i === 0" [nzFor]="control.controlInstance">
+        <nz-form-item
+          *ngFor="let control of listOfTrackControls; let i = index"
+        >
+          <nz-form-label
+            [nzXs]="24"
+            [nzSm]="4"
+            *ngIf="i === 0"
+            [nzFor]="control.controlInstance"
+          >
             Tracks
           </nz-form-label>
           <nz-form-control
@@ -192,10 +209,18 @@
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
-            <button nz-button nzType="dashed" class="add-button" (click)="addTrackField($event)">
+          <nz-form-control
+            [nzXs]="{ span: 24, offset: 0 }"
+            [nzSm]="{ span: 20, offset: 4 }"
+          >
+            <button
+              nz-button
+              nzType="dashed"
+              class="add-button"
+              (click)="addTrackField($event)"
+            >
               <span nz-icon nzType="plus"></span>
-              Add field
+              Add track
             </button>
           </nz-form-control>
         </nz-form-item>
@@ -264,6 +289,7 @@
       ></th>
       <th [nzLeft]="fixedColumn">Name</th>
       <th>Year Of Release</th>
+      <th>Number Of Tracks</th>
       <td>Album Type</td>
       <td>Performer</td>
       <td>Genre</td>
@@ -294,6 +320,9 @@
           <ng-template #yearOfReleaseDefaultValue> - </ng-template>
         </td>
         <td>
+          {{ data.album.numberOfTracks }}
+        </td>
+        <td>
           <ng-container
             *ngIf="data.album.albumType; else albumTypeDefaultValue"
           >
@@ -321,6 +350,57 @@
         >
           <button
             nz-button
+            class="album-details-button"
+            nzType="primary"
+            (click)="
+              createAlbumDetailsTemplateModal(
+                albumDetailsTemplateTitle,
+                albumDetailsTemplateContent,
+                albumDetailsTemplateFooter
+              )
+            "
+            nzGhost
+          >
+            <span>Details</span>
+          </button>
+          <ng-template #albumDetailsTemplateTitle>
+            <span>{{ data.album.name }}'s Details</span>
+          </ng-template>
+          <ng-template #albumDetailsTemplateContent>
+            <p>Created On: {{ data.album.createdOn }}</p>
+            <nz-list nzBordered nzSize="small">
+              <nz-list-header>Tracks</nz-list-header>
+              <ng-container *ngIf="data.album.tracks.length !== 0; else noTracks">
+                <nz-list-item *ngFor="let track of data.album.tracks">{{ track.name }}</nz-list-item>
+              </ng-container>
+              <ng-template #noTracks>
+                <nz-list-item>There are currently no tracks under this album</nz-list-item>
+              </ng-template>
+            </nz-list>
+            <nz-list nzBordered nzSize="small">
+               <nz-list-header>Performer</nz-list-header>
+               <ng-container *ngIf="data.album.performer; else noPerformer">
+                <nz-list-item>Name: {{ data.album.performer.name }}</nz-list-item>
+                <nz-list-item>Country: {{ data.album.performer.country }}</nz-list-item>
+               </ng-container>
+               <ng-template #noPerformer>
+                 <nz-list-item>There is currently no performer for the album</nz-list-item>
+               </ng-template>
+            </nz-list>
+          </ng-template>
+          <ng-template #albumDetailsTemplateFooter let-ref="modalRef">
+            <button nz-button (click)="ref.destroy()">Destroy</button>
+            <button
+              nz-button
+              nzType="primary"
+              (click)="destroyAlbumDetailsTemplateModal(ref)"
+              [nzLoading]="isTemplateModalButtonLoading"
+            >
+              Close
+            </button>
+          </ng-template>
+          <button
+            nz-button
             class="edit-album-button"
             (click)="showAlbumEditModal(data)"
           >
@@ -336,14 +416,16 @@
               <form
                 nz-form
                 [formGroup]="albumsEditForm"
-                (ngSubmit)="onAlbumsEditFormSubmit(data.album.id, data.album.tracks)"
+                (ngSubmit)="
+                  onAlbumsEditFormSubmit(data.album.id, data.album.tracks)
+                "
               >
                 <nz-form-item>
                   <nz-form-label [nzSpan]="8">Name</nz-form-label>
                   <nz-form-control
                     nzHasFeedback
                     [nzSpan]="12"
-                    [nzErrorTip]="combineAlbumCreationNameValidationTemplate"
+                    [nzErrorTip]="combineAlbumEditNameValidationTemplate"
                   >
                     <input
                       nz-input
@@ -353,7 +435,7 @@
                       required
                     />
                     <ng-template
-                      #combineAlbumCreationNameValidationTemplate
+                      #combineAlbumEditNameValidationTemplate
                       let-control
                     >
                       <ng-container *ngIf="control.hasError('maxlength')"
@@ -381,13 +463,21 @@
                   </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
+                  <nz-form-label [nzSpan]="8">Number of Tracks</nz-form-label>
+                  <nz-form-control [nzSpan]="12">
+                    <nz-input-number
+                      formControlName="numberOfTracks"
+                      [nzMin]="1"
+                      [nzMax]="20"
+                    ></nz-input-number>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
                   <nz-form-label [nzSpan]="8">Description</nz-form-label>
                   <nz-form-control
                     nzHasFeedback
                     [nzSpan]="12"
-                    [nzErrorTip]="
-                      combineAlbumCreationDescriptionValidationTemplate
-                    "
+                    [nzErrorTip]="combineAlbumEditDescriptionValidationTemplate"
                   >
                     <nz-textarea-count [nzMaxCharacterCount]="500">
                       <textarea
@@ -397,7 +487,7 @@
                       ></textarea>
                     </nz-textarea-count>
                     <ng-template
-                      #combineAlbumCreationDescriptionValidationTemplate
+                      #combineAlbumEditDescriptionValidationTemplate
                       let-control
                     >
                       <ng-container *ngIf="control.hasError('maxlength')"
@@ -463,8 +553,18 @@
                   </nz-form-control>
                 </nz-form-item>
                 <form nz-form [formGroup]="tracksEditActionFormGroup">
-                  <nz-form-item *ngFor="let control of listOfTrackEditControls; let i = index">
-                    <nz-form-label [nzXs]="24" [nzSm]="4" *ngIf="i === 0" [nzFor]="control.controlInstance">
+                  <nz-form-item
+                    *ngFor="
+                      let control of listOfTrackEditControls;
+                      let i = index
+                    "
+                  >
+                    <nz-form-label
+                      [nzXs]="24"
+                      [nzSm]="4"
+                      *ngIf="i === 0"
+                      [nzFor]="control.controlInstance"
+                    >
                       Tracks
                     </nz-form-label>
                     <nz-form-control
@@ -489,10 +589,18 @@
                     </nz-form-control>
                   </nz-form-item>
                   <nz-form-item>
-                    <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
-                      <button nz-button nzType="dashed" class="add-button" (click)="addEditTrackField($event)">
+                    <nz-form-control
+                      [nzXs]="{ span: 24, offset: 0 }"
+                      [nzSm]="{ span: 20, offset: 4 }"
+                    >
+                      <button
+                        nz-button
+                        nzType="dashed"
+                        class="add-button"
+                        (click)="addEditTrackField($event)"
+                      >
                         <span nz-icon nzType="plus"></span>
-                        Add field
+                        Add track
                       </button>
                     </nz-form-control>
                   </nz-form-item>
