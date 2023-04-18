@@ -238,7 +238,19 @@
 >
   <nz-option nzLabel=".pdf" nzValue="pdf"></nz-option>
   <nz-option nzLabel=".csv" nzValue="csv"></nz-option>
+  <nz-option nzLabel=".txt" nzValue="txt"></nz-option>
+  <nz-option nzLabel=".tsv" nzValue="tsv"></nz-option>
   <nz-option nzLabel=".xlsx" nzValue="xlsx"></nz-option>
+  <nz-option nzLabel=".json" nzValue="json"></nz-option>
+  <nz-option nzLabel=".xml" nzValue="xml"></nz-option>
+  <nz-option nzLabel=".docx" nzValue="docx"></nz-option>
+  <nz-option nzLabel=".pptx" nzValue="pptx"></nz-option>
+  <nz-option nzLabel=".apng" nzValue="apng"></nz-option>
+  <nz-option nzLabel=".avif" nzValue="avif"></nz-option>
+  <nz-option nzLabel=".jpg" nzValue="jpg"></nz-option>
+  <nz-option nzLabel=".jpeg" nzValue="jpeg"></nz-option>
+  <nz-option nzLabel=".png" nzValue=".png"></nz-option>
+  <nz-option nzLabel=".gif" nzValue="gif"></nz-option>
 </nz-select>
 
 <button
@@ -249,6 +261,11 @@
 >
   Export Albums
 </button>
+
+<div id="download">
+  <img #canvas />
+  <a #downloadLink></a>
+</div>
 
 <nz-table
   #albumsManagementDynamicTable
@@ -367,26 +384,40 @@
             <span>{{ data.album.name }}'s Details</span>
           </ng-template>
           <ng-template #albumDetailsTemplateContent>
-            <p>Created On: {{ data.album.createdOn | date: 'dd.MM.yyyy hh:mm' }}</p>
+            <p>
+              Created On: {{ data.album.createdOn | date : "dd.MM.yyyy hh:mm" }}
+            </p>
             <nz-list nzBordered nzSize="small">
               <nz-list-header>Tracks</nz-list-header>
-              <ng-container *ngIf="data.album.tracks.length !== 0; else noTracks">
-                <nz-list-item *ngFor="let track of data.album.tracks">{{ track.name }}</nz-list-item>
+              <ng-container
+                *ngIf="data.album.tracks.length !== 0; else noTracks"
+              >
+                <nz-list-item *ngFor="let track of data.album.tracks">{{
+                  track.name
+                }}</nz-list-item>
               </ng-container>
               <ng-template #noTracks>
-                <nz-list-item>There are currently no tracks under this album</nz-list-item>
+                <nz-list-item
+                  >There are currently no tracks under this album</nz-list-item
+                >
               </ng-template>
             </nz-list>
             <nz-divider></nz-divider>
             <nz-list nzBordered nzSize="small">
-               <nz-list-header>Performer</nz-list-header>
-               <ng-container *ngIf="data.album.performer; else noPerformer">
-                <nz-list-item>Name: {{ data.album.performer.name }}</nz-list-item>
-                <nz-list-item>Country: {{ data.album.performer.country }}</nz-list-item>
-               </ng-container>
-               <ng-template #noPerformer>
-                 <nz-list-item>There is currently no performer for the album</nz-list-item>
-               </ng-template>
+              <nz-list-header>Performer</nz-list-header>
+              <ng-container *ngIf="data.album.performer; else noPerformer">
+                <nz-list-item
+                  >Name: {{ data.album.performer.name }}</nz-list-item
+                >
+                <nz-list-item
+                  >Country: {{ data.album.performer.country }}</nz-list-item
+                >
+              </ng-container>
+              <ng-template #noPerformer>
+                <nz-list-item
+                  >There is currently no performer for the album</nz-list-item
+                >
+              </ng-template>
             </nz-list>
           </ng-template>
           <ng-template #albumDetailsTemplateFooter let-ref="modalRef">

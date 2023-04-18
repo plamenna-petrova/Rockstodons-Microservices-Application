@@ -31,6 +31,7 @@ import { UnauthorizedInterceptor } from './core/interceptors/unauthorized.interc
 import { SharedModule } from './common/shared/shared.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FileSaverModule } from 'ngx-filesaver';
 
 registerLocaleData(en);
 
@@ -62,6 +63,7 @@ const icons: IconDefinition[] = [
     NzLayoutModule,
     NzMenuModule,
     NzBreadCrumbModule,
+    FileSaverModule,
     SharedModule
   ],
   providers: [

@@ -12,6 +12,7 @@ import { AlbumTypesService } from 'src/app/core/services/album-types.service';
 import { IAlbumTypeCreateDTO } from 'src/app/core/interfaces/album-types/album-type-create-dto';
 import { Observable, of, take } from 'rxjs';
 import { IAlbumTypeUpdateDTO } from 'src/app/core/interfaces/album-types/album-type-update-dto';
+import { operationSuccessMessage, recordRemovalConfirmationModalCancelText, recordRemovalConfirmationModalOkDanger, recordRemovalConfirmationModalOkText, recordRemovalConfirmationModalOkType, recordRemovalConfirmationModalTitle, removalOperationCancelMessage } from 'src/app/core/utils/global-constants';
 
 @Component({
   selector: 'app-album-types-management',
@@ -148,7 +149,7 @@ export class AlbumTypesManagementComponent {
         .subscribe((response) => {
           let newAlbumType = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The album type ${newAlbumType.name} is created successfully!`,
             {
               nzPauseOnHover: true
@@ -183,7 +184,7 @@ export class AlbumTypesManagementComponent {
         .subscribe((response) => {
           let editedAlbumType = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The album type ${editedAlbumType.name} is edited successfully!`,
             {
               nzPauseOnHover: true
@@ -206,12 +207,12 @@ export class AlbumTypesManagementComponent {
 
   showAlbumTypeRemovalModal(albumTypeToRemove: IAlbumType): void {
     this.nzModalService.confirm({
-      nzTitle: `Do you really wish to remove ${albumTypeToRemove.name}?`,
-      nzOkText: 'Yes',
-      nzOkType: 'primary',
-      nzOkDanger: true,
+      nzTitle: recordRemovalConfirmationModalTitle(albumTypeToRemove.name),
+      nzOkText: recordRemovalConfirmationModalOkText,
+      nzOkType: recordRemovalConfirmationModalOkType,
+      nzOkDanger: recordRemovalConfirmationModalOkDanger,
       nzOnOk: () => this.handleOkAlbumTypeRemovalModal(albumTypeToRemove),
-      nzCancelText: 'No',
+      nzCancelText: recordRemovalConfirmationModalCancelText,
       nzOnCancel: () => this.handleCancelAlbumTypeRemovalModal(),
     });
   }
@@ -221,7 +222,7 @@ export class AlbumTypesManagementComponent {
       .deleteAlbumType(albumTypeToRemove.id)
       .subscribe(() => {
         this.nzNotificationService.success(
-          'Successful Operation',
+          operationSuccessMessage,
           `The album type ${albumTypeToRemove.name} has been removed!`,
           {
             nzPauseOnHover: true
@@ -233,7 +234,7 @@ export class AlbumTypesManagementComponent {
 
   handleCancelAlbumTypeRemovalModal(): void {
     this.nzNotificationService.info(
-      `Aborted Operation`,
+      removalOperationCancelMessage,
       `Album Type removal cancelled`
     );
   }

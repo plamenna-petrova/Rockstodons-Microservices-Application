@@ -33,7 +33,7 @@ namespace Catalog.API.Services.Data.Implementation
                 _azureStorageConnectionString, _azureStorageContainerName
             );
 
-            List<BlobDTO> blobFiles = new List<BlobDTO>();
+            List<BlobDTO> blobFiles = new();
 
             await foreach (BlobItem blobItem in blobContainerClient.GetBlobsAsync())
             {
@@ -108,7 +108,7 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task<BlobDTO> DownloadAsync(string blobFileName)
         {
-            BlobContainerClient blobContainerClient = new BlobContainerClient(
+            BlobContainerClient blobContainerClient = new(
                 _azureStorageConnectionString, _azureStorageContainerName
             );
 

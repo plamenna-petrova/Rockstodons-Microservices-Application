@@ -12,6 +12,15 @@ import { IGenre } from 'src/app/core/interfaces/genres/genre';
 import { IGenreCreateDTO } from 'src/app/core/interfaces/genres/genre-create-dto';
 import { IGenreUpdateDTO } from 'src/app/core/interfaces/genres/genre-update-dto';
 import { GenresService } from 'src/app/core/services/genres.service';
+import {
+  operationSuccessMessage,
+  recordRemovalConfirmationModalCancelText,
+  recordRemovalConfirmationModalOkDanger,
+  recordRemovalConfirmationModalOkText,
+  recordRemovalConfirmationModalOkType,
+  recordRemovalConfirmationModalTitle,
+  removalOperationCancelMessage
+} from 'src/app/core/utils/global-constants';
 
 @Component({
   selector: 'app-genres-management',
@@ -144,7 +153,7 @@ export class GenresManagementComponent {
         .subscribe((response) => {
           let newGenre = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The genre ${newGenre.name} is created successfully!`,
             {
               nzPauseOnHover: true
@@ -179,7 +188,7 @@ export class GenresManagementComponent {
         .subscribe((response) => {
           let editedGenre = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The genre ${editedGenre.name} is edited successfully!`,
             {
               nzPauseOnHover: true
@@ -202,12 +211,12 @@ export class GenresManagementComponent {
 
   showGenreRemovalModal(genreToRemove: IGenre): void {
     this.nzModalService.confirm({
-      nzTitle: `Do you really wish to remove ${genreToRemove.name}?`,
-      nzOkText: 'Yes',
-      nzOkType: 'primary',
-      nzOkDanger: true,
+      nzTitle: recordRemovalConfirmationModalTitle(genreToRemove.name),
+      nzOkText: recordRemovalConfirmationModalOkText,
+      nzOkType: recordRemovalConfirmationModalOkType,
+      nzOkDanger: recordRemovalConfirmationModalOkDanger,
       nzOnOk: () => this.handleOkGenreRemovalModal(genreToRemove),
-      nzCancelText: 'No',
+      nzCancelText: recordRemovalConfirmationModalCancelText,
       nzOnCancel: () => this.handleCancelGenreRemovalModal()
     });
   }
@@ -215,7 +224,7 @@ export class GenresManagementComponent {
   handleOkGenreRemovalModal(genreToRemove: IGenre): void {
     this.genresService.deleteGenre(genreToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
-        'Successful Operation',
+        operationSuccessMessage,
         `The genre ${genreToRemove.name} has been removed!`,
         {
           nzPauseOnHover: true
@@ -227,7 +236,7 @@ export class GenresManagementComponent {
 
   handleCancelGenreRemovalModal(): void {
     this.nzNotificationService.info(
-      `Aborted operation`,
+      removalOperationCancelMessage,
       `Genre removal cancelled`
     );
   }

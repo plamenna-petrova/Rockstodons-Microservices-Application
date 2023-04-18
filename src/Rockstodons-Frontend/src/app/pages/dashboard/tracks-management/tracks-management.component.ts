@@ -14,6 +14,7 @@ import { ITrackCreateDTO } from 'src/app/core/interfaces/tracks/track-create-dto
 import { ITrackUpdateDTO } from 'src/app/core/interfaces/tracks/track-update-dto';
 import { AlbumsService } from 'src/app/core/services/albums.service';
 import { TracksService } from 'src/app/core/services/tracks.service';
+import { operationSuccessMessage, recordRemovalConfirmationModalCancelText, recordRemovalConfirmationModalOkDanger, recordRemovalConfirmationModalOkText, recordRemovalConfirmationModalOkType, recordRemovalConfirmationModalTitle, removalOperationCancelMessage } from 'src/app/core/utils/global-constants';
 
 @Component({
   selector: 'app-tracks-management',
@@ -164,7 +165,7 @@ export class TracksManagementComponent {
         .subscribe((response) => {
           let newTrack = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The track ${newTrack.name} is created successfully!`,
             {
               nzPauseOnHover: true
@@ -207,7 +208,7 @@ export class TracksManagementComponent {
         .subscribe((response) => {
           let editedTrack = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The track ${editedTrack.name} is edited successfully!`,
             {
               nzPauseOnHover: true
@@ -231,12 +232,12 @@ export class TracksManagementComponent {
 
   showTrackRemovalModal(trackToRemove: ITrack): void {
     this.nzModalService.confirm({
-      nzTitle: `Do you really wish to remove ${trackToRemove.name}?`,
-      nzOkText: 'Yes',
-      nzOkType: 'primary',
-      nzOkDanger: true,
+      nzTitle: recordRemovalConfirmationModalTitle(trackToRemove.name),
+      nzOkText: recordRemovalConfirmationModalOkText,
+      nzOkType: recordRemovalConfirmationModalOkType,
+      nzOkDanger: recordRemovalConfirmationModalOkDanger,
       nzOnOk: () => this.handleOkTrackRemovalModal(trackToRemove),
-      nzCancelText: 'No',
+      nzCancelText: recordRemovalConfirmationModalCancelText,
       nzOnCancel: () => this.handleCancelTrackRemovalModal(),
     });
   }
@@ -244,7 +245,7 @@ export class TracksManagementComponent {
   handleOkTrackRemovalModal(trackToRemove: ITrack): void {
     this.tracksService.deleteTrack(trackToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
-        'Successful Operation',
+        operationSuccessMessage,
         `The track ${trackToRemove.name} has been removed!`,
         {
           nzPauseOnHover: true
@@ -256,7 +257,7 @@ export class TracksManagementComponent {
 
   handleCancelTrackRemovalModal(): void {
     this.nzNotificationService.info(
-      `Aborted Operation`,
+      removalOperationCancelMessage,
       `Track removal cancelled`
     );
   }
@@ -288,8 +289,6 @@ export class TracksManagementComponent {
 
     this.tracksService.getTracksWithFullDetails().subscribe((data) => {
       this.tracksData = [];
-      console.log('data');
-      console.log(data);
       data
         .filter((track) => !track.isDeleted)
         .map((track) => {

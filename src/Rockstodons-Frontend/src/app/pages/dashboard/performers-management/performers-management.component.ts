@@ -12,6 +12,7 @@ import { IPerformer } from 'src/app/core/interfaces/performers/performer';
 import { IPerformerCreateDTO } from 'src/app/core/interfaces/performers/performer-create-dto';
 import { IPerformerUpdateDTO } from 'src/app/core/interfaces/performers/performer-update-dto';
 import { PerformersService } from 'src/app/core/services/performers.service';
+import { operationSuccessMessage, recordRemovalConfirmationModalCancelText, recordRemovalConfirmationModalOkDanger, recordRemovalConfirmationModalOkText, recordRemovalConfirmationModalOkType, recordRemovalConfirmationModalTitle, removalOperationCancelMessage } from 'src/app/core/utils/global-constants';
 
 @Component({
   selector: 'app-performers-management',
@@ -472,7 +473,7 @@ export class PerformersManagementComponent {
         .subscribe((response) => {
           let newPerformer = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The performer ${newPerformer.name} is created successfully!`,
             {
               nzPauseOnHover: true
@@ -507,7 +508,7 @@ export class PerformersManagementComponent {
         .subscribe((response) => {
           let editedPerformer = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The performer ${editedPerformer.name} is edited successfully!`,
             {
               nzPauseOnHover: true
@@ -530,12 +531,12 @@ export class PerformersManagementComponent {
 
   showPerformerRemovalModal(performerToRemove: IPerformer): void {
     this.nzModalService.confirm({
-      nzTitle: `Do you really wish to remove ${performerToRemove.name}?`,
-      nzOkText: 'Yes',
-      nzOkType: 'primary',
-      nzOkDanger: true,
+      nzTitle: recordRemovalConfirmationModalTitle(performerToRemove.name),
+      nzOkText: recordRemovalConfirmationModalOkText,
+      nzOkType: recordRemovalConfirmationModalOkType,
+      nzOkDanger: recordRemovalConfirmationModalOkDanger,
       nzOnOk: () => this.handleOkPerformerRemovalModal(performerToRemove),
-      nzCancelText: 'No',
+      nzCancelText: recordRemovalConfirmationModalCancelText,
       nzOnCancel: () => this.handleCancelPerformerRemovalModal()
     });
   }
@@ -543,7 +544,7 @@ export class PerformersManagementComponent {
   handleOkPerformerRemovalModal(performerToRemove: IPerformer): void {
     this.performersService.deletePerformer(performerToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
-        'Successful Operation',
+        operationSuccessMessage,
         `The performer ${performerToRemove.name} has been removed!`,
         {
           nzPauseOnHover: true
@@ -555,7 +556,7 @@ export class PerformersManagementComponent {
 
   handleCancelPerformerRemovalModal(): void{
     this.nzNotificationService.info(
-      `Aborted operation`,
+      removalOperationCancelMessage,
       `Performer removal cancelled`
     );
   }

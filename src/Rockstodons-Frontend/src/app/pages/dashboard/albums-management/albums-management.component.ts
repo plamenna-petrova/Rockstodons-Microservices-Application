@@ -1,4 +1,4 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component, ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -31,6 +31,38 @@ import { PerformersService } from 'src/app/core/services/performers.service';
 import { TracksService } from 'src/app/core/services/tracks.service';
 import { ITrackCreateDTO } from 'src/app/core/interfaces/tracks/track-create-dto';
 import { ITrack } from 'src/app/core/interfaces/tracks/track';
+import {
+  operationSuccessMessage,
+  recordRemovalConfirmationModalCancelText,
+  recordRemovalConfirmationModalOkDanger,
+  recordRemovalConfirmationModalOkText,
+  recordRemovalConfirmationModalOkType,
+  recordRemovalConfirmationModalTitle,
+  removalOperationCancelMessage,
+} from 'src/app/core/utils/global-constants';
+
+import { FileSaverService } from 'ngx-filesaver';
+
+import * as XLSX from 'xlsx';
+
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+import {
+  HeadingLevel,
+  Packer,
+  Paragraph,
+  Document,
+  TextRun,
+  Table,
+  TableCell,
+  TableRow,
+  PageOrientation,
+  AlignmentType,
+} from 'docx';
+
+import pptxgen from 'pptxgenjs';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-albums-management',
@@ -60,7 +92,7 @@ export class AlbumsManagementComponent {
   albumsCreationForm!: FormGroup;
   albumsEditForm!: FormGroup;
 
-  selectedExportFormatValue = null;
+  selectedExportFormatValue = 'csv';
 
   currentYear = new Date().getFullYear();
 
@@ -129,6 +161,61 @@ export class AlbumsManagementComponent {
     },
   ];
 
+  // albumExportHeaders = {
+  //   Name: 'Name',
+  //   NumberOfTracks: 'Number Of Tracks',
+  //   YearOfRelease: 'Year Of Release',
+  //   AlbumType: 'Album Type',
+  //   Genre: 'Genre',
+  //   Performer: 'Performer',
+  // };
+
+  albumExportHeaders = [
+    'Name',
+    'Number Of Tracks',
+    'Year Of Release',
+    'Album Type',
+    'Genre',
+    'Performer',
+  ];
+
+  tableExportOptions = {
+    csv: '.csv',
+    txt: '.txt',
+    xlsx: '.xlsx',
+    pdf: '.pdf',
+    docx: '.docx',
+    json: '.json',
+    xml: '.xml',
+    pptx: '.pptx',
+    png: '.png',
+    jpg: '.jpg',
+    jpeg: '.jpeg',
+    webp: '.webp',
+    gif: '.gif',
+    apng: '.apng',
+    avif: '.avif',
+  };
+
+  fileTypes = {
+    csv: 'text/csv',
+    tsv: 'text/tsv',
+    txt: 'text/plain',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    pdf: 'application/pdf',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    json: 'application/json',
+    xml: 'application/xml',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    png: 'image/png',
+    jpg: 'image/jpg',
+    jpeg: 'image/jpeg',
+    webp: 'image/webp',
+    gif: 'image/gif',
+    apng: 'image/apng',
+    avif: 'image/avif',
+  };
+
   albumTypesNamesForAutocomplete: string[] = [];
   genresNamesForAutocomplete: string[] = [];
   performersNamesForAutocomplete: string[] = [];
@@ -137,6 +224,19 @@ export class AlbumsManagementComponent {
   filteredGenresNamesForAutocomplete: string[] = [];
   filteredPerformersNamesForAutocomplete: string[] = [];
 
+  @ViewChild('albumsManagementDynamicTable', {
+    static: false,
+    read: ElementRef,
+  })
+  albumsManagementDynamicTable: ElementRef | undefined;
+
+  @ViewChild('canvas', { static: false, read: ElementRef }) canvas:
+    | ElementRef
+    | undefined;
+
+  @ViewChild('downloadLink', { static: false, read: ElementRef })
+  downloadLink: ElementRef | undefined;
+
   constructor(
     private performersService: PerformersService,
     private albumsService: AlbumsService,
@@ -144,7 +244,8 @@ export class AlbumsManagementComponent {
     private albumTypesService: AlbumTypesService,
     private tracksService: TracksService,
     private nzNotificationService: NzNotificationService,
-    private nzModalService: NzModalService
+    private nzModalService: NzModalService,
+    private fileSaverService: FileSaverService
   ) {
     this.buildAlbumsActionForms();
   }
@@ -378,15 +479,13 @@ export class AlbumsManagementComponent {
 
     this.listOfTrackControls.forEach((control, i) => {
       if (i === 0) {
-        const controlToErase = this.tracksActionFormGroup
-          .controls[control.controlInstance];
+        const controlToErase =
+          this.tracksActionFormGroup.controls[control.controlInstance];
         controlToErase.setValue(null);
       } else {
         const index = this.listOfTrackControls.indexOf(control);
         this.listOfTrackControls.splice(index, 1);
-        this.tracksActionFormGroup.removeControl(
-          control.controlInstance
-        );
+        this.tracksActionFormGroup.removeControl(control.controlInstance);
       }
     });
   }
@@ -529,7 +628,10 @@ export class AlbumsManagementComponent {
       (performer) => performer.name === this.albumsCreationForm.value.performer
     )!;
 
-    if (this.albumsCreationForm.value.numberOfTracks !== this.listOfTrackControls.length) {
+    if (
+      this.albumsCreationForm.value.numberOfTracks !==
+      this.listOfTrackControls.length
+    ) {
       this.nzNotificationService.error(
         `Error`,
         `The number of tracks in the list must match the defined one for the album`
@@ -555,10 +657,10 @@ export class AlbumsManagementComponent {
           next: (response) => {
             let newAlbum = response;
             this.nzNotificationService.success(
-              `Successful Operation`,
+              operationSuccessMessage,
               `The album ${newAlbum.name} is created successfully!`,
               {
-                nzPauseOnHover: true
+                nzPauseOnHover: true,
               }
             );
 
@@ -574,10 +676,10 @@ export class AlbumsManagementComponent {
                   .subscribe((response) => {
                     let newTrack = response;
                     this.nzNotificationService.success(
-                      `Successful Operation`,
+                      operationSuccessMessage,
                       `The track ${newTrack.name} is created successfully`,
                       {
-                        nzPauseOnHover: true
+                        nzPauseOnHover: true,
                       }
                     );
                   });
@@ -601,7 +703,10 @@ export class AlbumsManagementComponent {
     }
   }
 
-  onAlbumsEditFormSubmit(albumId: string, tracks: ITrack[]): Observable<boolean> {
+  onAlbumsEditFormSubmit(
+    albumId: string,
+    tracks: ITrack[]
+  ): Observable<boolean> {
     let isAlbumsEditFormSubmitSuccessful = true;
 
     const albumType = this.typesForAlbums.find(
@@ -641,7 +746,7 @@ export class AlbumsManagementComponent {
             `Error`,
             `Please enter valid data for tracks`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
           isAlbumsEditFormSubmitSuccessful = false;
@@ -675,10 +780,10 @@ export class AlbumsManagementComponent {
         .subscribe((response) => {
           let editedAlbum = response;
           this.nzNotificationService.success(
-            `Successful Operation`,
+            operationSuccessMessage,
             `The album ${editedAlbum.name} is edited successfully`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
 
@@ -689,10 +794,10 @@ export class AlbumsManagementComponent {
                 .subscribe((response) => {
                   let newTrack = response;
                   this.nzNotificationService.success(
-                    `Successful Operation`,
+                    operationSuccessMessage,
                     `The track ${newTrack.name} is created successfully!`,
                     {
-                      nzPauseOnHover: true
+                      nzPauseOnHover: true,
                     }
                   );
                 });
@@ -703,10 +808,10 @@ export class AlbumsManagementComponent {
             for (const trackToRemove of tracksToRemoveOnAlbumEdit) {
               this.tracksService.deleteTrack(trackToRemove.id).subscribe(() => {
                 this.nzNotificationService.success(
-                  'Successful Operation',
+                  operationSuccessMessage,
                   `The track ${trackToRemove.name} has been removed!`,
                   {
-                    nzPauseOnHover: true
+                    nzPauseOnHover: true,
                   }
                 );
               });
@@ -734,12 +839,12 @@ export class AlbumsManagementComponent {
 
   showAlbumRemovalModal(albumToRemove: IAlbum): void {
     this.nzModalService.confirm({
-      nzTitle: `Do you really wish to remove ${albumToRemove.name}?`,
-      nzOkText: 'Yes',
-      nzOkType: 'primary',
-      nzOkDanger: true,
+      nzTitle: recordRemovalConfirmationModalTitle(albumToRemove.name),
+      nzOkText: recordRemovalConfirmationModalOkText,
+      nzOkType: recordRemovalConfirmationModalOkType,
+      nzOkDanger: recordRemovalConfirmationModalOkDanger,
       nzOnOk: () => this.handleOkAlbumRemovalModal(albumToRemove),
-      nzCancelText: 'No',
+      nzCancelText: recordRemovalConfirmationModalCancelText,
       nzOnCancel: () => this.handleCancelAlbumRemovalModal(),
     });
   }
@@ -747,10 +852,10 @@ export class AlbumsManagementComponent {
   handleOkAlbumRemovalModal(albumToRemove: IAlbum): void {
     this.albumsService.deleteAlbum(albumToRemove.id).subscribe(() => {
       this.nzNotificationService.success(
-        'Successful Operation',
+        operationSuccessMessage,
         `The album ${albumToRemove.name} has been removed!`,
         {
-          nzPauseOnHover: true
+          nzPauseOnHover: true,
         }
       );
       this.retrieveAlbumsData();
@@ -759,7 +864,7 @@ export class AlbumsManagementComponent {
 
   handleCancelAlbumRemovalModal(): void {
     this.nzNotificationService.info(
-      `Aborted operation`,
+      removalOperationCancelMessage,
       `Album removal cancelled`
     );
   }
@@ -788,15 +893,361 @@ export class AlbumsManagementComponent {
       );
   }
 
-  onExportAlbumsDataClick(): void {
-    switch (this.selectedExportFormatValue!) {
-      case 'pdf':
+  onExportAlbumsDataClick() {
+    console.log('file testing');
+    this.createFileExportContent(
+      this.fileTypes[this.selectedExportFormatValue as keyof {}]
+    );
+  }
+
+  createFileExportContent(fileType: string): void {
+    let separator;
+    let fileContent: string;
+
+    let mappedAlbumsDataForExport = this.albumsToManage
+      .filter((atm) => atm.checked)
+      .map((atm) => atm.album)
+      .map((a) => {
+        const albumsExportDatum = {
+          Name: a.name,
+          NumberOfTracks: a.numberOfTracks,
+          YearOfRelease: a.yearOfRelease,
+          AlbumType: a.albumType.name,
+          Genre: a.genre.name,
+          Performer: a.performer.name,
+        };
+        return albumsExportDatum;
+      });
+
+    if (mappedAlbumsDataForExport.length === 0) {
+      this.nzNotificationService.error(
+        'Error',
+        'Please select album entries for export'
+      );
+      return;
+    }
+
+    const mappedAlbumHeadersKeys = this.albumExportHeaders.map((header) =>
+      header.replaceAll(' ', '')
+    );
+
+    mappedAlbumsDataForExport = this.excludeMappedAlbumsPropertiesForFileExport(
+      mappedAlbumsDataForExport,
+      mappedAlbumHeadersKeys
+    );
+
+    switch (fileType) {
+      case this.fileTypes.csv:
+        separator = ',';
+        fileContent =
+          mappedAlbumHeadersKeys.join(separator) +
+          '\n' +
+          this.mapAlbumsForExport(
+            mappedAlbumsDataForExport,
+            mappedAlbumHeadersKeys,
+            separator
+          );
+        this.exportFile(fileContent, fileType);
         break;
-      case 'csv':
+      case this.fileTypes.txt:
+        separator = '\t';
+        fileContent = this.mapAlbumsForExport(
+          mappedAlbumsDataForExport,
+          mappedAlbumHeadersKeys,
+          separator
+        );
+        this.exportFile(fileContent, fileType);
         break;
-      case 'xlsx':
+      case this.fileTypes.tsv:
+        separator = '\t';
+        fileContent =
+          this.albumExportHeaders.join(separator) +
+          '\n' +
+          this.mapAlbumsForExport(
+            mappedAlbumsDataForExport,
+            this.albumExportHeaders,
+            separator
+          );
+        this.exportFile(fileContent, fileType);
+        break;
+      case this.fileTypes.xlsx:
+        const workSheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+          mappedAlbumsDataForExport
+        );
+        const workBook: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1');
+        XLSX.writeFile(
+          workBook,
+          `${this.generateExportFileName(this.tableExportOptions.xlsx)}`
+        );
+        break;
+      case this.fileTypes.pdf:
+        const pdfDocument = new jsPDF('l', 'mm', 'a3');
+        const pdfTableHeaders: string[][] = [this.albumExportHeaders];
+        const pdfTableRows: any[] = [];
+        mappedAlbumsDataForExport.forEach((item) => {
+          const mappedItemToArray: (string | number)[] = [
+            ...Object.values(item),
+          ];
+          pdfTableRows.push(mappedItemToArray);
+        });
+        autoTable(pdfDocument, {
+          head: pdfTableHeaders,
+          body: pdfTableRows,
+        });
+        pdfDocument.save(
+          `${this.generateExportFileName(this.tableExportOptions.pdf)}`
+        );
+        break;
+      case this.fileTypes.json:
+        this.exportFile(JSON.stringify(mappedAlbumsDataForExport), fileType);
+        break;
+      case this.fileTypes.xml:
+        let xmlContent = '';
+        xmlContent += `<?xml version='1.0'?>`;
+        xmlContent += `<AlbumsList>`;
+        mappedAlbumsDataForExport.forEach((mapedAlbumsDatumForExport) => {
+          xmlContent += `<Album>`;
+          for (const [key, value] of Object.entries(
+            mapedAlbumsDatumForExport
+          )) {
+            xmlContent += `<${key}>${value}</${key}>`;
+          }
+          xmlContent += `</Album>`;
+        });
+        xmlContent += `</AlbumsList>`;
+        this.exportFile(xmlContent, fileType);
+        break;
+      case this.fileTypes.docx:
+        const wordTableRows: TableRow[] = [];
+        const wordTableCells: TableCell[] = [];
+        this.albumExportHeaders.forEach((item) => {
+          const headerCellTextRun = new TextRun({
+            text: item,
+            size: 24,
+            bold: true,
+          });
+          wordTableCells.push(
+            new TableCell({
+              children: [
+                new Paragraph({
+                  children: [headerCellTextRun],
+                }),
+              ],
+            })
+          );
+        });
+        const wordTableHeaderRow: TableRow = new TableRow({
+          children: wordTableCells,
+        });
+        wordTableRows.push(wordTableHeaderRow);
+        mappedAlbumsDataForExport.forEach((item) => {
+          const articlesRangedListWordTableCells: TableCell[] = [];
+          for (const cellValue of Object.values(item)) {
+            const cellValueTextRun = new TextRun({
+              text: cellValue.toString(),
+              size: 24,
+            });
+            articlesRangedListWordTableCells.push(
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [cellValueTextRun],
+                  }),
+                ],
+              })
+            );
+          }
+          const wordTableRow: TableRow = new TableRow({
+            children: articlesRangedListWordTableCells,
+          });
+          wordTableRows.push(wordTableRow);
+        });
+        const wordTable = new Table({
+          rows: wordTableRows,
+        });
+        const wordDocument = new Document({
+          sections: [
+            {
+              properties: {
+                page: {
+                  size: {
+                    orientation: PageOrientation.LANDSCAPE,
+                  },
+                },
+              },
+              children: [
+                new Paragraph({
+                  text: 'Rockstodons Albums',
+                  heading: HeadingLevel.HEADING_1,
+                  alignment: AlignmentType.CENTER,
+                  spacing: {
+                    after: 200,
+                  },
+                }),
+                wordTable,
+              ],
+            },
+          ],
+          styles: {
+            paragraphStyles: [
+              {
+                id: 'style',
+                run: {
+                  size: 26,
+                },
+              },
+            ],
+          },
+        });
+        Packer.toBlob(wordDocument).then((blob) => {
+          this.fileSaverService.save(
+            blob,
+            `${this.generateExportFileName(this.tableExportOptions.docx)}`
+          );
+        });
+        break;
+      case this.fileTypes.pptx:
+        const presentation = new pptxgen();
+        const presentationSlide = presentation.addSlide();
+        const textboxText = 'Rockstodons Albums';
+        presentationSlide.addText([
+          { text: textboxText, options: { x: 1, y: 1, align: 'center' } },
+        ]);
+        const rows = [];
+        const headerCellArray: any[] = [];
+        this.albumExportHeaders.forEach((item) => {
+          headerCellArray.push({
+            text: item.toString(),
+            options: { bold: true },
+          });
+        });
+        rows.push(headerCellArray);
+        mappedAlbumsDataForExport.forEach((item) => {
+          const cellArray = [];
+          for (const value of Object.values(item)) {
+            cellArray.push({
+              text: value.toString(),
+              options: { color: '363636' },
+            });
+          }
+          rows.push(cellArray);
+        });
+        presentationSlide.addTable(rows, {
+          x: 0.5,
+          y: 1.0,
+          w: 9.0,
+          color: '363636',
+          autoPage: true,
+          border: {
+            type: 'solid',
+          },
+        });
+        presentation.writeFile({
+          fileName: `${this.generateExportFileName(
+            this.tableExportOptions.pptx
+          )}`,
+        });
+        break;
+      case this.fileTypes.apng:
+      case this.fileTypes.avif:
+      case this.fileTypes.jpg:
+      case this.fileTypes.jpeg:
+      case this.fileTypes.png:
+      case this.fileTypes.gif:
+        this.convertHTMLToCanvas(
+          this.albumsManagementDynamicTable!.nativeElement,
+          fileType
+        );
         break;
     }
+  }
+
+  excludeMappedAlbumsPropertiesForFileExport(
+    albumsForExport: any,
+    keys: string[]
+  ): any {
+    return albumsForExport.map((item: any) => {
+      for (const property of Object.keys(item)) {
+        if (!keys.includes(property)) {
+          delete item[property as keyof IAlbum];
+        }
+      }
+      return item;
+    });
+  }
+
+  mapAlbumsForExport(
+    arrayForExport: any,
+    headers: any,
+    separator: string
+  ): string {
+    return arrayForExport
+      .map((rowData: IAlbum) => {
+        return headers
+          .map((headerKey: string) => {
+            return rowData[headerKey.replaceAll(' ', '') as keyof IAlbum] ===
+              null ||
+              rowData[headerKey.replaceAll(' ', '') as keyof IAlbum] ===
+                undefined
+              ? ''
+              : rowData[headerKey.replaceAll(' ', '') as keyof IAlbum];
+          })
+          .join(separator);
+      })
+      .join('\n');
+  }
+
+  exportFile(data: any, fileType: string) {
+    const blob = new Blob([data], { type: fileType });
+    const fileExtension =
+      `.` +
+      Object.keys(this.fileTypes).find(
+        (k) => this.fileTypes[k as keyof object] === fileType
+      );
+    this.fileSaverService.save(
+      blob,
+      `${this.generateExportFileName(fileExtension)}`
+    );
+  }
+
+  generateExportFileName(fileExtension: string): string {
+    const currentTimeForFileExport: Date = new Date();
+    const generatedFileName =
+      `Rockstodons_Albums_` +
+      `${
+        currentTimeForFileExport.getDate() < 10 ? '0' : ''
+      }${currentTimeForFileExport.getDate()}.` +
+      `${currentTimeForFileExport.getMonth() + 1 < 10 ? '0' : ''}${
+        currentTimeForFileExport.getMonth() + 1
+      }.` +
+      `${currentTimeForFileExport.getFullYear()}_` +
+      `${
+        currentTimeForFileExport.getHours() < 10 ? '0' : ''
+      }${currentTimeForFileExport.getHours()}_` +
+      `${
+        currentTimeForFileExport.getMinutes() < 10 ? '0' : ''
+      }${currentTimeForFileExport.getMinutes()}_` +
+      `${
+        currentTimeForFileExport.getSeconds() < 10 ? '0' : ''
+      }${currentTimeForFileExport.getSeconds()}` +
+      `${fileExtension ? `${fileExtension}` : ''}`;
+    return generatedFileName;
+  }
+
+  convertHTMLToCanvas(nativeElement: any, fileType: string): void {
+    html2canvas(nativeElement).then((canvas) => {
+      console.log('canvas');
+      console.log(this.canvas);
+      this.canvas!.nativeElement.src = canvas.toDataURL();
+      this.downloadLink!.nativeElement.href = canvas.toDataURL(fileType);
+      const downloadImageName = `articles-general-registers.${
+        fileType.split('/')[1]
+      }`;
+      this.downloadLink!.nativeElement.download = downloadImageName;
+      this.downloadLink!.nativeElement.click();
+      this.canvas!.nativeElement.src = '';
+    });
   }
 
   addTrackField(mouseEvent?: MouseEvent): void {
