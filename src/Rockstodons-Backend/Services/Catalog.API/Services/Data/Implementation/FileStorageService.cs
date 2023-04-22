@@ -16,21 +16,19 @@ namespace Catalog.API.Services.Data.Implementation
     {
         private readonly IConfiguration _configuration;
         private readonly string _azureStorageConnectionString;
-        private readonly string _azureStorageContainerName;
         private readonly ILogger<FileStorageService> _logger;
 
         public FileStorageService(IConfiguration configuration, ILogger<FileStorageService> logger)
         {
             _configuration = configuration;
             _azureStorageConnectionString = _configuration["AzureStorage:BlobConnectionString"];
-            _azureStorageContainerName = _configuration["AzureStorage:AlbumsBlobContainerName"];
             _logger = logger;
         }
 
-        public async Task<List<BlobDTO>> GetFilesList()
+        public async Task<List<BlobDTO>> GetFilesList(string azureStorageContainerName)
         {
             BlobContainerClient blobContainerClient = new BlobContainerClient(
-                _azureStorageConnectionString, _azureStorageContainerName
+                _azureStorageConnectionString, azureStorageContainerName
             );
 
             List<BlobDTO> blobFiles = new();
@@ -52,12 +50,12 @@ namespace Catalog.API.Services.Data.Implementation
             return blobFiles;
         }
 
-        public async Task<BlobResponseDTO> UploadImageAsync(IFormFile blobFile)
+        public async Task<BlobResponseDTO> UploadImageAsync(IFormFile blobFile, string azureStorageContainerName)
         {
             BlobResponseDTO blobResponseDTO = new();
 
             BlobContainerClient blobContainerClient = new BlobContainerClient(
-                _azureStorageConnectionString, _azureStorageContainerName
+                _azureStorageConnectionString, azureStorageContainerName
             );
 
             try
@@ -96,7 +94,7 @@ namespace Catalog.API.Services.Data.Implementation
             {
                 _logger.LogError($"File with name {blobFile.FileName} already exists in the container. " +
                     $"Set another name to store the file in the container :" +
-                    $"'{_azureStorageContainerName}.'");
+                    $"'{azureStorageContainerName}.'");
                 blobResponseDTO.Status = $"The file with name {blobFile.FileName} already exists. " +
                     $"Please use another name to store your file.";
                 blobResponseDTO.Error = true;
@@ -106,10 +104,10 @@ namespace Catalog.API.Services.Data.Implementation
             return blobResponseDTO;
         }
 
-        public async Task<BlobDTO> DownloadAsync(string blobFileName)
+        public async Task<BlobDTO> DownloadAsync(string blobFileName, string azureStorageContainerName)
         {
             BlobContainerClient blobContainerClient = new(
-                _azureStorageConnectionString, _azureStorageContainerName
+                _azureStorageConnectionString, azureStorageContainerName
             );
 
             try
@@ -143,10 +141,10 @@ namespace Catalog.API.Services.Data.Implementation
             return null!;
         }
 
-        public async Task<BlobResponseDTO> DeleteAsync(string blobFileName)
+        public async Task<BlobResponseDTO> DeleteAsync(string blobFileName, string azureStorageContainerName)
         {
             BlobContainerClient blobContainerClient = new BlobContainerClient(
-                _azureStorageConnectionString, _azureStorageContainerName
+                _azureStorageConnectionString, azureStorageContainerName
             );
 
             BlobClient blobClient = blobContainerClient.GetBlobClient(blobFileName);

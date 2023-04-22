@@ -17,7 +17,7 @@ import {
   NzTablePaginationType,
   NzTableSize,
 } from 'ng-zorro-antd/table';
-import { Observable, of, take } from 'rxjs';
+import { Observable, Observer, of, take } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { IAlbumCreateDTO } from 'src/app/core/interfaces/albums/album-create-dto';
 import { IAlbumType } from 'src/app/core/interfaces/album-types/album-type';
@@ -63,6 +63,16 @@ import {
 
 import pptxgen from 'pptxgenjs';
 import html2canvas from 'html2canvas';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
+import {
+  HttpClient,
+  HttpEvent,
+  HttpEventType,
+  HttpRequest,
+  HttpResponse,
+} from '@angular/common/http';
+import { FileStorageService } from 'src/app/core/services/file-storage.service';
 
 @Component({
   selector: 'app-albums-management',
@@ -161,15 +171,6 @@ export class AlbumsManagementComponent {
     },
   ];
 
-  // albumExportHeaders = {
-  //   Name: 'Name',
-  //   NumberOfTracks: 'Number Of Tracks',
-  //   YearOfRelease: 'Year Of Release',
-  //   AlbumType: 'Album Type',
-  //   Genre: 'Genre',
-  //   Performer: 'Performer',
-  // };
-
   albumExportHeaders = [
     'Name',
     'Number Of Tracks',
@@ -237,6 +238,11 @@ export class AlbumsManagementComponent {
   @ViewChild('downloadLink', { static: false, read: ElementRef })
   downloadLink: ElementRef | undefined;
 
+  isAlbumCreationCoverImageUploadButtonVisible = false;
+  previewImage: string | undefined = '';
+  previewVisible = false;
+  fileList: NzUploadFile[] = [];
+
   constructor(
     private performersService: PerformersService,
     private albumsService: AlbumsService,
@@ -245,7 +251,10 @@ export class AlbumsManagementComponent {
     private tracksService: TracksService,
     private nzNotificationService: NzNotificationService,
     private nzModalService: NzModalService,
-    private fileSaverService: FileSaverService
+    private fileSaverService: FileSaverService,
+    private nzMessageService: NzMessageService,
+    private httpClient: HttpClient,
+    private fileStorageService: FileStorageService
   ) {
     this.buildAlbumsActionForms();
   }
@@ -475,6 +484,7 @@ export class AlbumsManagementComponent {
 
   showAlbumCreationModal(): void {
     this.isAlbumCreationModalVisible = true;
+    this.isAlbumCreationCoverImageUploadButtonVisible = true;
     this.albumsCreationForm.reset();
 
     this.listOfTrackControls.forEach((control, i) => {
@@ -701,6 +711,74 @@ export class AlbumsManagementComponent {
         }
       });
     }
+  }
+
+  setMediaUploadHeaders = (nzUplaodFile: NzUploadFile) => {
+    return {
+      'Content-Type': 'multipart/form-data',
+      Accept: 'application/json',
+    };
+  };
+
+  executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs) => {
+    const formData = new FormData();
+    formData.append('imageToUpload', nzUploadXHRArgs.file as any);
+
+    const fileUploadRequest = new HttpRequest(
+      'POST',
+      nzUploadXHRArgs.action!,
+      formData,
+      {
+        reportProgress: true,
+        withCredentials: false,
+      }
+    );
+
+    return this.httpClient.request(fileUploadRequest).subscribe(
+      (event: HttpEvent<unknown>) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          if (event.total! > 0) {
+            (event as any).percent = event.loaded;
+          }
+          nzUploadXHRArgs.onProgress!(event, nzUploadXHRArgs.file);
+        } else if (event instanceof HttpResponse) {
+          nzUploadXHRArgs.onSuccess!(event.body, nzUploadXHRArgs.file, event);
+          this.isAlbumCreationCoverImageUploadButtonVisible = false;
+        }
+      },
+      (error) => {
+        nzUploadXHRArgs.onError!(error, nzUploadXHRArgs.file);
+      }
+    );
+  };
+
+  handleAlbumImagePreview = async (nzUploadFile: NzUploadFile): Promise<void> => {
+    if (!nzUploadFile.url && !nzUploadFile['preview']) {
+      nzUploadFile['preview'] = await this.getBase64(nzUploadFile.originFileObj!);
+    }
+    this.previewImage = nzUploadFile.url || nzUploadFile['preview'];
+    this.previewVisible = true;
+  }
+
+  getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
+    new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => resolve(fileReader.result);
+      fileReader.onerror = error => reject(error);
+    });
+
+  downloadAlbumCoverImage(fileToDownload: NzUploadFile): void | undefined {
+    let a = document.createElement("a");
+    a.href = fileToDownload.thumbUrl!;
+    a.download = fileToDownload.name!;
+    a.click();
+  }
+
+  handleAlbumCoverImageChange(info: any) {
+    if (info.type === 'removed') {
+      this.isAlbumCreationCoverImageUploadButtonVisible = true;
+    };
   }
 
   onAlbumsEditFormSubmit(

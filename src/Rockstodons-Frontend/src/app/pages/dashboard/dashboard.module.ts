@@ -29,6 +29,8 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
@@ -83,6 +85,8 @@ registerLocaleData(en);
     NzListModule,
     NzSpinModule,
     NzSelectModule,
+    NzUploadModule,
+    NzMessageModule,
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,

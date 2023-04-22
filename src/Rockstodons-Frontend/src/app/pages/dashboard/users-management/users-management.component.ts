@@ -107,8 +107,6 @@ export class UsersManagementComponent {
     this.isLoading = true;
     this.rolesService.getRolesWithFullDetails().subscribe((data) => {
       this.rolesData = data;
-      console.log('roles data');
-      console.log(this.rolesData);
     });
     this.usersService.getAllUsers().subscribe((data) => {
       this.usersData = [];

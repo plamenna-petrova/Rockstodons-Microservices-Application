@@ -60,3 +60,8 @@
     .add-button {
         width: 60%;
     }
+    
+     :host ::ng-deep .album-cover-uploader>.ant-upload {
+        width: 128px;
+        height: 128px;
+    }

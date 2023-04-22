@@ -4,29 +4,36 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/storage")]
     [ApiController]
     public class FilesStorageController : ControllerBase
     {
         private readonly IFileStorageService _fileStorageService;
+        private readonly IConfiguration _configuration;
+        private readonly string _azureStorageAlbumsContainerName;
 
-        public FilesStorageController(IFileStorageService fileStorageService)
+        public FilesStorageController(IFileStorageService fileStorageService, IConfiguration configuration)
         {
-            _fileStorageService = fileStorageService;           
+            _fileStorageService = fileStorageService;
+            _configuration = configuration;
+            _azureStorageAlbumsContainerName = _configuration["AzureStorage:AlbumsBlobContainerName"];
         }
 
-        [HttpGet("files")]
-        public async Task<IActionResult> GetFilesFromAzureContainer()
+        [HttpGet("files/albums")]
+        public async Task<IActionResult> GetAlbumsImagesFromAzureContainer()
         {
-            List<BlobDTO> retrievedFiles = await _fileStorageService.GetFilesList();
+            List<BlobDTO> retrievedFiles = await _fileStorageService
+                .GetFilesList(_azureStorageAlbumsContainerName);
 
             return StatusCode(StatusCodes.Status200OK, retrievedFiles);
         }
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadImage(IFormFile imageToUpload)
+        [HttpPost("upload/album-image")]
+        public async Task<IActionResult> UploadAlbumImage(IFormFile imageToUpload)
         {
-            BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(imageToUpload);
+            BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
+                imageToUpload, _azureStorageAlbumsContainerName
+            );
 
             if (blobResponseDTO.Error)
             {
@@ -38,10 +45,12 @@ namespace Catalog.API.Controllers
             }
         }
 
-        [HttpGet("{filename}")]
+        [HttpGet("albums-images/{filename}")]
         public async Task<IActionResult> DownloadFile(string filename)
         {
-            BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(filename);
+            BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
+                filename, _azureStorageAlbumsContainerName
+            );
 
             if (blobDTO is null)
             {
@@ -49,14 +58,16 @@ namespace Catalog.API.Controllers
             }
             else
             {
-                return File(blobDTO.Content, blobDTO.ContentType, blobDTO.Name);
+                return File(blobDTO.Content!, blobDTO.ContentType!, blobDTO.Name);
             }
         }
 
-        [HttpDelete("filename")]
-        public async Task<IActionResult> DeleteFile(string filename)
+        [HttpDelete("albums-images/filename")]
+        public async Task<IActionResult> DeleteAlbumImage(string filename)
         {
-            BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(filename);
+            BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
+                filename, _azureStorageAlbumsContainerName
+            );
 
             if (blobResponseDTO.Error)
             {

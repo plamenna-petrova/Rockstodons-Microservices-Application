@@ -38,7 +38,6 @@ export class UnauthorizedInterceptor implements HttpInterceptor {
               }
             )
           }
-          this.router.navigate(['login']);
           this.authService.ngOnDestroy();
           this.authService.clearLocalStorage();
           console.clear();

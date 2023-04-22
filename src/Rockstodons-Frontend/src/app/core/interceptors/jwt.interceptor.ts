@@ -23,9 +23,13 @@ export class JwtInterceptor implements HttpInterceptor {
     const isAPIUrl = request.url.startsWith(environment.apiUrl);
 
     if (accessToken && isAPIUrl) {
-      request = request.clone({
-        setHeaders: { Authorization: `Bearer ${accessToken}` }
-      });
+      if (!request.url.endsWith('/storage/upload/album-image')) {
+        request = request.clone({
+          setHeaders: { Authorization: `Bearer ${accessToken}` }
+        });
+      } else {
+        console.log('upload storage request');
+      }
     }
 
     console.log('request url');

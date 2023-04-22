@@ -175,6 +175,37 @@
           ></nz-autocomplete>
         </nz-form-control>
       </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">Cover Image</nz-form-label>
+        <nz-upload
+          class="album-cover-uploader"
+          nzAction="https://localhost:32768/api/v1/storage/upload/album-image"
+          [nzCustomRequest]="executeCustomUploadRequest"
+          [nzHeaders]="setMediaUploadHeaders"
+          [nzName]="'file'"
+          nzListType="picture-card"
+          [nzMultiple]="false"
+          (nzChange)="handleAlbumCoverImageChange($event)"
+          [nzDownload]="downloadAlbumCoverImage"
+          [nzShowButton]="isAlbumCreationCoverImageUploadButtonVisible"
+          [nzPreview]="handleAlbumImagePreview"
+        >
+          <div>
+            <span nz-icon nzType="plus"></span>
+            <div style="margin-top: 8px">Upload</div>
+          </div>
+        </nz-upload>
+        <nz-modal
+        [nzVisible]="previewVisible"
+        [nzContent]="modalContent"
+        [nzFooter]="null"
+        (nzOnCancel)="previewVisible = false"
+      >
+        <ng-template #modalContent>
+          <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+        </ng-template>
+      </nz-modal>
+      </nz-form-item>
       <form nz-form [formGroup]="tracksActionFormGroup">
         <nz-form-item
           *ngFor="let control of listOfTrackControls; let i = index"
@@ -651,6 +682,7 @@
         </td>
       </tr>
       <tr
+
         *ngIf="albumsManagementTableSetting.isExpandable"
         [nzExpand]="data.expanded"
       >

@@ -4,12 +4,12 @@ namespace Catalog.API.Services.Data.Interfaces
 {
     public interface IFileStorageService
     {
-        Task<BlobResponseDTO> UploadImageAsync(IFormFile blobFile);
+        Task<List<BlobDTO>> GetFilesList(string azureStorageContainerName);
 
-        Task<BlobDTO> DownloadAsync(string blobFileName);
+        Task<BlobResponseDTO> UploadImageAsync(IFormFile blobFile, string azureStorageContainerName);
 
-        Task<BlobResponseDTO> DeleteAsync(string blobFileName);
+        Task<BlobDTO> DownloadAsync(string blobFileName, string azureStorageContainerName);
 
-        Task<List<BlobDTO>> GetFilesList();
+        Task<BlobResponseDTO> DeleteAsync(string blobFileName, string azureStorageContainerName);
     }
 }
