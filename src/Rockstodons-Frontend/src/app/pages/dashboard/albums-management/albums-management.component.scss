@@ -65,3 +65,8 @@
         width: 128px;
         height: 128px;
     }
+    
+     :host ::ng-deep .album-edit-cover-uploader>.ant-upload {
+        width: 128px;
+        height: 128px;
+    }

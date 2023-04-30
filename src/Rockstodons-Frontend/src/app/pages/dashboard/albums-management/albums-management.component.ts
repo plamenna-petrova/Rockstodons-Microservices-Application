@@ -4,7 +4,6 @@ import {
   FormArray,
   FormControl,
   FormGroup,
-  FormRecord,
   UntypedFormControl,
   UntypedFormGroup,
   Validators,
@@ -73,6 +72,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { FileStorageService } from 'src/app/core/services/file-storage.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-albums-management',
@@ -238,10 +238,15 @@ export class AlbumsManagementComponent {
   @ViewChild('downloadLink', { static: false, read: ElementRef })
   downloadLink: ElementRef | undefined;
 
+  existingAlbumCoverImages: any[] = [];
+
+  albumCoverImageUploadAPIUrl = `${environment.apiUrl}/storage/upload/album-image`;
   isAlbumCreationCoverImageUploadButtonVisible = false;
+  isAlbumEditCoverImageUploadButtonVisible = false;
   previewImage: string | undefined = '';
   previewVisible = false;
-  fileList: NzUploadFile[] = [];
+  albumCoverImagesFileList: NzUploadFile[] = [];
+  albumEditCoverImagesFileList: NzUploadFile[] = [];
 
   constructor(
     private performersService: PerformersService,
@@ -265,7 +270,7 @@ export class AlbumsManagementComponent {
         validators: Validators.compose([
           Validators.required,
           Validators.minLength(2),
-          Validators.maxLength(25),
+          Validators.maxLength(40),
         ]),
         nonNullable: true,
       }),
@@ -312,7 +317,7 @@ export class AlbumsManagementComponent {
         validators: Validators.compose([
           Validators.required,
           Validators.minLength(2),
-          Validators.maxLength(25),
+          Validators.maxLength(40),
         ]),
         nonNullable: true,
       }),
@@ -532,6 +537,22 @@ export class AlbumsManagementComponent {
 
   showAlbumEditModal(albumTableDatum: IAlbumTableData): void {
     albumTableDatum.isEditingModalVisible = true;
+    this.isAlbumEditCoverImageUploadButtonVisible = true;
+    this.albumEditCoverImagesFileList = [];
+
+    if (
+      albumTableDatum.album.imageFileName !== null &&
+      albumTableDatum.album.imageUrl !== null
+    ) {
+      this.albumEditCoverImagesFileList[0] = {
+        uid: '-1',
+        name: albumTableDatum.album.imageFileName,
+        status: 'done',
+        url: albumTableDatum.album.imageUrl,
+        thumbUrl: albumTableDatum.album.imageUrl
+      };
+      this.isAlbumEditCoverImageUploadButtonVisible = false;
+    }
 
     this.albumsEditForm.patchValue({
       name: albumTableDatum.album.name,
@@ -542,6 +563,8 @@ export class AlbumsManagementComponent {
       genre: albumTableDatum.album.genre.name,
       performer: albumTableDatum.album.performer.name,
     });
+
+    this.getExistingAlbumsImages();
 
     const albumTracksNames = albumTableDatum.album.tracks.map(
       (track) => track.name
@@ -649,11 +672,15 @@ export class AlbumsManagementComponent {
       return;
     }
 
+    const uploadedAlbumCoverImage = this.albumCoverImagesFileList[0];
+
     const albumToCreate: IAlbumCreateDTO = {
       name: this.albumsCreationForm.value.name,
       yearOfRelease: this.albumsCreationForm.value.yearOfRelease,
       numberOfTracks: this.albumsCreationForm.value.numberOfTracks,
       description: this.albumsCreationForm.value.description,
+      imageFileName: uploadedAlbumCoverImage.response.blobDTO.name,
+      imageUrl: uploadedAlbumCoverImage.response.blobDTO.uri,
       albumTypeId: albumType.id,
       genreId: genre.id,
       performerId: performer.id,
@@ -720,56 +747,77 @@ export class AlbumsManagementComponent {
     };
   };
 
-  executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs) => {
-    const formData = new FormData();
-    formData.append('imageToUpload', nzUploadXHRArgs.file as any);
-
-    const fileUploadRequest = new HttpRequest(
-      'POST',
-      nzUploadXHRArgs.action!,
-      formData,
-      {
-        reportProgress: true,
-        withCredentials: false,
+  executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs): any => {
+    this.fileStorageService.getAlbumsImages().subscribe((data: any) => {
+      if (
+        data.map((image: any) => image.name).includes(nzUploadXHRArgs.file.name)
+      ) {
+        this.nzMessageService.error(
+          `Album Cover Image with the same file name` +
+            `${nzUploadXHRArgs.file.name} already exists`
+        );
+        nzUploadXHRArgs.onError!(
+          `Album Cover Image with the same file name`,
+          nzUploadXHRArgs.file
+        );
+        return;
       }
-    );
 
-    return this.httpClient.request(fileUploadRequest).subscribe(
-      (event: HttpEvent<unknown>) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          if (event.total! > 0) {
-            (event as any).percent = event.loaded;
-          }
-          nzUploadXHRArgs.onProgress!(event, nzUploadXHRArgs.file);
-        } else if (event instanceof HttpResponse) {
-          nzUploadXHRArgs.onSuccess!(event.body, nzUploadXHRArgs.file, event);
-          this.isAlbumCreationCoverImageUploadButtonVisible = false;
+      const formData = new FormData();
+      formData.append('imageToUpload', nzUploadXHRArgs.file as any);
+
+      const fileUploadRequest = new HttpRequest(
+        'POST',
+        nzUploadXHRArgs.action!,
+        formData,
+        {
+          reportProgress: true,
+          withCredentials: false,
         }
-      },
-      (error) => {
-        nzUploadXHRArgs.onError!(error, nzUploadXHRArgs.file);
-      }
-    );
+      );
+
+      return this.httpClient.request(fileUploadRequest).subscribe(
+        (event: HttpEvent<unknown>) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            if (event.total! > 0) {
+              (event as any).percent = event.loaded;
+            }
+            nzUploadXHRArgs.onProgress!(event, nzUploadXHRArgs.file);
+          } else if (event instanceof HttpResponse) {
+            nzUploadXHRArgs.onSuccess!(event.body, nzUploadXHRArgs.file, event);
+            this.isAlbumCreationCoverImageUploadButtonVisible = false;
+            this.isAlbumEditCoverImageUploadButtonVisible = false;
+          }
+        },
+        (error) => {
+          nzUploadXHRArgs.onError!(error, nzUploadXHRArgs.file);
+        }
+      );
+    });
   };
 
-  handleAlbumImagePreview = async (nzUploadFile: NzUploadFile): Promise<void> => {
+  handleAlbumImagePreview = async (
+    nzUploadFile: NzUploadFile
+  ): Promise<void> => {
     if (!nzUploadFile.url && !nzUploadFile['preview']) {
-      nzUploadFile['preview'] = await this.getBase64(nzUploadFile.originFileObj!);
+      nzUploadFile['preview'] = await this.getBase64(
+        nzUploadFile.originFileObj!
+      );
     }
     this.previewImage = nzUploadFile.url || nzUploadFile['preview'];
     this.previewVisible = true;
-  }
+  };
 
   getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsDataURL(file);
       fileReader.onload = () => resolve(fileReader.result);
-      fileReader.onerror = error => reject(error);
+      fileReader.onerror = (error) => reject(error);
     });
 
   downloadAlbumCoverImage(fileToDownload: NzUploadFile): void | undefined {
-    let a = document.createElement("a");
+    let a = document.createElement('a');
     a.href = fileToDownload.thumbUrl!;
     a.download = fileToDownload.name!;
     a.click();
@@ -778,7 +826,35 @@ export class AlbumsManagementComponent {
   handleAlbumCoverImageChange(info: any) {
     if (info.type === 'removed') {
       this.isAlbumCreationCoverImageUploadButtonVisible = true;
-    };
+    } else {
+      let fileList = [...info.fileList];
+
+      fileList = fileList.map((file) => {
+        if (file.response) {
+          file.url = file.response.url;
+        }
+        return file;
+      });
+
+      this.albumCoverImagesFileList = fileList;
+    }
+  }
+
+  handleAlbumEditCoverImageChange(info: any) {
+    if (info.type === 'removed') {
+      this.isAlbumEditCoverImageUploadButtonVisible = true;
+    } else {
+      let fileList = [...info.fileList];
+
+      fileList = fileList.map((file) => {
+        if (file.response) {
+          file.url = file.response.url;
+        }
+        return file;
+      });
+
+      this.albumEditCoverImagesFileList = fileList;
+    }
   }
 
   onAlbumsEditFormSubmit(
@@ -797,7 +873,7 @@ export class AlbumsManagementComponent {
       (performer) => performer.name === this.albumsEditForm.value.performer
     )!;
 
-    const albumToEdit: IAlbumUpdateDTO = {
+    const albumToEdit = {
       id: albumId,
       name: this.albumsEditForm.value.name,
       yearOfRelease: this.albumsEditForm.value.yearOfRelease,
@@ -806,7 +882,19 @@ export class AlbumsManagementComponent {
       albumTypeId: albumType.id,
       genreId: genre.id,
       performerId: performer.id,
-    };
+    } as IAlbumUpdateDTO;
+
+    const uploadedAlbumCoverImage = this.albumEditCoverImagesFileList[0];
+
+    if (uploadedAlbumCoverImage !== undefined) {
+      if (uploadedAlbumCoverImage.name && uploadedAlbumCoverImage.url) {
+        albumToEdit.imageFileName = uploadedAlbumCoverImage.name;
+        albumToEdit.imageUrl = uploadedAlbumCoverImage.url;
+      } else {
+        albumToEdit.imageFileName = uploadedAlbumCoverImage.response.blobDTO.name;
+        albumToEdit.imageUrl = uploadedAlbumCoverImage.response.blobDTO.uri;
+      }
+    }
 
     const originalTracks = [...tracks];
     const originalTracksNames = originalTracks.map(
@@ -972,7 +1060,6 @@ export class AlbumsManagementComponent {
   }
 
   onExportAlbumsDataClick() {
-    console.log('file testing');
     this.createFileExportContent(
       this.fileTypes[this.selectedExportFormatValue as keyof {}]
     );
@@ -1315,8 +1402,6 @@ export class AlbumsManagementComponent {
 
   convertHTMLToCanvas(nativeElement: any, fileType: string): void {
     html2canvas(nativeElement).then((canvas) => {
-      console.log('canvas');
-      console.log(this.canvas);
       this.canvas!.nativeElement.src = canvas.toDataURL();
       this.downloadLink!.nativeElement.href = canvas.toDataURL(fileType);
       const downloadImageName = `articles-general-registers.${
@@ -1446,6 +1531,7 @@ export class AlbumsManagementComponent {
         position: new FormControl('bottom', { nonNullable: true }),
       });
     this.retrieveAlbumsData();
+    this.getExistingAlbumsImages();
     this.albumsManagementTableSetting =
       this.albumsManagementTableSettingsForm?.value;
     this.albumsManagementTableSettingsForm?.valueChanges.subscribe((value) => {
@@ -1459,6 +1545,12 @@ export class AlbumsManagementComponent {
       this.scrollY = isFixed ? '240px' : null;
     });
     this.addTrackField();
+  }
+
+  getExistingAlbumsImages(): void {
+    this.fileStorageService.getAlbumsImages().subscribe(data => {
+      this.existingAlbumCoverImages = data;
+    });
   }
 
   private retrieveAlbumsData(): void {
@@ -1477,6 +1569,8 @@ export class AlbumsManagementComponent {
             genre: retrievedAlbum.genre,
             albumType: retrievedAlbum.albumType,
             createdOn: retrievedAlbum.createdOn,
+            imageFileName: retrievedAlbum.imageFileName,
+            imageUrl: retrievedAlbum.imageUrl,
             tracks: retrievedAlbum.tracks,
           },
           checked: false,
@@ -1486,8 +1580,6 @@ export class AlbumsManagementComponent {
       this.albumsToManage = this.albumsToManage
         .sort((a, b) => a.album.yearOfRelease - b.album.yearOfRelease)
         .reverse();
-      console.log('albums to manage');
-      console.log(this.albumsToManage);
       this.performersService.getAllPerformers().subscribe((data) => {
         this.performersForAlbums = data;
         this.performersNamesForAutocomplete = this.performersForAlbums.map(

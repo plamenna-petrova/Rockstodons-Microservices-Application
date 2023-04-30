@@ -62,7 +62,7 @@ namespace Catalog.API.Controllers
             }
         }
 
-        [HttpDelete("albums-images/filename")]
+        [HttpDelete("albums-images/delete/{filename}")]
         public async Task<IActionResult> DeleteAlbumImage(string filename)
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(

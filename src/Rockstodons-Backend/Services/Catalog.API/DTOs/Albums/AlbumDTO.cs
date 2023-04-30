@@ -20,6 +20,10 @@ namespace Catalog.API.DTOs.Albums
 
         public int NumberOfTracks { get; set; }
 
+        public string? ImageFileName { get; set; }
+
+        public string? ImageUrl { get; set; }
+
         public DateTime CreatedOn { get; set; }
 
         public AlbumTypeDTO AlbumType { get; set; }

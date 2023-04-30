@@ -10,6 +10,7 @@ import { PerformersService } from 'src/app/core/services/performers.service';
 import { TracksService } from 'src/app/core/services/tracks.service';
 import { ITrack } from 'src/app/core/interfaces/tracks/track';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
+import { FileStorageService } from 'src/app/core/services/file-storage.service';
 
 @Component({
   selector: 'app-recycle-bin',
@@ -67,6 +68,7 @@ export class RecycleBinComponent {
     private performersService: PerformersService,
     private albumsService: AlbumsService,
     private tracksService: TracksService,
+    private fileStorageService: FileStorageService,
     private nzNotificationService: NzNotificationService
   ) {
 
@@ -123,6 +125,7 @@ export class RecycleBinComponent {
               nzPauseOnHover: true
             }
           );
+          this.fileStorageService.deleteAlbumImage(item.imageFileName).subscribe(() => { });
           this.retrieveRecycledData();
         });
         break;

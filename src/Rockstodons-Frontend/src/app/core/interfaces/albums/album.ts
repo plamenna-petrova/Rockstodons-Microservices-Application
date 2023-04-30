@@ -9,6 +9,8 @@ export interface IAlbum {
   description: string;
   yearOfRelease: number;
   numberOfTracks: number;
+  imageFileName: string;
+  imageUrl: string;
   albumType: IAlbumType;
   genre: IGenre;
   performer: IPerformer;

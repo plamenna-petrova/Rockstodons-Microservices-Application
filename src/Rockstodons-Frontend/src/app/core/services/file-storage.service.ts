@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class FileStorageService {
-  private readonly fileStorageAPIUrl = `${environment.apiUrl}/file-storage`;
+  private readonly fileStorageAPIUrl = `${environment.apiUrl}/storage`;
 
   constructor(private httpClient: HttpClient) {
 
@@ -21,11 +21,7 @@ export class FileStorageService {
     return this.httpClient.post<any>(`${this.fileStorageAPIUrl}/upload/album-image`, formData);
   }
 
-  downloadAlbumImage(albumImageFileName: string): Observable<any> {
-    return this.httpClient.get<any>(`https://localhost:32768/api/v1/storage/albums-images/6.jpg`);
-  }
-
   deleteAlbumImage(albumImageFileName: string): Observable<void> {
-    return this.httpClient.delete<void>(`${this.fileStorageAPIUrl}/albums-images/${albumImageFileName}`);
+    return this.httpClient.delete<void>(`${this.fileStorageAPIUrl}/albums-images/delete/${albumImageFileName}`);
   }
 }
