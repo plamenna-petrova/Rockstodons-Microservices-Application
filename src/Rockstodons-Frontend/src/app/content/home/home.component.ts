@@ -30,6 +30,8 @@ export class HomeComponent {
     textAlign: 'center'
   }
 
+  fallback = '../../../assets/images/alternative-image.png';
+
   constructor(
     private albumsService: AlbumsService,
     private performersService: PerformersService,

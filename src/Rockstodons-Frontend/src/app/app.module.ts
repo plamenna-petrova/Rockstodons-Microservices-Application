@@ -28,6 +28,8 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
+import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { HomeComponent } from './content/home/home.component';
 import { appInitializer } from './core/services/app-initializer.service';
 import { AuthService } from './core/services/auth.service';
@@ -38,6 +40,8 @@ import { SharedModule } from './common/shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FileSaverModule } from 'ngx-filesaver';
 import { AlbumsCatalogueComponent } from './pages/catalogue/albums-catalogue/albums-catalogue.component';
+import { PerformersCatalogueComponent } from './pages/catalogue/performers-catalogue/performers-catalogue.component';
+import { GenresCatalogueComponent } from './pages/catalogue/genres-catalogue/genres-catalogue.component';
 
 registerLocaleData(en);
 
@@ -52,7 +56,9 @@ const icons: IconDefinition[] = [
     RegisterComponent,
     LoginComponent,
     HomeComponent,
-    AlbumsCatalogueComponent
+    AlbumsCatalogueComponent,
+    PerformersCatalogueComponent,
+    GenresCatalogueComponent
   ],
   imports: [
     BrowserModule,
@@ -69,6 +75,8 @@ const icons: IconDefinition[] = [
     NzSpaceModule,
     NzDividerModule,
     NzCarouselModule,
+    NzImageModule,
+    NzPaginationModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,

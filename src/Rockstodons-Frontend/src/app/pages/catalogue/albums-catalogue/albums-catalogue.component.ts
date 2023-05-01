@@ -12,10 +12,12 @@ export class AlbumsCatalogueComponent {
 
   isLoading = false;
 
-  gridStyle = {
-    width: '300px',
+  gridSelectionStyle = {
+    width: '95%',
     textAlign: 'center'
   }
+
+  fallback = '../../../assets/images/alternative-image.png';
 
   constructor(private albumsService: AlbumsService) {
 

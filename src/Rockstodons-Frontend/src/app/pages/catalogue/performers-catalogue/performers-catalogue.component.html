@@ -1,0 +1,23 @@
+<app-navbar></app-navbar>
+<div style="background: #ececec; padding: 30px">
+    <h2 nz-typography style="margin-top: 20px;">All Performers</h2>
+    <div nz-row [nzGutter]="8">
+        <div nz-col [nzSpan]="6" *ngFor="let performer of performersForCatalogue">
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="performerCoverTemplate" [nzActions]="[performerCatalogue, actionEdit, actionEllipsis]">
+                <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country"></nz-card-meta>
+            </nz-card>
+            <ng-template #performerCoverTemplate>
+                <img nz-image alt="example" [nzSrc]="performer.imageUrl" [nzFallback]="fallback" />
+            </ng-template>
+            <ng-template #performerCatalogue>
+                <span nz-icon nzType="read" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEdit>
+                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEllipsis>
+                <span nz-icon nzType="ellipsis"></span>
+            </ng-template>
+        </div>
+    </div>
+</div>

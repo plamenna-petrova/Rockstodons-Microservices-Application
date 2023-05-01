@@ -1,0 +1,23 @@
+<app-navbar></app-navbar>
+<div style="background: #ececec; padding: 30px">
+    <h2 nz-typography style="margin-top: 20px;">All Genres</h2>
+    <div nz-row [nzGutter]="8">
+        <div nz-col [nzSpan]="6" *ngFor="let genre of genresForCatalogue">
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="genreCoverTemplate" [nzActions]="[genreCatalogue, actionEdit, actionEllipsis]">
+                <nz-card-meta [nzTitle]="genre.name"></nz-card-meta>
+            </nz-card>
+            <ng-template #genreCoverTemplate>
+                <img nz-image alt="example" [nzSrc]="genre.imageUrl" [nzFallback]="fallback" />
+            </ng-template>
+            <ng-template #genreCatalogue>
+                <span nz-icon nzType="read" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEdit>
+                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEllipsis>
+                <span nz-icon nzType="ellipsis"></span>
+            </ng-template>
+        </div>
+    </div>
+</div>
