@@ -18,6 +18,10 @@ namespace Catalog.API.Data.Data.Models
 
         public string History { get; set; } = default!;
 
+        public string? ImageFileName { get; set; }
+
+        public string? ImageUrl { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<Album> Albums { get; set; }
 

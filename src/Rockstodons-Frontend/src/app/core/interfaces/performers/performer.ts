@@ -4,5 +4,7 @@ export interface IPerformer {
   name: string;
   country: string;
   history: string;
+  imageFileName: string;
+  imageUrl: string;
   isDeleted: boolean;
 }

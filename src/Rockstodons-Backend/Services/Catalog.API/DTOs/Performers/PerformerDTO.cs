@@ -11,6 +11,10 @@ namespace Catalog.API.DTOs.Performers
 
         public string Country { get; set; }
 
+        public string? ImageFileName { get; set; }
+
+        public string? ImageUrl { get; set; }
+
         public DateTime CreatedOn { get; set; }
     }
 }

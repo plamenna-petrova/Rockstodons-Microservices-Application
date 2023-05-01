@@ -43,6 +43,21 @@
                     </ng-template>
                 </nz-form-control>
             </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="8">Cover Image</nz-form-label>
+                <nz-upload class="album-cover-uploader" [nzAction]="performerPresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" (nzChange)="handlePerformerPresentationImageChange($event)"
+                    [nzDownload]="downloadPerformerPresentationImage" [nzShowButton]="isPerformerCreationPresentationImageUploadButtonVisible" [nzPreview]="handlePerformerImagePreview" [nzFileList]="performerPresentationImagesFileList">
+                    <div>
+                        <span nz-icon nzType="plus"></span>
+                        <div style="margin-top: 8px">Upload</div>
+                    </div>
+                </nz-upload>
+                <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible = false">
+                    <ng-template #modalContent>
+                        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                    </ng-template>
+                </nz-modal>
+            </nz-form-item>
         </form>
     </ng-container>
 </nz-modal>
@@ -116,6 +131,23 @@
                                             <ng-container *ngIf="control.hasError('required')">The history of the performer is required</ng-container>
                                         </ng-template>
                                     </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label [nzSpan]="8">Cover Image</nz-form-label>
+                                    <nz-upload class="album-edit-cover-uploader" [nzAction]="performerPresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" [nzDownload]="downloadPerformerPresentationImage"
+                                        [nzShowButton]="
+                                      isPerformerEditPresentationImageUploadButtonVisible
+                                    " (nzChange)="handleAlbumEditCoverImageChange($event)" [nzPreview]="handlePerformerImagePreview" [(nzFileList)]="performerEditPresentationImagesFileList">
+                                        <div>
+                                            <span nz-icon nzType="plus"></span>
+                                            <div style="margin-top: 8px">Upload</div>
+                                        </div>
+                                    </nz-upload>
+                                    <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible = false">
+                                        <ng-template #modalContent>
+                                            <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                                        </ng-template>
+                                    </nz-modal>
                                 </nz-form-item>
                             </form>
                         </ng-container>

@@ -27,6 +27,7 @@ import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { HomeComponent } from './content/home/home.component';
 import { appInitializer } from './core/services/app-initializer.service';
 import { AuthService } from './core/services/auth.service';
@@ -67,6 +68,7 @@ const icons: IconDefinition[] = [
     NzCardModule,
     NzSpaceModule,
     NzDividerModule,
+    NzCarouselModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,

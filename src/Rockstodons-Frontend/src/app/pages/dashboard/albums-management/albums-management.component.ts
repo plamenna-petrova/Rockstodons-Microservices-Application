@@ -551,6 +551,7 @@ export class AlbumsManagementComponent {
         url: albumTableDatum.album.imageUrl,
         thumbUrl: albumTableDatum.album.imageUrl
       };
+      
       this.isAlbumEditCoverImageUploadButtonVisible = false;
     }
 
