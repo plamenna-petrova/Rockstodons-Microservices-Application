@@ -14,6 +14,5 @@ namespace Catalog.API.DTOs.Performers
         public string? ImageFileName { get; set; }
 
         public string? ImageUrl { get; set; }
-
     }
 }

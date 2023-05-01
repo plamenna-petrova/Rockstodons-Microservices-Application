@@ -44,9 +44,9 @@
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label [nzSpan]="8">Cover Image</nz-form-label>
-                <nz-upload class="album-cover-uploader" [nzAction]="performerPresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" (nzChange)="handlePerformerPresentationImageChange($event)"
-                    [nzDownload]="downloadPerformerPresentationImage" [nzShowButton]="isPerformerCreationPresentationImageUploadButtonVisible" [nzPreview]="handlePerformerImagePreview" [nzFileList]="performerPresentationImagesFileList">
+                <nz-form-label [nzSpan]="8">Presentation Image</nz-form-label>
+                <nz-upload class="performer-presentation-image-uploader" [nzAction]="performerPresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false"
+                    (nzChange)="handlePerformerPresentationImageChange($event)" [nzDownload]="downloadPerformerPresentationImage" [nzShowButton]="isPerformerCreationPresentationImageUploadButtonVisible" [nzPreview]="handlePerformerImagePreview" [nzFileList]="performerPresentationImagesFileList">
                     <div>
                         <span nz-icon nzType="plus"></span>
                         <div style="margin-top: 8px">Upload</div>
@@ -133,11 +133,11 @@
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
-                                    <nz-form-label [nzSpan]="8">Cover Image</nz-form-label>
-                                    <nz-upload class="album-edit-cover-uploader" [nzAction]="performerPresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" [nzDownload]="downloadPerformerPresentationImage"
-                                        [nzShowButton]="
+                                    <nz-form-label [nzSpan]="8">Presentation Image</nz-form-label>
+                                    <nz-upload class="performer-edit-presentation-image-uploader" [nzAction]="performerPresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false"
+                                        [nzDownload]="downloadPerformerPresentationImage" [nzShowButton]="
                                       isPerformerEditPresentationImageUploadButtonVisible
-                                    " (nzChange)="handleAlbumEditCoverImageChange($event)" [nzPreview]="handlePerformerImagePreview" [(nzFileList)]="performerEditPresentationImagesFileList">
+                                    " (nzChange)="handlePerformerEditPresentationImageChange($event)" [nzPreview]="handlePerformerImagePreview" [(nzFileList)]="performerEditPresentationImagesFileList">
                                         <div>
                                             <span nz-icon nzType="plus"></span>
                                             <div style="margin-top: 8px">Upload</div>

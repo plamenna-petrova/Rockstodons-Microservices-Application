@@ -31,3 +31,13 @@
 .edit-performer-button {
     margin-right: 20px;
 }
+
+:host ::ng-deep .performer-presentation-image-uploader>.ant-upload {
+    width: 128px;
+    height: 128px;
+}
+
+:host ::ng-deep .performer-edit-presentation-image-uploader>.ant-upload {
+    width: 128px;
+    height: 128px;
+}

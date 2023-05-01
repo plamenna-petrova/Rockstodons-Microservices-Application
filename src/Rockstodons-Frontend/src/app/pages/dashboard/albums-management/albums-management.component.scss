@@ -2,43 +2,43 @@
         margin-right: 16px;
         margin-bottom: 8px;
     }
-    
+
     .load-albums-data-button {
         margin: 20px 0px;
     }
-    
+
     .edit-album-button {
         margin-right: 20px;
     }
-    
+
     .create-new-album-button {
         margin-left: 20px;
     }
-    
+
     .album-details-button {
         margin-right: 20px;
     }
-    
+
     .edit-album-button {
         margin-right: 20px;
     }
-    
+
     .export-albums-data-select {
         margin-left: 20px;
     }
-    
+
     .export-albums-data-button {
         margin-left: 20px;
     }
-    
+
     nz-select {
         width: 200px;
     }
-    
+
     nz-number-input {
         width: 200px;
     }
-    
+
     .dynamic-delete-button {
         cursor: pointer;
         position: relative;
@@ -47,25 +47,25 @@
         color: #999;
         transition: all 0.3s;
     }
-    
+
     .dynamic-delete-button:hover {
         color: #777;
     }
-    
+
     .track-input {
         width: 60%;
         margin-right: 8px;
     }
-    
+
     .add-button {
         width: 60%;
     }
-    
+
      :host ::ng-deep .album-cover-uploader>.ant-upload {
         width: 128px;
         height: 128px;
     }
-    
+
      :host ::ng-deep .album-edit-cover-uploader>.ant-upload {
         width: 128px;
         height: 128px;

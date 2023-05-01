@@ -7,7 +7,34 @@
 </button>
 <nz-modal [(nzVisible)]="isGenreCreationModalVisible" nzTitle="Create New Genre" (nzOnOk)="handleOkGenreCreationModal()" (nzOnCancel)="handleCancelGenreCreationModal()">
     <ng-container *nzModalContent>
-        <app-add-or-edit-genre-form [genreActionFormGroup]="genresCreationForm"></app-add-or-edit-genre-form>
+        <form nz-form [formGroup]="genresCreationForm">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineGenreNameValidationTemplate">
+                    <input nz-input formControlName="genreName" minlength="3" maxlength="20" required />
+                    <ng-template #combineGenreNameValidationTemplate let-control>
+                        <ng-container *ngIf="control.hasError('maxlength')">The genre's name cannot be longer than 20 characters</ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The genre's name must be at least 3 character long</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">The genre's name is required</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="8">Presentation Image</nz-form-label>
+                <nz-upload class="genre-presentation-image-uploader" [nzAction]="genrePresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" (nzChange)="handleGenrePresentationImageChange($event)"
+                    [nzDownload]="downloadGenrePresentationImage" [nzShowButton]="isGenreCreationPresentationImageUploadButtonVisible" [nzPreview]="handleGenreImagePreview" [nzFileList]="genrePresentationImagesFileList">
+                    <div>
+                        <span nz-icon nzType="plus"></span>
+                        <div style="margin-top: 8px">Upload</div>
+                    </div>
+                </nz-upload>
+                <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible = false">
+                    <ng-template #modalContent>
+                        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                    </ng-template>
+                </nz-modal>
+            </nz-form-item>
+        </form>
     </ng-container>
 </nz-modal>
 
@@ -32,7 +59,36 @@
         </button>
                 <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Genre" (nzOnOk)="handleOkGenreEditModal(data)" (nzOnCancel)="handleCancelGenreEditModal(data)">
                     <ng-container *nzModalContent>
-                        <app-add-or-edit-genre-form [genreActionFormGroup]="genresEditForm"></app-add-or-edit-genre-form>
+                        <form nz-form [formGroup]="genresEditForm">
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="5">Name</nz-form-label>
+                                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineGenreNameValidationTemplate">
+                                    <input nz-input formControlName="genreName" minlength="3" maxlength="20" required />
+                                    <ng-template #combineGenreNameValidationTemplate let-control>
+                                        <ng-container *ngIf="control.hasError('maxlength')">The genre's name cannot be longer than 20 characters</ng-container>
+                                        <ng-container *ngIf="control.hasError('minlength')">The genre's name must be at least 3 character long</ng-container>
+                                        <ng-container *ngIf="control.hasError('required')">The genre's name is required</ng-container>
+                                    </ng-template>
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="8">Presentation Image</nz-form-label>
+                                <nz-upload class="genre-edit-presentation-image-uploader" [nzAction]="genrePresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false"
+                                    [nzDownload]="downloadGenrePresentationImage" [nzShowButton]="
+                                isGenreEditPresentationImageUploadButtonVisible
+                              " (nzChange)="handleGenreEditPresentationImageChange($event)" [nzPreview]="handleGenreImagePreview" [(nzFileList)]="genreEditPresentationImagesFileList">
+                                    <div>
+                                        <span nz-icon nzType="plus"></span>
+                                        <div style="margin-top: 8px">Upload</div>
+                                    </div>
+                                </nz-upload>
+                                <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible = false">
+                                    <ng-template #modalContent>
+                                        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                                    </ng-template>
+                                </nz-modal>
+                            </nz-form-item>
+                        </form>
                     </ng-container>
                 </nz-modal>
                 <button nz-button (click)="showGenreRemovalModal(data.genre)" nzDanger>

@@ -516,13 +516,13 @@ export class PerformersManagementComponent {
       return;
     }
 
-    const uploadedPerformerCoverImage =
+    const uploadedPerformerPresentationImage =
       this.performerPresentationImagesFileList[0];
 
     const performerToCreate: IPerformerCreateDTO = {
       ...this.performersCreationForm.value,
-      imageFileName: uploadedPerformerCoverImage.response.blobDTO.name,
-      imageUrl: uploadedPerformerCoverImage.response.blobDTO.uri,
+      imageFileName: uploadedPerformerPresentationImage.response.blobDTO.name,
+      imageUrl: uploadedPerformerPresentationImage.response.blobDTO.uri,
     };
 
     if (this.performersCreationForm.valid) {
@@ -560,18 +560,18 @@ export class PerformersManagementComponent {
       ...this.performersEditForm.value,
     } as IPerformerUpdateDTO;
 
-    const uploadedPerformerCoverImage =
+    const uploadedPerformerPresentationImage =
       this.performerEditPresentationImagesFileList[0];
 
-    if (uploadedPerformerCoverImage !== undefined) {
-      if (uploadedPerformerCoverImage.name && uploadedPerformerCoverImage.url) {
-        performerToEdit.imageFileName = uploadedPerformerCoverImage.name;
-        performerToEdit.imageUrl = uploadedPerformerCoverImage.url;
+    if (uploadedPerformerPresentationImage !== undefined) {
+      if (uploadedPerformerPresentationImage.name && uploadedPerformerPresentationImage.url) {
+        performerToEdit.imageFileName = uploadedPerformerPresentationImage.name;
+        performerToEdit.imageUrl = uploadedPerformerPresentationImage.url;
       } else {
         performerToEdit.imageFileName =
-          uploadedPerformerCoverImage.response.blobDTO.name;
+        uploadedPerformerPresentationImage.response.blobDTO.name;
         performerToEdit.imageUrl =
-          uploadedPerformerCoverImage.response.blobDTO.uri;
+        uploadedPerformerPresentationImage.response.blobDTO.uri;
       }
     }
 
@@ -706,7 +706,7 @@ export class PerformersManagementComponent {
     }
   }
 
-  handleAlbumEditCoverImageChange(info: any) {
+  handlePerformerEditPresentationImageChange(info: any) {
     if (info.type === 'removed') {
       this.isPerformerEditPresentationImageUploadButtonVisible = true;
     } else {

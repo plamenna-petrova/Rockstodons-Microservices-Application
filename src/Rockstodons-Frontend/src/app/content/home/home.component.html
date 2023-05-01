@@ -19,7 +19,7 @@
     <h2 nz-typography style="margin-top: 20px;">Albums Selection</h2>
     <div nz-row [nzGutter]="8">
         <div nz-col [nzSpan]="6" *ngFor="let album of albumsPrimarySelection">
-            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridStyleAlbumsPrimarySelection" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit, actionEllipsis]">
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit, actionEllipsis]">
                 <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
@@ -38,7 +38,7 @@
     </div>
     <div nz-row [nzGutter]="8">
         <div nz-col [nzSpan]="4" *ngFor="let album of albumsSecondarySelection">
-            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridStyleAlbumsSecondarySelection" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit, actionEllipsis]">
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit, actionEllipsis]">
                 <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
@@ -48,7 +48,51 @@
                 <span nz-icon nzType="read" nzTheme="outline"></span>
             </ng-template>
             <ng-template #actionEdit>
-                <span nz-icon nzType="edit"></span>
+                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEllipsis>
+                <span nz-icon nzType="ellipsis"></span>
+            </ng-template>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    <button nz-button nzType="default">Browse for More</button>
+    <h2 nz-typography style="margin-top: 20px;">Top Performers</h2>
+    <div nz-row [nzGutter]="8">
+        <div nz-col [nzSpan]="4" *ngFor="let performer of performersPrimarySelection">
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="performerCoverTemplate" [nzActions]="[performerCatalogue, actionEdit, actionEllipsis]">
+                <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country"></nz-card-meta>
+            </nz-card>
+            <ng-template #performerCoverTemplate>
+                <img alt="example" [src]="performer.imageUrl" />
+            </ng-template>
+            <ng-template #performerCatalogue>
+                <span nz-icon nzType="read" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEdit>
+                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEllipsis>
+                <span nz-icon nzType="ellipsis"></span>
+            </ng-template>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    <button nz-button nzType="default">Browse for More</button>
+    <h2 nz-typography style="margin-top: 20px;">Trending Genres</h2>
+    <div nz-row [nzGutter]="8">
+        <div nz-col [nzSpan]="4" *ngFor="let genre of genresPrimarySelection">
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit, actionEllipsis]">
+                <nz-card-meta [nzTitle]="genre.name"></nz-card-meta>
+            </nz-card>
+            <ng-template #albumCoverTemplate>
+                <img alt="example" [src]="genre.imageUrl" />
+            </ng-template>
+            <ng-template #albumCatalogue>
+                <span nz-icon nzType="read" nzTheme="outline"></span>
+            </ng-template>
+            <ng-template #actionEdit>
+                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
             </ng-template>
             <ng-template #actionEllipsis>
                 <span nz-icon nzType="ellipsis"></span>

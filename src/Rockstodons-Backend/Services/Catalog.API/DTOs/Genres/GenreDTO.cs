@@ -9,6 +9,10 @@ namespace Catalog.API.DTOs.Genres
 
         public string Name { get; set; }
 
+        public string? ImageFileName { get; set; }
+
+        public string? ImageUrl { get; set; }
+
         public DateTime CreatedOn { get; set; }
     }
 }
