@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { IAlbum } from '../interfaces/albums/album';
 import { environment } from 'src/environments/environment';
 import { IAlbumCreateDTO } from '../interfaces/albums/album-create-dto';

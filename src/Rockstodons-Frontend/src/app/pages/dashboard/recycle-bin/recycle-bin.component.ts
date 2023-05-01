@@ -58,8 +58,8 @@ export class RecycleBinComponent {
       name: 'Tracks',
       disabled: false,
       group: 'tracks',
-      list: [] as any[]
-    }
+      list: [] as any[],
+    },
   ];
 
   constructor(
@@ -70,9 +70,7 @@ export class RecycleBinComponent {
     private tracksService: TracksService,
     private fileStorageService: FileStorageService,
     private nzNotificationService: NzNotificationService
-  ) {
-
-  }
+  ) {}
 
   deleteRecycledItemPermanently(item: any, group: string): void {
     switch (group) {
@@ -82,7 +80,7 @@ export class RecycleBinComponent {
             'Successful Operation',
             `The genre ${item.name} has been deleted permanently!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
           this.retrieveRecycledData();
@@ -96,7 +94,7 @@ export class RecycleBinComponent {
               'Successful Operation',
               `The album type ${item.name} has been deleted permanently!`,
               {
-                nzPauseOnHover: true
+                nzPauseOnHover: true,
               }
             );
             this.retrieveRecycledData();
@@ -110,24 +108,41 @@ export class RecycleBinComponent {
               'Successful Operation',
               `The performer ${item.name} has been deleted permanently!`,
               {
-                nzPauseOnHover: true
+                nzPauseOnHover: true,
               }
             );
             this.retrieveRecycledData();
           });
         break;
       case 'albums':
-        this.albumsService.deleteAlbumPermanently(item.id).subscribe(() => {
-          this.nzNotificationService.success(
-            'Successful Operation',
-            `The album ${item.name} has been deleted permanently!`,
-            {
-              nzPauseOnHover: true
-            }
-          );
-          this.fileStorageService.deleteAlbumImage(item.imageFileName).subscribe(() => { });
-          this.retrieveRecycledData();
+        this.albumsService.deleteAlbumPermanently(item.id).subscribe({
+          next: () => {
+            this.albumsService.deleteAlbumPermanently(item.id).subscribe(() => {
+              this.nzNotificationService.success(
+                'Successful Operation',
+                `The album ${item.name} has been deleted permanently!`,
+                {
+                  nzPauseOnHover: true,
+                }
+              );
+              this.fileStorageService
+                .deleteAlbumImage(item.imageFileName)
+                .subscribe(() => {});
+            });
+          },
+          error: (error) => {
+            this.nzNotificationService
+              .error(
+                'Error',
+                'Couldn\'t delete the album. Please delete all the tracks ' +
+                'belonging to this album before trying again'
+              );
+          },
+          complete: () => {
+            this.retrieveRecycledData();
+          }
         });
+
         break;
       case 'tracks':
         this.tracksService.deleteTrackPermanently(item.id).subscribe(() => {
@@ -135,7 +150,7 @@ export class RecycleBinComponent {
             'Successful Operation',
             `The track ${item.name} has been deleted permanently!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
           this.retrieveRecycledData();
@@ -152,7 +167,7 @@ export class RecycleBinComponent {
             'Successful Operation',
             `The genre ${item.name} has been restored!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
           this.retrieveRecycledData();
@@ -164,7 +179,7 @@ export class RecycleBinComponent {
             'Successful Operation',
             `The album type ${item.name} has been restored!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
           this.retrieveRecycledData();
@@ -176,7 +191,7 @@ export class RecycleBinComponent {
             'Successful Operation',
             `The performer ${item.name} has been restored!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
           this.retrieveRecycledData();
@@ -188,7 +203,7 @@ export class RecycleBinComponent {
             'Successful Operation',
             `The album ${item.name} has been restored!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
           this.retrieveRecycledData();
@@ -200,9 +215,9 @@ export class RecycleBinComponent {
             'Successful Operation',
             `The track ${item.name} has been restored!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
-          )
+          );
         });
         break;
     }

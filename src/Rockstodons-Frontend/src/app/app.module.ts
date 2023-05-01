@@ -23,6 +23,10 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { HomeComponent } from './content/home/home.component';
 import { appInitializer } from './core/services/app-initializer.service';
 import { AuthService } from './core/services/auth.service';
@@ -32,6 +36,7 @@ import { SharedModule } from './common/shared/shared.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FileSaverModule } from 'ngx-filesaver';
+import { AlbumsCatalogueComponent } from './pages/catalogue/albums-catalogue/albums-catalogue.component';
 
 registerLocaleData(en);
 
@@ -45,7 +50,8 @@ const icons: IconDefinition[] = [
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    AlbumsCatalogueComponent
   ],
   imports: [
     BrowserModule,
@@ -57,6 +63,10 @@ const icons: IconDefinition[] = [
     NzInputModule,
     NzButtonModule,
     NzNotificationModule,
+    NzPageHeaderModule,
+    NzCardModule,
+    NzSpaceModule,
+    NzDividerModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,
