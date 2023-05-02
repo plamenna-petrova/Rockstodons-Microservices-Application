@@ -2,7 +2,7 @@
 <div style="background: #ececec; padding: 30px">
     <h2 nz-typography style="margin-top: 20px;">All Genres</h2>
     <div nz-row [nzGutter]="8">
-        <div nz-col [nzSpan]="6" *ngFor="let genre of genresForCatalogue">
+        <div nz-col [nzSpan]="4" *ngFor="let genre of genresForCatalogue">
             <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="genreCoverTemplate" [nzActions]="[genreCatalogue, actionEdit, actionEllipsis]">
                 <nz-card-meta [nzTitle]="genre.name"></nz-card-meta>
             </nz-card>

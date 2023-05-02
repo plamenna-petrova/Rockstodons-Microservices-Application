@@ -787,8 +787,6 @@ export class PerformersManagementComponent {
             isEditingModalVisible: false,
           } as IPerformerTableData);
         });
-      console.log('performer data');
-      console.log(this.performersData);
       this.performersDisplayData = [...this.performersData];
       this.isLoading = false;
     });

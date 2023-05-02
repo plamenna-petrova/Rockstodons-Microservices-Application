@@ -13,6 +13,7 @@ namespace Catalog.API.Controllers
         private readonly string _azureStorageAlbumsContainerName;
         private readonly string _azureStoragePerformersContainerName;
         private readonly string _azureStorageGenresContainerName;
+        private readonly string _azureStorageTracksContainerName;
 
         public FilesStorageController(IFileStorageService fileStorageService, IConfiguration configuration)
         {
@@ -21,6 +22,7 @@ namespace Catalog.API.Controllers
             _azureStorageAlbumsContainerName = _configuration["AzureStorage:AlbumsBlobContainerName"];
             _azureStoragePerformersContainerName = _configuration["AzureStorage:PerformersBlobContainerName"];
             _azureStorageGenresContainerName = _configuration["AzureStorage:GenresBlobContainerName"];
+            _azureStorageTracksContainerName = _configuration["AzureStorage:TracksBlobContainerName"];
         }
 
         [HttpGet("files/albums")]
@@ -191,6 +193,66 @@ namespace Catalog.API.Controllers
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
                 filename, _azureStorageGenresContainerName
+            );
+
+            if (blobResponseDTO.Error)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status200OK, blobResponseDTO.Status);
+            }
+        }
+
+        [HttpGet("files/tracks")]
+        public async Task<IActionResult> GetTracksMP3FilesFromAzureContainer()
+        {
+            List<BlobDTO> retrievedFiles = await _fileStorageService
+                .GetFilesList(_azureStorageTracksContainerName);
+
+            return StatusCode(StatusCodes.Status200OK, retrievedFiles);
+        }
+
+        [HttpPost("upload/track-mp3-file")]
+        public async Task<IActionResult> UploadTracksMP3File(IFormFile imageToUpload)
+        {
+            BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
+                imageToUpload, _azureStorageTracksContainerName
+            );
+
+            if (blobResponseDTO.Error)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status200OK, blobResponseDTO);
+            }
+        }
+
+        [HttpGet("tracks-mp3-files/{filename}")]
+        public async Task<IActionResult> DownloadTrackMP3(string filename)
+        {
+            BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
+                filename, _azureStorageTracksContainerName
+            );
+
+            if (blobDTO is null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            else
+            {
+                return File(blobDTO.Content!, blobDTO.ContentType!, blobDTO.Name);
+            }
+        }
+
+        [HttpDelete("tracks-mp3-files/delete/{filename}")]
+        public async Task<IActionResult> DeleteTracksMP3File(string filename)
+        {
+            BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
+                filename, _azureStorageTracksContainerName
             );
 
             if (blobResponseDTO.Error)

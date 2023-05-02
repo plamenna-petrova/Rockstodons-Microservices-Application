@@ -100,6 +100,64 @@ namespace Catalog.API.Services.Data.Implementation
                 blobResponseDTO.Error = true;
                 return blobResponseDTO;
             }
+            catch (RequestFailedException requestFailedException)
+            {
+                _logger.LogError($"Unhandled Exception. ID: {requestFailedException.StackTrace} - " +
+                    $"Message: {requestFailedException.Message}");
+                blobResponseDTO.Status = $"Unexpected error: {requestFailedException.StackTrace}. " +
+                    $"Check log with StackTrace ID.";
+                blobResponseDTO.Error = true;
+                return blobResponseDTO;
+            }
+
+            return blobResponseDTO;
+        }
+
+
+        public async Task<BlobResponseDTO> UploadMP3FileAsync(IFormFile blobFile, string azureStorageContainerName)
+        {
+            BlobResponseDTO blobResponseDTO = new();
+
+            BlobContainerClient blobContainerClient = new BlobContainerClient(
+                _azureStorageConnectionString, azureStorageContainerName
+            );
+
+            try
+            {
+                BlobClient blobClient = blobContainerClient.GetBlobClient(blobFile.FileName);
+
+                var extension = Path.GetExtension(blobFile.FileName);
+
+                await using (Stream? data = blobFile.OpenReadStream())
+                {
+                    await blobClient.UploadAsync(data);
+                }
+
+                blobResponseDTO.Status = $"File {blobFile.FileName} uploaded successfully";
+                blobResponseDTO.Error = false;
+                blobResponseDTO.BlobDTO.Uri = blobClient.Uri.AbsoluteUri;
+                blobResponseDTO.BlobDTO.Name = blobClient.Name;
+            }
+            catch (RequestFailedException requestFailedException)
+               when (requestFailedException.ErrorCode == BlobErrorCode.BlobAlreadyExists)
+            {
+                _logger.LogError($"File with name {blobFile.FileName} already exists in the container. " +
+                    $"Set another name to store the file in the container :" +
+                    $"'{azureStorageContainerName}.'");
+                blobResponseDTO.Status = $"The file with name {blobFile.FileName} already exists. " +
+                    $"Please use another name to store your file.";
+                blobResponseDTO.Error = true;
+                return blobResponseDTO;
+            } 
+            catch (RequestFailedException requestFailedException)
+            {
+                _logger.LogError($"Unhandled Exception. ID: {requestFailedException.StackTrace} - " +
+                    $"Message: {requestFailedException.Message}");
+                blobResponseDTO.Status = $"Unexpected error: {requestFailedException.StackTrace}. " +
+                    $"Check log with StackTrace ID.";
+                blobResponseDTO.Error = true;
+                return blobResponseDTO;
+            }
 
             return blobResponseDTO;
         }

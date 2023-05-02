@@ -537,6 +537,17 @@ export class AlbumsManagementComponent {
 
   showAlbumEditModal(albumTableDatum: IAlbumTableData): void {
     albumTableDatum.isEditingModalVisible = true;
+
+    this.albumsEditForm.patchValue({
+      name: albumTableDatum.album.name,
+      yearOfRelease: albumTableDatum.album.yearOfRelease,
+      numberOfTracks: albumTableDatum.album.numberOfTracks,
+      description: albumTableDatum.album.description,
+      albumType: albumTableDatum.album.albumType.name,
+      genre: albumTableDatum.album.genre.name,
+      performer: albumTableDatum.album.performer.name,
+    });
+
     this.isAlbumEditCoverImageUploadButtonVisible = true;
     this.albumEditCoverImagesFileList = [];
 
@@ -551,36 +562,15 @@ export class AlbumsManagementComponent {
         url: albumTableDatum.album.imageUrl,
         thumbUrl: albumTableDatum.album.imageUrl
       };
-      
+
       this.isAlbumEditCoverImageUploadButtonVisible = false;
     }
-
-    this.albumsEditForm.patchValue({
-      name: albumTableDatum.album.name,
-      yearOfRelease: albumTableDatum.album.yearOfRelease,
-      numberOfTracks: albumTableDatum.album.numberOfTracks,
-      description: albumTableDatum.album.description,
-      albumType: albumTableDatum.album.albumType.name,
-      genre: albumTableDatum.album.genre.name,
-      performer: albumTableDatum.album.performer.name,
-    });
-
-    this.getExistingAlbumsImages();
 
     const albumTracksNames = albumTableDatum.album.tracks.map(
       (track) => track.name
     );
 
-    if (this.listOfTrackEditControls.length > 0) {
-      this.listOfTrackEditControls.forEach((editControl) => {
-        const index = this.listOfTrackEditControls.indexOf(editControl);
-        this.listOfTrackEditControls.splice(index, 1);
-        this.tracksEditActionFormGroup.removeControl(
-          editControl.controlInstance
-        );
-      });
-    }
-
+    this.tracksEditActionFormGroup.reset();
     this.listOfTrackEditControls = [];
 
     albumTracksNames.forEach((trackName, i) => {
@@ -602,6 +592,12 @@ export class AlbumsManagementComponent {
           ])
         )
       );
+    });
+
+    this.listOfTrackEditControls.forEach((control, i) => {
+      const controlToFill =
+          this.tracksEditActionFormGroup.controls[control.controlInstance];
+        controlToFill.setValue(albumTracksNames[i]);
     });
   }
 
@@ -1532,7 +1528,6 @@ export class AlbumsManagementComponent {
         position: new FormControl('bottom', { nonNullable: true }),
       });
     this.retrieveAlbumsData();
-    this.getExistingAlbumsImages();
     this.albumsManagementTableSetting =
       this.albumsManagementTableSettingsForm?.value;
     this.albumsManagementTableSettingsForm?.valueChanges.subscribe((value) => {
@@ -1546,12 +1541,6 @@ export class AlbumsManagementComponent {
       this.scrollY = isFixed ? '240px' : null;
     });
     this.addTrackField();
-  }
-
-  getExistingAlbumsImages(): void {
-    this.fileStorageService.getAlbumsImages().subscribe(data => {
-      this.existingAlbumCoverImages = data;
-    });
   }
 
   private retrieveAlbumsData(): void {
