@@ -700,10 +700,10 @@ export class AlbumsManagementComponent {
 
             Object.values(this.tracksActionFormGroup.controls).forEach(
               (control: any) => {
-                const trackToCreate: ITrackCreateDTO = {
+                const trackToCreate = {
                   name: control.value,
                   albumId: newAlbum.id,
-                };
+                } as ITrackCreateDTO;
 
                 this.tracksService
                   .createNewTrack(trackToCreate)
@@ -920,7 +920,7 @@ export class AlbumsManagementComponent {
           tracksToCreateOnAlbumEdit.push({
             name: control.value,
             albumId: albumToEdit.id,
-          });
+          } as ITrackCreateDTO);
         } else {
           const foundExistingTrackId = originalTracks.find(
             (track) => track.name === control.value

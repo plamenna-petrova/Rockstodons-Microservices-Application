@@ -7,6 +7,10 @@ namespace Catalog.API.Data.Data.Models
     {
         public string Name { get; set; } = default!;
 
+        public string? AudioFileName { get; set; }
+
+        public string? AudioFileUrl { get; set; }
+
         public string AlbumId { get; set; }
 
         public virtual Album Album { get; set; }

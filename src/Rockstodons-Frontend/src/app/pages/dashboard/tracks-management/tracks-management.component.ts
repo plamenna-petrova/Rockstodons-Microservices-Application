@@ -1,3 +1,10 @@
+import {
+  HttpClient,
+  HttpEvent,
+  HttpEventType,
+  HttpRequest,
+  HttpResponse,
+} from '@angular/common/http';
 import { Component } from '@angular/core';
 import {
   AbstractControl,
@@ -5,16 +12,28 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { Observable, of, take } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { ITrack } from 'src/app/core/interfaces/tracks/track';
 import { ITrackCreateDTO } from 'src/app/core/interfaces/tracks/track-create-dto';
 import { ITrackUpdateDTO } from 'src/app/core/interfaces/tracks/track-update-dto';
 import { AlbumsService } from 'src/app/core/services/albums.service';
+import { FileStorageService } from 'src/app/core/services/file-storage.service';
 import { TracksService } from 'src/app/core/services/tracks.service';
-import { operationSuccessMessage, recordRemovalConfirmationModalCancelText, recordRemovalConfirmationModalOkDanger, recordRemovalConfirmationModalOkText, recordRemovalConfirmationModalOkType, recordRemovalConfirmationModalTitle, removalOperationCancelMessage } from 'src/app/core/utils/global-constants';
+import {
+  operationSuccessMessage,
+  recordRemovalConfirmationModalCancelText,
+  recordRemovalConfirmationModalOkDanger,
+  recordRemovalConfirmationModalOkText,
+  recordRemovalConfirmationModalOkType,
+  recordRemovalConfirmationModalTitle,
+  removalOperationCancelMessage,
+} from 'src/app/core/utils/global-constants';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tracks-management',
@@ -22,9 +41,11 @@ import { operationSuccessMessage, recordRemovalConfirmationModalCancelText, reco
   styleUrls: ['./tracks-management.component.scss'],
 })
 export class TracksManagementComponent {
-  searchValue = '';
   isLoading = false;
-  isTracksSearchTriggerVisible = false;
+  isTracksSearchByNameTriggerVisible = false;
+  isTracksSearchByAlbumTriggerVisible = false;
+  searchByNameValue = '';
+  searchByAlbumValue = '';
   tracksData!: ITrackTableData[];
   tracksDisplayData!: ITrackTableData[];
   isTrackCreationModalVisible = false;
@@ -36,11 +57,20 @@ export class TracksManagementComponent {
   tracksCreationForm!: FormGroup;
   tracksEditForm!: FormGroup;
 
+  trackAudioFileAPIUrl = `${environment.apiUrl}/storage/upload/track-mp3-file`;
+  isTrackAudioFileUploadButtonVisible = false;
+  isTrackEditAudioFileUploadButtonVisible = false;
+  trackAudioFileList: NzUploadFile[] = [];
+  trackEditAudioFileList: NzUploadFile[] = [];
+
   constructor(
     private tracksService: TracksService,
     private albumsService: AlbumsService,
     private nzNotificationService: NzNotificationService,
-    private nzModalService: NzModalService
+    private nzModalService: NzModalService,
+    private nzMessageService: NzMessageService,
+    private httpClient: HttpClient,
+    private fileStorageService: FileStorageService
   ) {
     this.buildTracksActionForms();
   }
@@ -85,22 +115,36 @@ export class TracksManagementComponent {
   }
 
   resetTracksSearch(): void {
-    this.searchValue = '';
-    this.searchForTracks();
+    this.searchByNameValue = '';
+    this.searchByAlbumValue = '';
+    this.isTracksSearchByNameTriggerVisible = false;
+    this.isTracksSearchByAlbumTriggerVisible = false;
+    this.retrieveTracksData();
   }
 
   searchForTracks(): void {
-    this.isTracksSearchTriggerVisible = false;
+    this.isTracksSearchByNameTriggerVisible = false;
     this.tracksDisplayData = this.tracksData.filter(
       (data: ITrackTableData) =>
         data.track.name
           .toLowerCase()
-          .indexOf(this.searchValue.toLowerCase()) !== -1
+          .indexOf(this.searchByNameValue.toLowerCase()) !== -1
+    );
+  }
+
+  searchForTracksByAlbum(): void {
+    this.isTracksSearchByAlbumTriggerVisible = false;
+    this.tracksDisplayData = this.tracksData.filter(
+      (data: ITrackTableData) =>
+        data.track.album?.name
+          .toLowerCase()
+          .indexOf(this.searchByAlbumValue.toLowerCase()) !== -1
     );
   }
 
   showTrackCreationModal(): void {
     this.isTrackCreationModalVisible = true;
+    this.isTrackAudioFileUploadButtonVisible = true;
     this.tracksCreationForm.reset();
   }
 
@@ -114,18 +158,38 @@ export class TracksManagementComponent {
 
   showTrackEditModal(trackTableDatum: ITrackTableData): void {
     trackTableDatum.isEditingModalVisible = true;
+    this.isTrackEditAudioFileUploadButtonVisible = true;
+    this.trackEditAudioFileList = [];
+
     this.tracksEditForm.setValue({
       name: trackTableDatum.track.name,
       album: trackTableDatum.track.album?.name,
     });
+
+    if (
+      trackTableDatum.track.audioFileName !== null &&
+      trackTableDatum.track.audioFileUrl !== null
+    ) {
+      this.trackEditAudioFileList[0] = {
+        uid: '-1',
+        name: trackTableDatum.track.audioFileName,
+        status: 'done',
+        url: trackTableDatum.track.audioFileUrl,
+        thumbUrl: trackTableDatum.track.audioFileUrl,
+      };
+
+      this.isTrackEditAudioFileUploadButtonVisible = false;
+    }
   }
 
   handleOkTrackEditModal(trackTableDatum: ITrackTableData): void {
-    this.onTracksEditFormSubmit(trackTableDatum.track.id).subscribe((success) => {
-      if (success) {
-        trackTableDatum.isEditingModalVisible = false;
+    this.onTracksEditFormSubmit(trackTableDatum.track.id).subscribe(
+      (success) => {
+        if (success) {
+          trackTableDatum.isEditingModalVisible = false;
+        }
       }
-    });
+    );
   }
 
   handleCancelTrackEditModal(trackTableDatum: ITrackTableData): void {
@@ -147,15 +211,19 @@ export class TracksManagementComponent {
         `Error`,
         `The track ${trackName} already exists under the album ${album.name}!`,
         {
-          nzPauseOnHover: true
+          nzPauseOnHover: true,
         }
       );
       return;
     }
 
+    const uploadedTrackAudioFile = this.trackAudioFileList[0];
+
     const trackToCreate: ITrackCreateDTO = {
       name: trackName,
       albumId: album.id,
+      audioFileName: uploadedTrackAudioFile.response.blobDTO.name,
+      audioFileUrl: uploadedTrackAudioFile.response.blobDTO.uri,
     };
 
     if (this.tracksCreationForm.valid) {
@@ -168,7 +236,7 @@ export class TracksManagementComponent {
             operationSuccessMessage,
             `The track ${newTrack.name} is created successfully!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
 
@@ -192,14 +260,24 @@ export class TracksManagementComponent {
       (album) => album.name === this.tracksEditForm.value.album
     )!;
 
-    console.log('album');
-    console.log(album);
-
-    const trackToEdit: ITrackUpdateDTO = {
+    const trackToEdit = {
       id: trackId,
       name: this.tracksEditForm.value.name,
       albumId: album.id,
-    };
+    } as ITrackUpdateDTO;
+
+    const uploadedTrackAudioFile = this.trackEditAudioFileList[0];
+
+    if (uploadedTrackAudioFile !== undefined) {
+      if (uploadedTrackAudioFile.name && uploadedTrackAudioFile.url) {
+        trackToEdit.audioFileName = uploadedTrackAudioFile.name;
+        trackToEdit.audioFileUrl = uploadedTrackAudioFile.url;
+      } else {
+        trackToEdit.audioFileName =
+          uploadedTrackAudioFile.response.blobDTO.name;
+        trackToEdit.audioFileUrl = uploadedTrackAudioFile.response.blobDTO.uri;
+      }
+    }
 
     if (this.tracksEditForm.valid) {
       this.tracksService
@@ -211,7 +289,7 @@ export class TracksManagementComponent {
             operationSuccessMessage,
             `The track ${editedTrack.name} is edited successfully!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
           );
 
@@ -228,6 +306,105 @@ export class TracksManagementComponent {
     }
 
     return of(isTracksEditFormSubmitSuccessful);
+  }
+
+  setMediaUploadHeaders = (nzUplaodFile: NzUploadFile) => {
+    return {
+      'Content-Type': 'multipart/form-data',
+      Accept: 'application/json',
+    };
+  };
+
+  executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs): any => {
+    this.fileStorageService.getAlbumsImages().subscribe((data: any) => {
+      if (
+        data
+          .map((mp3File: any) => mp3File.name)
+          .includes(nzUploadXHRArgs.file.name)
+      ) {
+        this.nzMessageService.error(
+          `Track mp3 file with the same file name` +
+            `${nzUploadXHRArgs.file.name} already exists`
+        );
+        nzUploadXHRArgs.onError!(
+          `Track mp3 file with the same file name`,
+          nzUploadXHRArgs.file
+        );
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('mp3FileToUpload', nzUploadXHRArgs.file as any);
+
+      const fileUploadRequest = new HttpRequest(
+        'POST',
+        nzUploadXHRArgs.action!,
+        formData,
+        {
+          reportProgress: true,
+          withCredentials: false,
+        }
+      );
+
+      return this.httpClient.request(fileUploadRequest).subscribe({
+        next: (event: HttpEvent<unknown>) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            if (event.total! > 0) {
+              (event as any).percent = event.loaded;
+            }
+            nzUploadXHRArgs.onProgress!(event, nzUploadXHRArgs.file);
+          } else if (event instanceof HttpResponse) {
+            nzUploadXHRArgs.onSuccess!(event.body, nzUploadXHRArgs.file, event);
+            this.isTrackAudioFileUploadButtonVisible = false;
+            this.isTrackEditAudioFileUploadButtonVisible = false;
+          }
+        },
+        error: (error) => {
+          nzUploadXHRArgs.onError!(error, nzUploadXHRArgs.file);
+        },
+      });
+    });
+  };
+
+  downloadTrackAudioFile(fileToDownload: NzUploadFile): void | undefined {
+    let a = document.createElement('a');
+    a.href = fileToDownload.thumbUrl!;
+    a.download = fileToDownload.name!;
+    a.click();
+  }
+
+  handleTrackAudioFileChange(info: any) {
+    if (info.type === 'removed') {
+      this.isTrackAudioFileUploadButtonVisible = true;
+    } else {
+      let fileList = [...info.fileList];
+
+      fileList = fileList.map((file) => {
+        if (file.response) {
+          file.url = file.response.url;
+        }
+        return file;
+      });
+
+      this.trackAudioFileList = fileList;
+    }
+  }
+
+  handleTrackEditAudioFileChange(info: any) {
+    if (info.type === 'removed') {
+      this.isTrackEditAudioFileUploadButtonVisible = true;
+    } else {
+      let fileList = [...info.fileList];
+
+      fileList = fileList.map((file) => {
+        if (file.response) {
+          file.url = file.response.url;
+        }
+        return file;
+      });
+
+      this.trackEditAudioFileList = fileList;
+    }
   }
 
   showTrackRemovalModal(trackToRemove: ITrack): void {
@@ -248,7 +425,7 @@ export class TracksManagementComponent {
         operationSuccessMessage,
         `The track ${trackToRemove.name} has been removed!`,
         {
-          nzPauseOnHover: true
+          nzPauseOnHover: true,
         }
       );
       this.retrieveTracksData();
@@ -264,8 +441,9 @@ export class TracksManagementComponent {
 
   onAlbumsAutocompleteChange(value: string): void {
     this.filteredAlbumsNamesForAutocomplete =
-      this.albumsNamesForAutocomplete.filter((albumName) =>
-        albumName.toLowerCase().indexOf(value.toLowerCase()) !== -1
+      this.albumsNamesForAutocomplete.filter(
+        (albumName) =>
+          albumName.toLowerCase().indexOf(value.toLowerCase()) !== -1
       );
   }
 
@@ -279,12 +457,9 @@ export class TracksManagementComponent {
     this.albumsService.getAllAlbums().subscribe((data) => {
       this.albumsForTracks = data;
       this.albumsNamesForAutocomplete = this.albumsForTracks
-        .filter(album => !album.isDeleted).map(
-        (album) => album.name
-      );
+        .filter((album) => !album.isDeleted)
+        .map((album) => album.name);
       this.filteredAlbumsNamesForAutocomplete = this.albumsNamesForAutocomplete;
-      console.log('albums for tracks');
-      console.log(this.albumsForTracks);
     });
 
     this.tracksService.getTracksWithFullDetails().subscribe((data) => {

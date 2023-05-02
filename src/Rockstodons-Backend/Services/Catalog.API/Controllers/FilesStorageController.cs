@@ -215,10 +215,10 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost("upload/track-mp3-file")]
-        public async Task<IActionResult> UploadTracksMP3File(IFormFile imageToUpload)
+        public async Task<IActionResult> UploadTracksMP3File(IFormFile mp3FileToUpload)
         {
-            BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
-                imageToUpload, _azureStorageTracksContainerName
+            BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadMP3FileAsync(
+                mp3FileToUpload, _azureStorageTracksContainerName
             );
 
             if (blobResponseDTO.Error)

@@ -9,6 +9,10 @@ namespace Catalog.API.DTOs.Tracks
 
         public string Name { get; set; }
 
+        public string? AudioFileName { get; set; }
+
+        public string? AudioFileUrl { get; set; }
+
         public DateTime CreatedOn { get; set; } 
     }
 }

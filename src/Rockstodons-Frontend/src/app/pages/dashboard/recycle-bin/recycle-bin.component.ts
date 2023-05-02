@@ -83,6 +83,9 @@ export class RecycleBinComponent {
               nzPauseOnHover: true,
             }
           );
+          this.fileStorageService
+            .deleteGenreImage(item.imageFileName)
+            .subscribe(() => {});
           this.retrieveRecycledData();
         });
         break;
@@ -111,36 +114,36 @@ export class RecycleBinComponent {
                 nzPauseOnHover: true,
               }
             );
+            this.fileStorageService
+              .deletePerformerImage(item.imageFileName)
+              .subscribe(() => {});
             this.retrieveRecycledData();
           });
         break;
       case 'albums':
         this.albumsService.deleteAlbumPermanently(item.id).subscribe({
           next: () => {
-            this.albumsService.deleteAlbumPermanently(item.id).subscribe(() => {
-              this.nzNotificationService.success(
-                'Successful Operation',
-                `The album ${item.name} has been deleted permanently!`,
-                {
-                  nzPauseOnHover: true,
-                }
-              );
-              this.fileStorageService
-                .deleteAlbumImage(item.imageFileName)
-                .subscribe(() => {});
-            });
+            this.nzNotificationService.success(
+              'Successful Operation',
+              `The album ${item.name} has been deleted permanently!`,
+              {
+                nzPauseOnHover: true,
+              }
+            );
+            this.fileStorageService
+              .deleteAlbumImage(item.imageFileName)
+              .subscribe(() => {});
           },
           error: (error) => {
-            this.nzNotificationService
-              .error(
-                'Error',
-                'Couldn\'t delete the album. Please delete all the tracks ' +
+            this.nzNotificationService.error(
+              'Error',
+              "Couldn't delete the album. Please delete all the tracks " +
                 'belonging to this album before trying again'
-              );
+            );
           },
           complete: () => {
             this.retrieveRecycledData();
-          }
+          },
         });
 
         break;

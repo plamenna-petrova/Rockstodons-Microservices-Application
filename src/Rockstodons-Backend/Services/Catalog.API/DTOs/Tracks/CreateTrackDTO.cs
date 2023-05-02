@@ -10,6 +10,10 @@ namespace Catalog.API.DTOs.Tracks
         [StringLength(30, MinimumLength = 2)]
         public string Name { get; set; }
 
+        public string? AudioFileName { get; set; }
+
+        public string? AudioFileUrl { get; set; }
+
         [Required]
         public string AlbumId { get; set; }
     }

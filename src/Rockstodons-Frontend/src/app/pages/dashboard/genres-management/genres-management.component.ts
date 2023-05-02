@@ -290,11 +290,11 @@ export class GenresManagementComponent {
         data.map((image: any) => image.name).includes(nzUploadXHRArgs.file.name)
       ) {
         this.nzMessageService.error(
-          `Performer Presentation Image with the same file name` +
+          `Genre presentation image with the same file name` +
             `${nzUploadXHRArgs.file.name} already exists`
         );
         nzUploadXHRArgs.onError!(
-          `Album Cover Image with the same file name`,
+          `Genre presentation image with the same file name`,
           nzUploadXHRArgs.file
         );
         return;

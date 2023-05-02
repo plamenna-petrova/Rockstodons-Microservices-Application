@@ -28,6 +28,16 @@
                     <nz-autocomplete [nzDataSource]="filteredAlbumsNamesForAutocomplete!" #albumAutocomplete></nz-autocomplete>
                 </nz-form-control>
             </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="8">Audio File</nz-form-label>
+                <nz-upload class="track-mp3-file-uploader" [nzAction]="trackAudioFileAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" (nzChange)="handleTrackAudioFileChange($event)"
+                    [nzDownload]="downloadTrackAudioFile" nzAccept=".mp3" [nzShowButton]="isTrackAudioFileUploadButtonVisible" [nzFileList]="trackAudioFileList">
+                    <div>
+                        <span nz-icon nzType="plus"></span>
+                        <div style="margin-top: 8px">Upload</div>
+                    </div>
+                </nz-upload>
+            </nz-form-item>
         </form>
     </ng-container>
 </nz-modal>
@@ -37,12 +47,15 @@
         <tr>
             <th nzCustomFilter>
                 Name
-                <nz-filter-trigger [(nzVisible)]="isTracksSearchTriggerVisible" [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+                <nz-filter-trigger [(nzVisible)]="isTracksSearchByNameTriggerVisible" [nzActive]="searchByNameValue.length > 0" [nzDropdownMenu]="searchByNameMenu">
                     <span nz-icon nzType="search"></span>
                 </nz-filter-trigger>
             </th>
-            <th>
+            <th nzCustomFilter>
                 Album
+                <nz-filter-trigger [(nzVisible)]="isTracksSearchByAlbumTriggerVisible" [nzActive]="searchByAlbumValue.length > 0" [nzDropdownMenu]="searchByAlbumMenu">
+                    <span nz-icon nzType="search"></span>
+                </nz-filter-trigger>
             </th>
             <th>Actions</th>
         </tr>
@@ -83,6 +96,16 @@
                                     <nz-autocomplete [nzDataSource]="filteredAlbumsNamesForAutocomplete!" #albumAutocomplete></nz-autocomplete>
                                 </nz-form-control>
                             </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="8">Audio File</nz-form-label>
+                                <nz-upload class="track-mp3-file-uploader" [nzAction]="trackAudioFileAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" [nzDownload]="downloadTrackAudioFile"
+                                    [nzShowButton]="isTrackEditAudioFileUploadButtonVisible" nzAccept=".mp3" (nzChange)="handleTrackEditAudioFileChange($event)" [(nzFileList)]="trackEditAudioFileList">
+                                    <div>
+                                        <span nz-icon nzType="plus"></span>
+                                        <div style="margin-top: 8px">Upload</div>
+                                    </div>
+                                </nz-upload>
+                            </nz-form-item>
                         </form>
                     </ng-container>
                 </nz-modal>
@@ -93,16 +116,29 @@
         </tr>
     </tbody>
 </nz-table>
-<nz-dropdown-menu #menu="nzDropdownMenu">
+<nz-dropdown-menu #searchByNameMenu="nzDropdownMenu">
     <div class="ant-table-filter-dropdown">
         <div class="search-box">
-            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
+            <input type="text" nz-input placeholder="Search by name" [(ngModel)]="searchByNameValue" />
             <button nz-button nzSize="small" nzType="primary" (click)="searchForTracks()" class="search-button">
         Search
       </button>
             <button nz-button nzSize="small" (click)="resetTracksSearch()">
         Reset
       </button>
+        </div>
+    </div>
+</nz-dropdown-menu>
+<nz-dropdown-menu #searchByAlbumMenu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search by album" [(ngModel)]="searchByAlbumValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="searchForTracksByAlbum()" class="search-button">
+      Search
+    </button>
+            <button nz-button nzSize="small" (click)="resetTracksSearch()">
+      Reset
+    </button>
         </div>
     </div>
 </nz-dropdown-menu>
