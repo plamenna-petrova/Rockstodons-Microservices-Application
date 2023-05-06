@@ -118,7 +118,7 @@ namespace Catalog.API.Services.Data.Implementation
         {
             BlobResponseDTO blobResponseDTO = new();
 
-            BlobContainerClient blobContainerClient = new BlobContainerClient(
+            BlobContainerClient blobContainerClient = new(
                 _azureStorageConnectionString, azureStorageContainerName
             );
 

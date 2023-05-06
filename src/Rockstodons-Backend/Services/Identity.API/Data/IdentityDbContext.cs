@@ -1,32 +1,18 @@
-﻿using Catalog.API.Data.Data.Common.Models.Interfaces;
-using Catalog.API.Data.Data.Models;
-using Catalog.API.Data.Models;
-using Catalog.API.Infrastructure.EntityConfigurations;
+﻿using Identity.API.Models;
+using Identity.API.Models.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace Catalog.API.Infrastructure
+namespace Identity.API.Data
 {
-    public class CatalogDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public class IdentityDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
-        public CatalogDbContext(DbContextOptions<CatalogDbContext> options)
+        public IdentityDbContext(DbContextOptions<IdentityDbContext> options)
             : base(options)
         {
             
         }
-
-        public virtual DbSet<Album> Albums { get; set; } = default!;
-
-        public virtual DbSet<Genre> Genres { get; set; } = default!;
-
-        public virtual DbSet<AlbumType> AlbumTypes { get; set; } = default!;
-
-        public virtual DbSet<Performer> Performers { get; set; } = default!;    
-
-        public virtual DbSet<Track> Tracks { get; set; } = default!;    
-
-        public override int SaveChanges() => base.SaveChanges();
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
@@ -37,7 +23,7 @@ namespace Catalog.API.Infrastructure
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => SaveChangesAsync(true, cancellationToken);
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, 
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
             ApplyAuditInfoRules();
@@ -58,8 +44,8 @@ namespace Catalog.API.Infrastructure
 
             foreach (var mutableDeletableEntityType in mutableDeletableEntityTypes)
             {
-                var method = SetIsDeletedQueryFilterMethod
-                    .MakeGenericMethod(mutableDeletableEntityType.ClrType);
+                var method = SetIsDeletedQueryFilterMethod.
+                    MakeGenericMethod(mutableDeletableEntityType.ClrType);
                 method.Invoke(null, new object[] { modelBuilder });
             }
 
@@ -73,11 +59,6 @@ namespace Catalog.API.Infrastructure
             }
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseLazyLoadingProxies();
-        }
-
         private static void SetIsDeletedQueryFilter<T>(ModelBuilder modelBuilder)
             where T : class, IDeletableEntity
         {
@@ -85,7 +66,7 @@ namespace Catalog.API.Infrastructure
         }
 
         private static readonly MethodInfo SetIsDeletedQueryFilterMethod =
-            typeof(CatalogDbContext)
+            typeof(IdentityDbContext)
                 .GetMethod(nameof(SetIsDeletedQueryFilter),
                     BindingFlags.NonPublic | BindingFlags.Static)!;
 
@@ -102,7 +83,7 @@ namespace Catalog.API.Infrastructure
 
             foreach (var entry in changedEntries)
             {
-                var entity = (IAuditInfo) entry.Entity;
+                var entity = (IAuditInfo)entry.Entity;
 
                 if (entry.State == EntityState.Added && entity.CreatedOn == default)
                 {
