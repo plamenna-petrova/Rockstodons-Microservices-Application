@@ -1,5 +1,5 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Options;
+﻿using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -16,17 +16,13 @@ namespace Identity.API.Factories
                 .Build();
 
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<PersistedGrantDbContext>();
-            var operationalStoreOptions = new OperationalStoreOptions();
 
             dbContextOptionsBuilder.UseSqlServer(
                 configurationBuilder["ConnectionString"], 
                 sqlServerOptionsAction: o => o.MigrationsAssembly("Idedntity.API")
             );
 
-            return new PersistedGrantDbContext(
-                dbContextOptionsBuilder.Options, 
-                operationalStoreOptions
-            );
+            return new PersistedGrantDbContext(dbContextOptionsBuilder.Options);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Options;
+﻿using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -24,7 +24,7 @@ namespace Identity.API.Factories
             );
 
             return new ConfigurationDbContext(
-                optionsBuilder.Options, configurationStoreOptions
+                optionsBuilder.Options
             );
         }
     }

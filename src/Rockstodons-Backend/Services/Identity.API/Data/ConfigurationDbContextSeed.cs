@@ -1,7 +1,7 @@
-﻿using Identity.API.Configuration;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Entities;
-using IdentityServer4.EntityFramework.Mappers;
+﻿using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Entities;
+using Duende.IdentityServer.EntityFramework.Mappers;
+using Identity.API.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Data
@@ -26,7 +26,7 @@ namespace Identity.API.Data
             }
             else
             {
-                List<ClientRedirectUri> oldRedirects = 
+                List<ClientRedirectUri> oldRedirects =
                     (await configurationDbContext.Clients.Include(c => c.RedirectUris).ToListAsync())
                     .SelectMany(c => c.RedirectUris)
                     .Where(ru => ru.RedirectUri.EndsWith("/o2c.html"))
