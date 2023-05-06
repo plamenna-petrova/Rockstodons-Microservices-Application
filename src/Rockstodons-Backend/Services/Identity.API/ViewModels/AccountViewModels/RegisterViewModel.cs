@@ -6,6 +6,10 @@ namespace Identity.API.ViewModels.AccountViewModels
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "User Name")]
+        public string UserName { get; init; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; init; }
