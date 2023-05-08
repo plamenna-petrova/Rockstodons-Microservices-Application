@@ -7,6 +7,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { AlbumsCatalogueComponent } from './pages/catalogue/albums-catalogue/albums-catalogue.component';
 import { PerformersCatalogueComponent } from './pages/catalogue/performers-catalogue/performers-catalogue.component';
 import { GenresCatalogueComponent } from './pages/catalogue/genres-catalogue/genres-catalogue.component';
+import { ShouldLoginComponent } from './should-login/should-login.component';
 
 const routes: Routes = [
   {
@@ -19,29 +20,28 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
-    canActivate: [AuthGuard]
+    component: HomeComponent
   },
   {
     path: 'albums',
-    component: AlbumsCatalogueComponent,
-    canActivate: [AuthGuard]
+    component: AlbumsCatalogueComponent
   },
   {
     path: 'performers',
-    component: PerformersCatalogueComponent,
-    canActivate: [AuthGuard]
+    component: PerformersCatalogueComponent
   },
   {
     path: 'genres',
-    component: GenresCatalogueComponent,
-    canActivate: [AuthGuard]
+    component: GenresCatalogueComponent
+  },
+  {
+    path: 'should-login',
+    component: ShouldLoginComponent
   },
   {
     path: '',
     pathMatch: 'full',
-    component: HomeComponent,
-    canActivate: [AuthGuard]
+    component: HomeComponent
   },
   {
     path: 'dashboard',

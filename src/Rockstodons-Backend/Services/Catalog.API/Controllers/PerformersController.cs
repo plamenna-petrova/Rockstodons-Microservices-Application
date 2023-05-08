@@ -30,7 +30,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [ProducesResponseType(typeof(List<PerformerDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<PerformerDTO>>> GetAllPerformers()
         {

@@ -42,6 +42,13 @@ import { FileSaverModule } from 'ngx-filesaver';
 import { AlbumsCatalogueComponent } from './pages/catalogue/albums-catalogue/albums-catalogue.component';
 import { PerformersCatalogueComponent } from './pages/catalogue/performers-catalogue/performers-catalogue.component';
 import { GenresCatalogueComponent } from './pages/catalogue/genres-catalogue/genres-catalogue.component';
+import { NavbarComponent } from './content/navbar/navbar.component';
+import { ShouldLoginComponent } from './should-login/should-login.component';
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { CoreModule } from './core.module';
+import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.interceptor';
+import { RouteReuseStrategy } from '@angular/router';
+import { RouteReusableStrategy } from './core/utils/route-reusable-strategy';
 
 registerLocaleData(en);
 
@@ -56,14 +63,15 @@ const icons: IconDefinition[] = [
     RegisterComponent,
     LoginComponent,
     HomeComponent,
+    NavbarComponent,
     AlbumsCatalogueComponent,
     PerformersCatalogueComponent,
-    GenresCatalogueComponent
+    GenresCatalogueComponent,
+    ShouldLoginComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     NzFormModule,
@@ -84,28 +92,38 @@ const icons: IconDefinition[] = [
     NzMenuModule,
     NzBreadCrumbModule,
     FileSaverModule,
-    SharedModule
+    SharedModule,
+    CoreModule.forRoot()
   ],
   providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitializer,
-      multi: true,
-      deps: [AuthService]
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: UnauthorizedInterceptor,
-      multi: true
-    },
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: appInitializer,
+    //   multi: true,
+    //   deps: [AuthService]
+    // },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: JwtInterceptor,
+    //   multi: true
+    // },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: UnauthorizedInterceptor,
+    //   multi: true
+    // },
     {
       provide: NZ_I18N,
       useValue: en_US
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerInterceptor,
+      multi: true,
+    },
+    {
+      provide: RouteReuseStrategy,
+      useClass: RouteReusableStrategy,
     },
   ],
   bootstrap: [AppComponent],

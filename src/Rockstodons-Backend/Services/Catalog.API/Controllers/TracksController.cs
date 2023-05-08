@@ -32,7 +32,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [ProducesResponseType(typeof(List<TrackDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<TrackDTO>>> GetAllTracks()
         {

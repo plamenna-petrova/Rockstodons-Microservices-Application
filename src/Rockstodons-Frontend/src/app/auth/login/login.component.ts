@@ -27,8 +27,7 @@ export class LoginComponent {
   constructor(
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private router: Router,
-    private nzNotificationService: NzNotificationService
+    private router: Router
   ) {
     this.loginForm = new FormGroup<ILoginForm>({
       username: new FormControl('', { nonNullable: true }),

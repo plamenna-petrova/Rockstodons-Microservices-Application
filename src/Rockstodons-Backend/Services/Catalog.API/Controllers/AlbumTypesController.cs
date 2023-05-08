@@ -31,7 +31,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [ProducesResponseType(typeof(List<AlbumTypeDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<AlbumTypeDTO>>> GetAllAlbumTypes()
         {

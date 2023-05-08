@@ -31,7 +31,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [ProducesResponseType(typeof(List<GenreDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<GenreDTO>>> GetAllGenres()
         {
