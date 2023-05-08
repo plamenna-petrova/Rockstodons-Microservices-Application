@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "TokenService.Admin.EntityFramework.Shared": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:55621;http://localhost:55624"
+    }
+  }
+}

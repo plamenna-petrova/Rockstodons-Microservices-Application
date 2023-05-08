@@ -80,7 +80,7 @@ internal class Program
     {
         services.AddDbContext<CatalogDbContext>(
             options => options.UseLazyLoadingProxies()
-               .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+               .UseSqlServer("Server=LENOVOLEGION\\SQLEXPRESS;Initial Catalog=Rockstodons.CatalogDb;Integrated Security=true"));
 
         services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
             .AddRoles<ApplicationRole>().AddEntityFrameworkStores<CatalogDbContext>()

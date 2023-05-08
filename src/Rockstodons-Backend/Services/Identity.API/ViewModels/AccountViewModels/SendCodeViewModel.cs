@@ -2,7 +2,7 @@
 
 namespace Identity.API.ViewModels.AccountViewModels
 {
-    public class SendCodedViewModel
+    public class SendCodeViewModel
     {
         public string SelectedProvider { get; init; }
 

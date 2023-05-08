@@ -141,7 +141,8 @@ namespace Identity.API.Controllers
             {
                 if (logoutViewModel.LogoutId == null)
                 {
-                    logoutViewModel.LogoutId = await _identityServerInteractionService.CreateLogoutContextAsync();
+                    logoutViewModel.LogoutId = 
+                        await _identityServerInteractionService.CreateLogoutContextAsync();
                 }
 
                 string url = $"/Account/Logout?logoutId={logoutViewModel.LogoutId}";
@@ -193,7 +194,9 @@ namespace Identity.API.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel registerViewModel, string returnUrl = null)
+        public async Task<IActionResult> Register(
+            RegisterViewModel registerViewModel, string returnUrl = null!
+        )
         {
             ViewData["ReturnUrl"] = returnUrl;
 

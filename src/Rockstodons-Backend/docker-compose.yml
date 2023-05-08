@@ -1,24 +1,136 @@
-version: "3.4"
-
+version: '3.4'
 services:
-
-    catalog-api:
-      image: ${REGISTRY:-rockstodons}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
-      build:
-        context: .
-        dockerfile: Services/Catalog.API/Dockerfile
-      ports:
-          - "8080:80"
-      depends_on:
-          - sqldata
-
-
-    sqldata:
-       image: mcr.microsoft.com/mssql/server:2019-latest 
-       ports:
-          - "1433:1433"
-
-
-       environment:
-            SA_PASSWORD: "S3cur3P@ssW0rd!"
-            ACCEPT_EULA: "Y"
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock:ro'
+      - './shared/nginx/vhost.d:/etc/nginx/vhost.d'
+      - './shared/nginx/certs:/etc/nginx/certs:ro'
+    networks:
+      proxy: null
+      identityserverui:
+        aliases:
+          - sts.rockstodons.local
+          - admin.rockstodons.local
+          - admin-api.rockstodons.local
+    restart: always
+  tokenservice.admin:
+    image: '${DOCKER_REGISTRY-}rockstodons-duende-identityserver-admin'
+    build:
+      context: .
+      dockerfile: Services/TokenService.Admin/Dockerfile
+    container_name: rockstodons-duende-identityserver-admin
+    environment:
+      - VIRTUAL_HOST=admin.rockstodons.local
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminLogDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'AdminConfiguration__IdentityAdminBaseUrl=https://admin.rockstodons.local'
+      - 'AdminConfiguration__IdentityAdminRedirectUri=https://admin.rockstodons.local/signin-oidc'
+      - 'AdminConfiguration__IdentityServerBaseUrl=https://sts.rockstodons.local'
+      - AdminConfiguration__RequireHttpsMetadata=false
+      - 'IdentityServerData__Clients__0__ClientUri=https://admin.rockstodons.local'
+      - 'IdentityServerData__Clients__0__RedirectUris__0=https://admin.rockstodons.local/signin-oidc'
+      - 'IdentityServerData__Clients__0__FrontChannelLogoutUri=https://admin.rockstodons.local/signin-oidc'
+      - 'IdentityServerData__Clients__0__PostLogoutRedirectUris__0=https://admin.rockstodons.local/signout-callback-oidc'
+      - 'IdentityServerData__Clients__0__AllowedCorsOrigins__0=https://admin.rockstodons.local'
+      - 'IdentityServerData__Clients__1__RedirectUris__0=https://admin-api.rockstodons.local/swagger/oauth2-redirect.html'
+      - 'Serilog__WriteTo__1__Args__connectionString=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - DockerConfiguration__UpdateCaCertificate=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    command: dotnet TokenService.Admin.dll /seed
+    depends_on:
+      - db
+      - tokenservice.sts.identity
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+      - './shared/identitydata.json:/app/identitydata.json'
+      - './shared/identityserverdata.json:/app/identityserverdata.json'
+      - './shared/nginx/certs/cacerts.crt:/usr/local/share/ca-certificates/cacerts.crt'
+    networks:
+      identityserverui: null
+  tokenservice.admin.api:
+    image: '${DOCKER_REGISTRY-}rockstodons-duende-identityserver-admin-api'
+    build:
+      context: .
+      dockerfile: Services/TokenService.Admin.Api/Dockerfile
+    container_name: rockstodons-duende-identityserver-admin-api
+    environment:
+      - VIRTUAL_HOST=admin-api.rockstodons.local
+      - AdminApiConfiguration__RequireHttpsMetadata=false
+      - 'AdminApiConfiguration__ApiBaseUrl=https://admin-api.rockstodons.local'
+      - 'AdminApiConfiguration__IdentityServerBaseUrl=https://sts.rockstodons.local'
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminLogDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - DockerConfiguration__UpdateCaCertificate=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+      - './shared/nginx/certs/cacerts.crt:/usr/local/share/ca-certificates/cacerts.crt'
+    networks:
+      identityserverui: null
+  tokenservice.sts.identity:
+    image: '${DOCKER_REGISTRY-}rockstodons-duende-identityserver-sts-identity'
+    build:
+      context: .
+      dockerfile: Services/TokenService.STS.Identity/Dockerfile
+    container_name: rockstodons-duende-identityserver-sts-identity
+    environment:
+      - VIRTUAL_HOST=sts.rockstodons.local
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=db;Database=IdentityServerAdmin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'AdminConfiguration__IdentityAdminBaseUrl=https://admin.rockstodons.local'
+      - 'AdvancedConfiguration__IssuerUri=https://sts.rockstodons.local'
+      - DockerConfiguration__UpdateCaCertificate=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - db
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+      - './shared/nginx/certs/cacerts.crt:/usr/local/share/ca-certificates/cacerts.crt'
+    networks:
+      identityserverui:
+        aliases:
+          - sts.rockstodons.local
+  catalog-api:
+    image: ${REGISTRY:-rockstodons}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Catalog.API/Dockerfile
+    ports:
+        - "8080:80"
+    depends_on:
+        - db
+  db:
+    image: 'mcr.microsoft.com/mssql/server:2017-CU20-ubuntu-16.04'
+    ports:
+      - '1433:1433'
+    container_name: rockstodons-duende-identityserver-db
+    environment:
+      SA_PASSWORD: '${DB_PASSWORD:-Password_123}'
+      ACCEPT_EULA: 'Y'
+    volumes:
+      - 'dbdata:/var/opt/mssql'
+    networks:
+      identityserverui: null
+volumes:
+  dbdata:
+    driver: local
+networks:
+  proxy:
+    driver: bridge
+  identityserverui:
+    driver: bridge

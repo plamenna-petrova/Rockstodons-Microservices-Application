@@ -7,6 +7,7 @@ namespace Identity.API.ViewModels.AccountViewModels
         public ConsentViewModel(
             ConsentInputModel consentInputModel, 
             string returnUrl, 
+            AuthorizationRequest authorizationRequest,
             Client client, 
             Resources resources
         )
