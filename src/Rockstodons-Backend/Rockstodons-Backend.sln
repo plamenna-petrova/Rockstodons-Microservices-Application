@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catalog.API", "Services\Cat
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F817047F-018D-4F93-BDA5-58602073B634}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.API", "Services\Identity.API\Identity.API.csproj", "{7D717416-6F09-4E13-AA15-56CA66F4190E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenService.STS.Identity", "Services\TokenService.STS.Identity\TokenService.STS.Identity.csproj", "{184DE6C8-E5E8-4F46-A53D-DC6B955675D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenService.Admin.Api", "Services\TokenService.Admin.Api\TokenService.Admin.Api.csproj", "{2B6BB8C6-708B-4810-84AD-40DA2E0FEBCE}"
@@ -39,10 +37,6 @@ Global
 		{F817047F-018D-4F93-BDA5-58602073B634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F817047F-018D-4F93-BDA5-58602073B634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F817047F-018D-4F93-BDA5-58602073B634}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D717416-6F09-4E13-AA15-56CA66F4190E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D717416-6F09-4E13-AA15-56CA66F4190E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D717416-6F09-4E13-AA15-56CA66F4190E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D717416-6F09-4E13-AA15-56CA66F4190E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{184DE6C8-E5E8-4F46-A53D-DC6B955675D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{184DE6C8-E5E8-4F46-A53D-DC6B955675D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{184DE6C8-E5E8-4F46-A53D-DC6B955675D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
