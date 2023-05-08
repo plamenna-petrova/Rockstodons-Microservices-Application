@@ -3,9 +3,7 @@ import { Observable } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { IGenre } from 'src/app/core/interfaces/genres/genre';
 import { IPerformer } from 'src/app/core/interfaces/performers/performer';
-import { IApplicationUser } from 'src/app/core/interfaces/users/application-user';
 import { AlbumsService } from 'src/app/core/services/albums.service';
-import { AuthService } from 'src/app/core/services/auth.service';
 import { GenresService } from 'src/app/core/services/genres.service';
 import { PerformersService } from 'src/app/core/services/performers.service';
 

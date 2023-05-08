@@ -5,10 +5,8 @@ import { AlbumsManagementComponent } from './albums-management/albums-management
 import { GenresManagementComponent } from './genres-management/genres-management.component';
 import { AlbumTypesManagementComponent } from './album-types-management/album-types-management.component';
 import { PerformersManagementComponent } from './performers-management/performers-management.component';
-import { UsersManagementComponent } from './users-management/users-management.component';
 import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 import { TracksManagementComponent } from './tracks-management/tracks-management.component';
-import { RolesManagementComponent } from './roles-management/roles-management.component';
 
 const routes: Routes = [
   {
@@ -38,16 +36,6 @@ const routes: Routes = [
       {
         path: 'tracks-management',
         component: TracksManagementComponent,
-        outlet: 'dashboard'
-      },
-      {
-        path: 'roles-management',
-        component: RolesManagementComponent,
-        outlet: 'dashboard'
-      },
-      {
-        path: 'users-management',
-        component: UsersManagementComponent,
         outlet: 'dashboard'
       },
       {

@@ -30,7 +30,6 @@ export class OAuth2Service {
   ]).pipe(map((values) => values.every((b) => b)));
 
   private navigateToLoginPage() {
-    // TODO: Remember current URL
     this.router.navigateByUrl('/should-login');
   }
 

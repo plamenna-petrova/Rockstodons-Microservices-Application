@@ -39,12 +39,9 @@ import { SharedModule } from 'src/app/common/shared/shared.module';
 import { GenresManagementComponent } from './genres-management/genres-management.component';
 import { AlbumTypesManagementComponent } from './album-types-management/album-types-management.component';
 import { PerformersManagementComponent } from './performers-management/performers-management.component';
-import { UsersManagementComponent } from './users-management/users-management.component';
 import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
-import { AddOrEditGenreFormComponent } from './forms/add-or-edit-genre-form/add-or-edit-genre-form.component';
 import { AddOrEditAlbumTypeFormComponent } from './forms/add-or-edit-album-type-form/add-or-edit-album-type-form.component';
 import { TracksManagementComponent } from './tracks-management/tracks-management.component';
-import { RolesManagementComponent } from './roles-management/roles-management.component';
 
 registerLocaleData(en);
 
@@ -55,12 +52,9 @@ registerLocaleData(en);
     GenresManagementComponent,
     AlbumTypesManagementComponent,
     PerformersManagementComponent,
-    UsersManagementComponent,
     RecycleBinComponent,
-    AddOrEditGenreFormComponent,
     AddOrEditAlbumTypeFormComponent,
-    TracksManagementComponent,
-    RolesManagementComponent
+    TracksManagementComponent
   ],
   imports: [
     DashboardRoutingModule,

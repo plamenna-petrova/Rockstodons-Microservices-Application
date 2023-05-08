@@ -3,9 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RegisterComponent } from './auth/register/register.component';
-import { LoginComponent } from './auth/login/login.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -31,10 +29,6 @@ import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { HomeComponent } from './content/home/home.component';
-import { appInitializer } from './core/services/app-initializer.service';
-import { AuthService } from './core/services/auth.service';
-import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
-import { UnauthorizedInterceptor } from './core/interceptors/unauthorized.interceptor';
 import { SharedModule } from './common/shared/shared.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -60,8 +54,6 @@ const icons: IconDefinition[] = [
 @NgModule({
   declarations: [
     AppComponent,
-    RegisterComponent,
-    LoginComponent,
     HomeComponent,
     NavbarComponent,
     AlbumsCatalogueComponent,
@@ -96,22 +88,6 @@ const icons: IconDefinition[] = [
     CoreModule.forRoot()
   ],
   providers: [
-    // {
-    //   provide: APP_INITIALIZER,
-    //   useFactory: appInitializer,
-    //   multi: true,
-    //   deps: [AuthService]
-    // },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: JwtInterceptor,
-    //   multi: true
-    // },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: UnauthorizedInterceptor,
-    //   multi: true
-    // },
     {
       provide: NZ_I18N,
       useValue: en_US
