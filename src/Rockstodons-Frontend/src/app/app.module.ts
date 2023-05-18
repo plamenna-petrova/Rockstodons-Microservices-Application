@@ -28,6 +28,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { HomeComponent } from './content/home/home.component';
 import { SharedModule } from './common/shared/shared.module';
 
@@ -38,11 +40,12 @@ import { PerformersCatalogueComponent } from './pages/catalogue/performers-catal
 import { GenresCatalogueComponent } from './pages/catalogue/genres-catalogue/genres-catalogue.component';
 import { NavbarComponent } from './content/navbar/navbar.component';
 import { ShouldLoginComponent } from './should-login/should-login.component';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { DefaultOAuthInterceptor } from 'angular-oauth2-oidc';
 import { CoreModule } from './core.module';
 import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.interceptor';
 import { RouteReuseStrategy } from '@angular/router';
 import { RouteReusableStrategy } from './core/utils/route-reusable-strategy';
+import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/album-details.component';
 
 registerLocaleData(en);
 
@@ -59,7 +62,8 @@ const icons: IconDefinition[] = [
     AlbumsCatalogueComponent,
     PerformersCatalogueComponent,
     GenresCatalogueComponent,
-    ShouldLoginComponent
+    ShouldLoginComponent,
+    AlbumDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -77,6 +81,8 @@ const icons: IconDefinition[] = [
     NzCarouselModule,
     NzImageModule,
     NzPaginationModule,
+    NzRadioModule,
+    NzDescriptionsModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,
@@ -91,6 +97,11 @@ const icons: IconDefinition[] = [
     {
       provide: NZ_I18N,
       useValue: en_US
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: DefaultOAuthInterceptor,
+      multi: true
     },
     {
       provide: HTTP_INTERCEPTORS,

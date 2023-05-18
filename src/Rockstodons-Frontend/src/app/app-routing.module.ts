@@ -6,6 +6,7 @@ import { PerformersCatalogueComponent } from './pages/catalogue/performers-catal
 import { GenresCatalogueComponent } from './pages/catalogue/genres-catalogue/genres-catalogue.component';
 import { ShouldLoginComponent } from './should-login/should-login.component';
 import { FallbackComponent } from './fallback.component';
+import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/album-details.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,10 @@ const routes: Routes = [
   {
     path: 'albums',
     component: AlbumsCatalogueComponent
+  },
+  {
+    path: 'album-details/:id',
+    component: AlbumDetailsComponent
   },
   {
     path: 'performers',

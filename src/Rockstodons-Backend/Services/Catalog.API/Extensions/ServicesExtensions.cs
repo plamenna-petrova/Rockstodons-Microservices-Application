@@ -1,7 +1,9 @@
 ﻿using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 
 namespace Catalog.API.Extensions
@@ -83,11 +85,20 @@ namespace Catalog.API.Extensions
             this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+                .AddJwtBearer("Bearer", options =>
                 {
                     options.RequireHttpsMetadata = false;
                     options.Authority = configuration["STS:ServerUrl"];
-                    options.Audience = configuration["STS:Audience"];
+                    options.Audience = "app.api.userprofile";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["STS:ServerUrl"],
+                        ValidAudience = "app.api.userprofile"
+                    };
                 });
         }
 

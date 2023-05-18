@@ -2,6 +2,7 @@
 using Catalog.API.Data.Data.Models;
 using Catalog.API.DTOs.Performers;
 using Catalog.API.DTOs.Tracks;
+using Catalog.API.Extensions;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.Authorization;
@@ -281,6 +282,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("create")]
         public async Task<ActionResult> CreateTrack([FromBody] CreateTrackDTO createTrackDTO)
         {

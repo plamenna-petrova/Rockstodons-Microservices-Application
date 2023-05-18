@@ -24,7 +24,12 @@ export function storageFactory(): OAuthStorage {
   imports: [
     CommonModule,
     HttpClientModule,
-    OAuthModule.forRoot(),
+    OAuthModule.forRoot({
+      resourceServer: {
+        allowedUrls: ['https://localhost:7246/api/v1'],
+        sendAccessToken: true
+      }
+    }),
     RouterModule
   ],
   providers: [

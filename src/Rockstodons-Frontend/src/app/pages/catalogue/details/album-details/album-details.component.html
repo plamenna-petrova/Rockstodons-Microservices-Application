@@ -1,0 +1,27 @@
+<div class="album-descriptions-wrapper">
+    <nz-radio-group [(ngModel)]="size">
+        <label nz-radio nzValue="default">default</label>
+        <label nz-radio nzValue="middle">middle</label>
+        <label nz-radio nzValue="small">small</label>
+    </nz-radio-group>
+    <br />
+    <br />
+    <nz-descriptions nzTitle="Custom Size" nzBordered [nzSize]="size" [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }" *ngIf="albumDetails">
+        <nz-descriptions-item nzTitle="Album Name">{{ albumDetails.name }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Year Of Release">{{ albumDetails.yearOfRelease }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Number Of Tracks">{{ albumDetails.numberOfTracks }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Album Type">{{ albumDetails.albumType.name }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Performer">{{ albumDetails.performer.name }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Genre">{{ albumDetails.genre.name }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Presentation Image">
+            <img nz-image alt="example" [nzSrc]="albumDetails.imageUrl ? albumDetails.imageUrl : fallback" [nzFallback]="fallback" />
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Tracks">
+            <div *ngFor="let track of albumDetails.tracks; let i = index">
+                <br /> <span>#Track {{ i + 1}} - {{ track.name }}</span>
+            </div>
+        </nz-descriptions-item>
+    </nz-descriptions>
+    <br />
+    <button nz-button nzType="default" [routerLink]="['/albums']">Go Back</button>
+</div>

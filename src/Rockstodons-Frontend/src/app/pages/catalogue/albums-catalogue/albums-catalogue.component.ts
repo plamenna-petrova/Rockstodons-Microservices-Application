@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { AlbumsService } from 'src/app/core/services/albums.service';
 
@@ -19,8 +20,16 @@ export class AlbumsCatalogueComponent {
 
   fallback = '../../../assets/images/alternative-image.png';
 
-  constructor(private albumsService: AlbumsService) {
+  constructor(
+    private albumsService: AlbumsService,
+    private router: Router
+  ) {
 
+  }
+
+  getAlbumDetails(albumId: string): void {
+    const albumDetailsRouteToNavigate = `/album-details/${albumId}`
+    this.router.navigate([`${albumDetailsRouteToNavigate}`]);
   }
 
   ngOnInit(): void {

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Catalog.API.Infrastructure
 {
-    public class CatalogDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public class CatalogDbContext : DbContext
     {
         public CatalogDbContext(DbContextOptions<CatalogDbContext> options)
             : base(options)

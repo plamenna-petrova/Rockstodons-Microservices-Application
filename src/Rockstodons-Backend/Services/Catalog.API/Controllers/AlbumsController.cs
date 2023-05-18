@@ -4,6 +4,7 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Albums;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

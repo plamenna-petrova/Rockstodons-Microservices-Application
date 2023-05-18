@@ -48,7 +48,7 @@ export class HomeComponent {
     this.albumsService.getAllAlbums().subscribe((data) => {
       this.albumsSelection = [...data].slice(0, 11);
       this.albumsPrimarySelection = this.albumsSelection.slice(0, 4);
-      this.albumsSecondarySelection = this.albumsSelection.slice(4, 11);
+      this.albumsSecondarySelection = this.albumsSelection.slice(4, 10);
     });
     this.performersService.getAllPerformers().subscribe((data) => {
       this.performersPrimarySelection = [...data].slice(0, 6);

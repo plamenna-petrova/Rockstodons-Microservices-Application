@@ -3,13 +3,13 @@
     <div nz-row [nzGutter]="8">
         <div nz-col [nzSpan]="4" *ngFor="let album of albumsForCatalogue">
             <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit, actionEllipsis]">
-                <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
+                <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name" (click)="getAlbumDetails(album.id)"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
                 <img nz-image alt="example" [nzSrc]="album.imageUrl ? album.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #albumCatalogue>
-                <span nz-icon nzType="read" nzTheme="outline"></span>
+                <span nz-icon nzType="read" nzTheme="outline" (click)="getAlbumDetails(album.id)"></span>
             </ng-template>
             <ng-template #actionEdit>
                 <span nz-icon nzType="play-circle" nzTheme="outline"></span>
