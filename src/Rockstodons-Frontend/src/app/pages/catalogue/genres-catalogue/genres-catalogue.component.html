@@ -6,7 +6,7 @@
                 <nz-card-meta [nzTitle]="genre.name"></nz-card-meta>
             </nz-card>
             <ng-template #genreCoverTemplate>
-                <img nz-image alt="example" [nzSrc]="genre.imageUrl" [nzFallback]="fallback" />
+                <img nz-image alt="example" [nzSrc]="genre.imageUrl ? genre.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #genreCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline"></span>

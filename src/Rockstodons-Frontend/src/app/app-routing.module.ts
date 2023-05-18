@@ -5,6 +5,7 @@ import { AlbumsCatalogueComponent } from './pages/catalogue/albums-catalogue/alb
 import { PerformersCatalogueComponent } from './pages/catalogue/performers-catalogue/performers-catalogue.component';
 import { GenresCatalogueComponent } from './pages/catalogue/genres-catalogue/genres-catalogue.component';
 import { ShouldLoginComponent } from './should-login/should-login.component';
+import { FallbackComponent } from './fallback.component';
 
 const routes: Routes = [
   {
@@ -29,8 +30,8 @@ const routes: Routes = [
   },
   {
     path: '',
-    pathMatch: 'full',
-    component: HomeComponent
+    redirectTo: 'home',
+    pathMatch: 'full'
   },
   {
     path: 'dashboard',

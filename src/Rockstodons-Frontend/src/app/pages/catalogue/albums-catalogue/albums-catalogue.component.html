@@ -6,7 +6,7 @@
                 <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
-                <img nz-image alt="example" [nzSrc]="album.imageUrl" [nzFallback]="fallback" />
+                <img nz-image alt="example" [nzSrc]="album.imageUrl ? album.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #albumCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline"></span>

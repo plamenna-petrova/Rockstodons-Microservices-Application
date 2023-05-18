@@ -269,22 +269,6 @@ namespace Catalog.API.Infrastructure.Seeding
             return albumsToSeed;
         }
 
-        private void GetAlbumPictures(string contentRootPath, string picturesPath)
-        {
-            if (picturesPath != null)
-            {
-                DirectoryInfo directoryInfo = new DirectoryInfo(picturesPath);
-
-                foreach (FileInfo fileInfo in directoryInfo.GetFiles())
-                {
-                    fileInfo.Delete();
-                }
-
-                string albumPicturesZipFile = Path.Combine(contentRootPath, "Setup", "Albums.zip");
-                ZipFile.ExtractToDirectory(albumPicturesZipFile, picturesPath);
-            }
-        }
-
         public AsyncRetryPolicy CreatePolicy(ILogger<EntitiesSeeder> logger, string prefix, int retries = 3)
         {
             return Policy.Handle<SqlException>().WaitAndRetryAsync(

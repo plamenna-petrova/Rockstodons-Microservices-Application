@@ -6,7 +6,7 @@
                 <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country"></nz-card-meta>
             </nz-card>
             <ng-template #performerCoverTemplate>
-                <img nz-image alt="example" [nzSrc]="performer.imageUrl" [nzFallback]="fallback" />
+                <img nz-image alt="example" [nzSrc]="performer.imageUrl ? performer.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #performerCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline"></span>

@@ -23,8 +23,10 @@ export class NavbarComponent {
     this.oauth2Service.logout();
   }
 
-  get username(): string | null {
-    return this.oauth2Service.identityClaims ? (this.oauth2Service.identityClaims as any)['name'] : null;
+  get userDetails(): any {
+    return this.oauth2Service.identityClaims ?
+      (({ name, role }) => ({ name, role }))(this.oauth2Service.identityClaims as any)
+      : null;
   }
 
   ngOnInit(): void {

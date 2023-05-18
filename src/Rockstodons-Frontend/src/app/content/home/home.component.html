@@ -22,7 +22,7 @@
                 <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
-                <img nz-image alt="example" [nzSrc]="album.imageUrl" [nzFallback]="fallback" />
+                <img nz-image alt="example" [nzSrc]="album.imageUrl ? album.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #albumCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline"></span>
@@ -41,7 +41,7 @@
                 <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
-                <img nz-image alt="example" [nzSrc]="album.imageUrl" [nzFallback]="fallback" />
+                <img nz-image alt="example" [nzSrc]="album.imageUrl ? album.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #albumCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline"></span>
@@ -63,7 +63,7 @@
                 <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country"></nz-card-meta>
             </nz-card>
             <ng-template #performerCoverTemplate>
-                <img nz-image alt="example" [nzSrc]="performer.imageUrl" [nzFallback]="fallback" />
+                <img nz-image alt="example" [nzSrc]="performer.imageUrl ? performer.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #performerCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline"></span>
@@ -85,7 +85,7 @@
                 <nz-card-meta [nzTitle]="genre.name"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
-                <img nz-image alt="example" [nzSrc]="genre.imageUrl" [nzFallback]="fallback" />
+                <img nz-image alt="example" [nzSrc]="genre.imageUrl ? genre.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #albumCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline"></span>

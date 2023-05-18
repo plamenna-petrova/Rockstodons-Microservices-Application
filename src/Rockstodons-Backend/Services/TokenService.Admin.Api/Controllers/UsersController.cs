@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0.
 
 using AutoMapper;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Test;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

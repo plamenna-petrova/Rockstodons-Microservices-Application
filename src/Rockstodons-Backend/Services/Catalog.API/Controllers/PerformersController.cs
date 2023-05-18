@@ -57,7 +57,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         public async Task<ActionResult<List<Performer>>> GetPerformersWithDeletedRecords()
         {
             try
@@ -94,7 +93,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         public async Task<ActionResult<List<Performer>>> GetPaginatedPerformers([FromQuery] PerformerParameters performerParameters)
         {
             try
@@ -145,7 +143,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [Route("search/{term}")]
         public async Task<ActionResult<PerformerDetailsDTO>> SearchForPerformers(string term)
         {
@@ -182,7 +179,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [Route("search")]
         public async Task<ActionResult<PerformerDetailsDTO>> PaginateSearchedPerformers([FromQuery] PerformerParameters performerParameters)
         {
@@ -233,7 +229,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<Performer>> GetPerformerById(string id)
         {
             try
@@ -257,7 +252,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [Route("details/{id}", Name = PerformerDetailsRouteName)]
         [ProducesResponseType(typeof(PerformerDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<PerformerDetailsDTO>> GetPerformerDetails(string id)
@@ -283,7 +277,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("create")]
         public async Task<ActionResult> CreatePerformer([FromBody] CreatePerformerDTO createPerformerDTO)
         {
@@ -311,7 +304,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdatePerformer(string id, [FromBody] UpdatePerformerDTO updatePerformerDTO)
         {
@@ -346,7 +338,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdatePerformer(string id, [FromBody] JsonPatchDocument<UpdatePerformerDTO> performerJsonPatchDocument)
         {
@@ -381,7 +372,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName + "," + GlobalConstants.EditorRoleName)]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeletePerformer(string id)
         {
@@ -411,7 +401,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeletePerformer(string id)
         {
@@ -441,7 +430,6 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestorePerformer(string id)
         {

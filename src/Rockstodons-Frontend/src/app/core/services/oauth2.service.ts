@@ -87,9 +87,7 @@ export class OAuth2Service {
       );
     }
 
-    // 0. LOAD CONFIG:
-    // First we have to check to see how the IdServer is
-    // currently configured:
+    // retrieve discovery document
     return (
       this.oauthService
         .loadDiscoveryDocument()
@@ -107,16 +105,12 @@ export class OAuth2Service {
             return Promise.resolve();
           }
 
-          // 2. SILENT LOGIN:
           // Try to log in via a refresh because then we can prevent
           // needing to redirect the user:
           return this.oauthService
             .silentRefresh()
             .then(() => Promise.resolve())
             .catch((result) => {
-              // Subset of situations from https://openid.net/specs/openid-connect-core-1_0.html#AuthError
-              // Only the ones where it's reasonably sure that sending the
-              // user to the IdServer will help.
               const errorResponsesRequiringUserInteraction = [
                 'interaction_required',
                 'login_required',
@@ -125,21 +119,10 @@ export class OAuth2Service {
               ];
 
               if (result && result.reason && errorResponsesRequiringUserInteraction.indexOf(result.reason.error) >= 0) {
-                // 3. ASK FOR LOGIN:
-                // At this point we know for sure that we have to ask the
-                // user to log in, so we redirect them to the IdServer to
-                // enter credentials.
-                //
-                // Enable this to ALWAYS force a user to login.
-                // this.login();
-                //
-                // Instead, we'll now do this:
                 console.warn('User interaction is needed to log in, we will wait for the user to manually log in.');
                 return Promise.resolve();
               }
 
-              // We can't handle the truth, just pass on the problem to the
-              // next handler.
               return Promise.reject(result);
             });
         })
@@ -147,9 +130,6 @@ export class OAuth2Service {
         .then(() => {
           this.isDoneLoadingSubject$.next(true);
 
-          // Check for the strings 'undefined' and 'null' just to be sure. Our current
-          // login(...) should never have this, but in case someone ever calls
-          // initImplicitFlow(undefined | null) this could happen.
           if (
             this.oauthService.state &&
             this.oauthService.state !== 'undefined' &&
@@ -176,9 +156,11 @@ export class OAuth2Service {
   public logout() {
     this.oauthService.logOut();
   }
+
   public refresh() {
     this.oauthService.silentRefresh();
   }
+
   public hasValidToken() {
     return this.oauthService.hasValidAccessToken();
   }
@@ -188,15 +170,19 @@ export class OAuth2Service {
   public get accessToken() {
     return this.oauthService.getAccessToken();
   }
+
   public get refreshToken() {
     return this.oauthService.getRefreshToken();
   }
+
   public get identityClaims() {
     return this.oauthService.getIdentityClaims();
   }
+
   public get idToken() {
     return this.oauthService.getIdToken();
   }
+
   public get logoutUrl() {
     return this.oauthService.logoutUrl;
   }

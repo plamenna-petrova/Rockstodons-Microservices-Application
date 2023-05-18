@@ -7,7 +7,10 @@ import { OAuth2Service } from '../services/oauth2.service';
 
 @Injectable()
 export class AuthGuardWithForcedLogin implements CanActivate {
-  constructor(private oauth2Service: OAuth2Service) {}
+
+  constructor(private oauth2Service: OAuth2Service) {
+
+  }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.oauth2Service.isDoneLoading$.pipe(

@@ -27,6 +27,7 @@
                         "inlineStyleLanguage": "scss",
                         "assets": [
                             "src/favicon.ico",
+                            "src/silent-refresh.html",
                             "src/assets",
                             {
                                 "glob": "**/*",
@@ -94,8 +95,7 @@
                         "inlineStyleLanguage": "scss",
                         "assets": [
                             "src/favicon.ico",
-                            "src/assets",
-                            "src/silent-refresh.html"
+                            "src/assets"
                         ],
                         "styles": [
                             "src/styles.scss"

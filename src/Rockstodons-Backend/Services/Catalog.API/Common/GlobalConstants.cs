@@ -44,7 +44,7 @@
 
         // Roles
 
-        public const string AdministratorRoleName = "Administrator";
+        public const string AdministratorRoleName = "STSAdminRole";
 
         public const string EditorRoleName = "Editor";
 
