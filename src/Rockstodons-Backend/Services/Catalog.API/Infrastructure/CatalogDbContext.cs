@@ -24,7 +24,11 @@ namespace Catalog.API.Infrastructure
 
         public virtual DbSet<Performer> Performers { get; set; } = default!;    
 
-        public virtual DbSet<Track> Tracks { get; set; } = default!;    
+        public virtual DbSet<Track> Tracks { get; set; } = default!; 
+        
+        public virtual DbSet<Data.Data.Models.Stream> Streams { get; set; } = default!;
+
+        public virtual DbSet<StreamTrack> StreamTracks { get; set;  } = default!;
 
         public override int SaveChanges() => base.SaveChanges();
 

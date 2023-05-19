@@ -258,7 +258,7 @@ namespace Catalog.API.Controllers
 
         [HttpGet]
         [Route("details/{id}", Name = TrackDetailsRouteName)]
-        [ProducesResponseType(typeof(PerformerDetailsDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(TrackDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<TrackDetailsDTO>> GetTrackDetails(string id)
         {
             try

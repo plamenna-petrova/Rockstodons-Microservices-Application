@@ -10,7 +10,6 @@ import { OAuthService } from 'angular-oauth2-oidc';
 export class ShouldLoginComponent {
 
   constructor(
-    private oauth2Service: OAuth2Service,
     private oAuthService: OAuthService
   ) {
 

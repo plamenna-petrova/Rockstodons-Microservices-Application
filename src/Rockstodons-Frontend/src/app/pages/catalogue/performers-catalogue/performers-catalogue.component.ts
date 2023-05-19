@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { IPerformer } from 'src/app/core/interfaces/performers/performer';
 import { PerformersService } from 'src/app/core/services/performers.service';
 
@@ -19,8 +20,16 @@ export class PerformersCatalogueComponent {
 
   fallback = '../../../assets/images/alternative-image.png';
 
-  constructor(private performersService: PerformersService) {
+  constructor(
+    private performersService: PerformersService,
+    private router: Router
+  ) {
 
+  }
+
+  getPerformerDetails(performerId: string): void {
+    const performerDetailsRouteToNavigate = `/performer-details/${performerId}`
+    this.router.navigate([`${performerDetailsRouteToNavigate}`]);
   }
 
   ngOnInit(): void {

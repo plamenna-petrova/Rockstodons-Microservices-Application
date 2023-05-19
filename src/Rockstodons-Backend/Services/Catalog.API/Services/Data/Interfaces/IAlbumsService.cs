@@ -12,7 +12,7 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<List<Album>> GetAllAlbumsWithDeletedRecords();
 
-        Task<PagedList<AlbumDTO>> GetPaginatedAlbums(AlbumParameters genreParameters);
+        Task<PagedList<AlbumDTO>> GetPaginatedAlbums(AlbumParameters albumsParameters);
 
         Task<List<AlbumDetailsDTO>> SearchForAlbums(string albumsSearchTerm);
 

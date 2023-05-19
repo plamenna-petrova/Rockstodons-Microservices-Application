@@ -5,6 +5,11 @@ namespace Catalog.API.Data.Data.Models
 {
     public class Track : BaseDeletableModel<string>
     {
+        public Track()
+        {
+            StreamTracks = new HashSet<StreamTrack>();
+        }
+
         public string Name { get; set; } = default!;
 
         public string? AudioFileName { get; set; }
@@ -14,5 +19,7 @@ namespace Catalog.API.Data.Data.Models
         public string AlbumId { get; set; }
 
         public virtual Album Album { get; set; }
+
+        public virtual ICollection<StreamTrack> StreamTracks { get; set; }
     }
 }

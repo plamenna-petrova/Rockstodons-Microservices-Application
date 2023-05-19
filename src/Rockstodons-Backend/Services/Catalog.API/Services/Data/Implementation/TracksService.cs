@@ -36,7 +36,7 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task<PagedList<Track>> GetPaginatedTracks(TrackParameters trackParameters)
         {
-            var tracksToPaginate = _tracksRepository.GetAllWithDeletedRecords().OrderBy(p => p.Name);
+            var tracksToPaginate = _tracksRepository.GetAllWithDeletedRecords().OrderBy(t => t.Name);
             return PagedList<Track>.ToPagedList(tracksToPaginate, trackParameters.PageNumber, trackParameters.PageSize);
         }
 
@@ -55,19 +55,19 @@ namespace Catalog.API.Services.Data.Implementation
 
             SearchByTrackName(ref tracksToPaginate, trackParameters.Name);
 
-            return PagedList<TrackDetailsDTO>.ToPagedList(tracksToPaginate.OrderBy(p => p.Name),
+            return PagedList<TrackDetailsDTO>.ToPagedList(tracksToPaginate.OrderBy(t => t.Name),
                 trackParameters.PageNumber, trackParameters.PageSize);
         }
 
         public async Task<Track> GetTrackById(string id)
         {
             return await _tracksRepository.GetAllWithDeletedRecords()
-                .Where(p => p.Id == id).FirstOrDefaultAsync();
+                .Where(t => t.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<TrackDetailsDTO> GetTrackDetails(string id)
         {
-            return await _tracksRepository.GetAll().Where(p => p.Id == id)
+            return await _tracksRepository.GetAll().Where(t => t.Id == id)
                 .MapTo<TrackDetailsDTO>().FirstOrDefaultAsync();
         }
 

@@ -1,0 +1,19 @@
+<div class="performer-descriptions-wrapper">
+    <nz-radio-group [(ngModel)]="size">
+        <label nz-radio nzValue="default">default</label>
+        <label nz-radio nzValue="middle">middle</label>
+        <label nz-radio nzValue="small">small</label>
+    </nz-radio-group>
+    <br />
+    <br />
+    <nz-descriptions nzTitle="Custom Size" nzBordered [nzSize]="size" [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }" *ngIf="performerDetails">
+        <nz-descriptions-item nzTitle="Performer Name">{{ performerDetails.name }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Country">{{ performerDetails.country }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="History">{{ performerDetails.history }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Presentation Image">
+            <img nz-image alt="example" [nzSrc]="performerDetails.imageUrl ? performerDetails.imageUrl : fallback" [nzFallback]="fallback" />
+        </nz-descriptions-item>
+    </nz-descriptions>
+    <br />
+    <button nz-button nzType="default" [routerLink]="['/performers']">Go Back</button>
+</div>

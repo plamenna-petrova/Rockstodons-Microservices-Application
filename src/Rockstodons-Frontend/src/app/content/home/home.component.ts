@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { IGenre } from 'src/app/core/interfaces/genres/genre';
@@ -33,9 +34,20 @@ export class HomeComponent {
   constructor(
     private albumsService: AlbumsService,
     private performersService: PerformersService,
-    private genresService: GenresService
+    private genresService: GenresService,
+    private router: Router
   ) {
 
+  }
+
+  getAlbumDetails(albumId: string): void {
+    const albumDetailsRouteToNavigate = `/album-details/${albumId}`
+    this.router.navigate([`${albumDetailsRouteToNavigate}`]);
+  }
+
+  getPerformerDetails(performerId: string): void {
+    const performerDetailsRouteToNavigate = `/performer-details/${performerId}`;
+    this.router.navigate([`${performerDetailsRouteToNavigate}`]);
   }
 
   ngOnInit(): void {

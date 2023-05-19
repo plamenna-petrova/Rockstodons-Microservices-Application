@@ -46,6 +46,7 @@ import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.inter
 import { RouteReuseStrategy } from '@angular/router';
 import { RouteReusableStrategy } from './core/utils/route-reusable-strategy';
 import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/album-details.component';
+import { PerformersDetailsComponent } from './pages/catalogue/details/performers-details/performers-details.component';
 
 registerLocaleData(en);
 
@@ -63,7 +64,8 @@ const icons: IconDefinition[] = [
     PerformersCatalogueComponent,
     GenresCatalogueComponent,
     ShouldLoginComponent,
-    AlbumDetailsComponent
+    AlbumDetailsComponent,
+    PerformersDetailsComponent
   ],
   imports: [
     BrowserModule,

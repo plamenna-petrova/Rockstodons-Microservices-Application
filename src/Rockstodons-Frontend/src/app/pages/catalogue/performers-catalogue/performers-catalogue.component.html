@@ -9,7 +9,7 @@
                 <img nz-image alt="example" [nzSrc]="performer.imageUrl ? performer.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #performerCatalogue>
-                <span nz-icon nzType="read" nzTheme="outline"></span>
+                <span nz-icon nzType="read" nzTheme="outline" (click)="getPerformerDetails(performer.id)"></span>
             </ng-template>
             <ng-template #actionEdit>
                 <span nz-icon nzType="play-circle" nzTheme="outline"></span>

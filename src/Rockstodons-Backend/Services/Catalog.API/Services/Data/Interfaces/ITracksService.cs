@@ -13,7 +13,7 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<List<Track>> GetAllTracksWithDeletedRecords();
 
-        Task<PagedList<Track>> GetPaginatedTracks(TrackParameters TrackParameters);
+        Task<PagedList<Track>> GetPaginatedTracks(TrackParameters trackParameters);
 
         Task<List<TrackDetailsDTO>> SearchForTracks(string trackSearchTerm);
 
