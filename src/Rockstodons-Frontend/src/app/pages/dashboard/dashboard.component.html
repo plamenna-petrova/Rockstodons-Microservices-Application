@@ -11,38 +11,86 @@
                     <li nz-menu-item>
                         <span nz-icon nzType="pie-chart"></span>
                         <span>
-                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['genres-management']}}]">Genres</a>
-                        </span>
+              <a
+                [routerLink]="[
+                  '/dashboard',
+                  { outlets: { dashboard: ['genres-management'] } }
+                ]"
+                >Genres</a
+              >
+            </span>
                     </li>
                     <li nz-menu-item>
-                        <span nz-icon nzType="laptop"></span>
+                        <span nz-icon nzType="info-circle" nzTheme="outline"></span>
                         <span>
-                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['album-types-management']}}]">Album Types</a>
-                        </span>
+              <a
+                [routerLink]="[
+                  '/dashboard',
+                  { outlets: { dashboard: ['album-types-management'] } }
+                ]"
+                >Album Types</a
+              >
+            </span>
                     </li>
                     <li nz-menu-item>
                         <span nz-icon nzType="user"></span>
                         <span>
-                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['performers-management']}}]">Performers</a>
-                        </span>
+              <a
+                [routerLink]="[
+                  '/dashboard',
+                  { outlets: { dashboard: ['performers-management'] } }
+                ]"
+                >Performers</a
+              >
+            </span>
                     </li>
                     <li nz-menu-item>
-                        <span nz-icon nzType="desktop"></span>
+                        <span nz-icon nzType="book" nzTheme="outline"></span>
                         <span>
-                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['albums-management']}}]">Albums</a>
-                        </span>
+              <a
+                [routerLink]="[
+                  '/dashboard',
+                  { outlets: { dashboard: ['albums-management'] } }
+                ]"
+                >Albums</a
+              >
+            </span>
                     </li>
                     <li nz-menu-item>
-                        <span nz-icon nzType="laptop"></span>
+                        <span nz-icon nzType="customer-service" nzTheme="outline"></span>
                         <span>
-                        <a [routerLink]="['/dashboard', { outlets: { dashboard: ['tracks-management']}}]">Tracks</a>
-                      </span>
+              <a
+                [routerLink]="[
+                  '/dashboard',
+                  { outlets: { dashboard: ['tracks-management'] } }
+                ]"
+                >Tracks</a
+              >
+            </span>
+                    </li>
+                    <li nz-menu-item>
+                        <span nz-icon nzType="play-circle" nzTheme="outline"></span>
+                        <span>
+              <a
+                [routerLink]="[
+                  '/dashboard',
+                  { outlets: { dashboard: ['streams-management'] } }
+                ]"
+                >Streams</a
+              >
+            </span>
                     </li>
                     <li nz-menu-item>
                         <span nz-icon nzType="delete" nzTheme="outline"></span>
                         <span>
-                          <a [routerLink]="['/dashboard', { outlets: { dashboard: ['recycle-bin']}}]">Recycle Bin</a>
-                        </span>
+              <a
+                [routerLink]="[
+                  '/dashboard',
+                  { outlets: { dashboard: ['recycle-bin'] } }
+                ]"
+                >Recycle Bin</a
+              >
+            </span>
                     </li>
                 </ul>
             </nz-sider>
@@ -55,6 +103,6 @@
                 </div>
             </nz-layout>
         </nz-layout>
-        <nz-footer>RockStodons ©{{currentYear}}</nz-footer>
+        <nz-footer>RockStodons ©{{ currentYear }}</nz-footer>
     </nz-content>
 </nz-layout>

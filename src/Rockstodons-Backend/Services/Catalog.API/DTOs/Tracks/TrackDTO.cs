@@ -1,4 +1,5 @@
 ﻿using Catalog.API.Data.Data.Models;
+using Catalog.API.DTOs.Albums;
 using Catalog.API.Services.Mapping;
 
 namespace Catalog.API.DTOs.Tracks
@@ -14,5 +15,7 @@ namespace Catalog.API.DTOs.Tracks
         public string? AudioFileUrl { get; set; }
 
         public DateTime CreatedOn { get; set; } 
+
+        public AlbumDetailsDTO Album { get; set; }
     }
 }

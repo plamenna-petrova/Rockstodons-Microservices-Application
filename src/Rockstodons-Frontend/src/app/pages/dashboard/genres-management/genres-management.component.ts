@@ -49,8 +49,6 @@ export class GenresManagementComponent {
   genresCreationForm!: FormGroup;
   genresEditForm!: FormGroup;
 
-  existingPerformerCoverImages: any[] = [];
-
   genrePresentationImageUploadAPIUrl = `${environment.apiUrl}/storage/upload/genre-image`;
   isGenreCreationPresentationImageUploadButtonVisible = false;
   isGenreEditPresentationImageUploadButtonVisible = false;
@@ -285,7 +283,7 @@ export class GenresManagementComponent {
   };
 
   executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs): any => {
-    this.fileStorageService.getAlbumsImages().subscribe((data: any) => {
+    this.fileStorageService.getGenresImages().subscribe((data: any) => {
       if (
         data.map((image: any) => image.name).includes(nzUploadXHRArgs.file.name)
       ) {

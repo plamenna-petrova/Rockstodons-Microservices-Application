@@ -60,4 +60,16 @@ export class FileStorageService {
   deleteTrackMP3File(trackMP3FileName: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.fileStorageAPIUrl}/tracks-mp3-files/delete/${trackMP3FileName}`);
   }
+
+  getStreamsImages(): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.fileStorageAPIUrl}/files/streams`);
+  }
+
+  uploadStreamImage(formData: FormData): Observable<any> {
+    return this.httpClient.post<any>(`${this.fileStorageAPIUrl}/upload/stream-image`, formData);
+  }
+
+  deleteStreamImage(streamImageFileName: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.fileStorageAPIUrl}/streams-images/delete/${streamImageFileName}`);
+  }
 }

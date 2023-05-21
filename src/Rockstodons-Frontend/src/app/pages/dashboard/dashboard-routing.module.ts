@@ -7,6 +7,7 @@ import { AlbumTypesManagementComponent } from './album-types-management/album-ty
 import { PerformersManagementComponent } from './performers-management/performers-management.component';
 import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 import { TracksManagementComponent } from './tracks-management/tracks-management.component';
+import { StreamsManagementComponent } from './streams-management/streams-management.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,11 @@ const routes: Routes = [
       {
         path: 'tracks-management',
         component: TracksManagementComponent,
+        outlet: 'dashboard'
+      },
+      {
+        path: 'streams-management',
+        component: StreamsManagementComponent,
         outlet: 'dashboard'
       },
       {

@@ -13,7 +13,8 @@
                 <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineGenreNameValidationTemplate">
                     <input nz-input formControlName="genreName" minlength="3" maxlength="20" required />
                     <ng-template #combineGenreNameValidationTemplate let-control>
-                        <ng-container *ngIf="control.hasError('maxlength')">The genre's name cannot be longer than 20 characters</ng-container>
+                        <ng-container *ngIf="control.hasError('maxlength')">The genre's name cannot be longer than 20 characters
+                        </ng-container>
                         <ng-container *ngIf="control.hasError('minlength')">The genre's name must be at least 3 character long</ng-container>
                         <ng-container *ngIf="control.hasError('required')">The genre's name is required</ng-container>
                     </ng-template>
@@ -65,8 +66,10 @@
                                 <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineGenreNameValidationTemplate">
                                     <input nz-input formControlName="genreName" minlength="3" maxlength="20" required />
                                     <ng-template #combineGenreNameValidationTemplate let-control>
-                                        <ng-container *ngIf="control.hasError('maxlength')">The genre's name cannot be longer than 20 characters</ng-container>
-                                        <ng-container *ngIf="control.hasError('minlength')">The genre's name must be at least 3 character long</ng-container>
+                                        <ng-container *ngIf="control.hasError('maxlength')">The genre's name cannot be longer than 20 characters
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('minlength')">The genre's name must be at least 3 character long
+                                        </ng-container>
                                         <ng-container *ngIf="control.hasError('required')">The genre's name is required</ng-container>
                                     </ng-template>
                                 </nz-form-control>
@@ -75,8 +78,8 @@
                                 <nz-form-label [nzSpan]="8">Presentation Image</nz-form-label>
                                 <nz-upload class="genre-edit-presentation-image-uploader" [nzAction]="genrePresentationImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false"
                                     [nzDownload]="downloadGenrePresentationImage" [nzShowButton]="
-                                isGenreEditPresentationImageUploadButtonVisible
-                              " (nzChange)="handleGenreEditPresentationImageChange($event)" [nzPreview]="handleGenreImagePreview" [(nzFileList)]="genreEditPresentationImagesFileList">
+                    isGenreEditPresentationImageUploadButtonVisible
+                  " (nzChange)="handleGenreEditPresentationImageChange($event)" [nzPreview]="handleGenreImagePreview" [(nzFileList)]="genreEditPresentationImagesFileList">
                                     <div>
                                         <span nz-icon nzType="plus"></span>
                                         <div style="margin-top: 8px">Upload</div>

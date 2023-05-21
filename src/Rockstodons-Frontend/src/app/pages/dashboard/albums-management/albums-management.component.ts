@@ -237,8 +237,6 @@ export class AlbumsManagementComponent {
   @ViewChild('downloadLink', { static: false, read: ElementRef })
   downloadLink: ElementRef | undefined;
 
-  existingAlbumCoverImages: any[] = [];
-
   albumCoverImageUploadAPIUrl = `${environment.apiUrl}/storage/upload/album-image`;
   isAlbumCreationCoverImageUploadButtonVisible = false;
   isAlbumEditCoverImageUploadButtonVisible = false;
@@ -689,6 +687,7 @@ export class AlbumsManagementComponent {
         .subscribe({
           next: (response) => {
             let newAlbum = response;
+
             this.nzNotificationService.success(
               operationSuccessMessage,
               `The album ${newAlbum.name} is created successfully!`,
@@ -941,6 +940,7 @@ export class AlbumsManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let editedAlbum = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The album ${editedAlbum.name} is edited successfully`,

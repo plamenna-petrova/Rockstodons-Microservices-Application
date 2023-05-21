@@ -9,8 +9,12 @@ namespace Catalog.API.DTOs.Albums
 {
     public class AlbumDetailsDTO : IMapFrom<Album>
     {
+        public string Id { get; set; }
+
         public string Name { get; set; }
 
         public int YearOfRelease { get; set; }
+
+        public PerformerDetailsDTO Performer { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace Catalog.API.Controllers
         private readonly string _azureStoragePerformersContainerName;
         private readonly string _azureStorageGenresContainerName;
         private readonly string _azureStorageTracksContainerName;
+        private readonly string _azureStorageStreamsContainerName;
 
         public FilesStorageController(IFileStorageService fileStorageService, IConfiguration configuration)
         {
@@ -23,6 +24,7 @@ namespace Catalog.API.Controllers
             _azureStoragePerformersContainerName = _configuration["AzureStorage:PerformersBlobContainerName"];
             _azureStorageGenresContainerName = _configuration["AzureStorage:GenresBlobContainerName"];
             _azureStorageTracksContainerName = _configuration["AzureStorage:TracksBlobContainerName"];
+            _azureStorageStreamsContainerName = _configuration["AzureStorage:StreamsBlobContainerName"];
         }
 
         [HttpGet("files/albums")]
@@ -253,6 +255,66 @@ namespace Catalog.API.Controllers
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
                 filename, _azureStorageTracksContainerName
+            );
+
+            if (blobResponseDTO.Error)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status200OK, blobResponseDTO.Status);
+            }
+        }
+
+        [HttpGet("files/streams")]
+        public async Task<IActionResult> GetStreamsImagesFromAzureContainer()
+        {
+            List<BlobDTO> retrievedFiles = await _fileStorageService
+                .GetFilesList(_azureStorageStreamsContainerName);
+
+            return StatusCode(StatusCodes.Status200OK, retrievedFiles);
+        }
+
+        [HttpPost("upload/stream-image")]
+        public async Task<IActionResult> UploadStreamImage(IFormFile imageToUpload)
+        {
+            BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
+                imageToUpload, _azureStorageStreamsContainerName
+            );
+
+            if (blobResponseDTO.Error)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status200OK, blobResponseDTO);
+            }
+        }
+
+        [HttpGet("streams-images/{filename}")]
+        public async Task<IActionResult> DownloadStreamImage(string filename)
+        {
+            BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
+                filename, _azureStorageStreamsContainerName
+            );
+
+            if (blobDTO is null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            else
+            {
+                return File(blobDTO.Content!, blobDTO.ContentType!, blobDTO.Name);
+            }
+        }
+
+        [HttpDelete("streams-images/delete/{filename}")]
+        public async Task<IActionResult> DeleteStreamImage(string filename)
+        {
+            BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
+                filename, _azureStorageStreamsContainerName
             );
 
             if (blobResponseDTO.Error)

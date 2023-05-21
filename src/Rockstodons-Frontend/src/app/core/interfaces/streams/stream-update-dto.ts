@@ -4,6 +4,6 @@ export interface IStreamUpdateDTO {
   id: string;
   name: string;
   imageFileName: string;
-  imageFileUrl: string;
+  imageUrl: string;
   tracks: ITrack[];
 }

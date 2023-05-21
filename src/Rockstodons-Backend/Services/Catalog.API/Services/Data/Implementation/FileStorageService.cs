@@ -54,7 +54,7 @@ namespace Catalog.API.Services.Data.Implementation
         {
             BlobResponseDTO blobResponseDTO = new();
 
-            BlobContainerClient blobContainerClient = new BlobContainerClient(
+            BlobContainerClient blobContainerClient = new(
                 _azureStorageConnectionString, azureStorageContainerName
             );
 
@@ -201,7 +201,7 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task<BlobResponseDTO> DeleteAsync(string blobFileName, string azureStorageContainerName)
         {
-            BlobContainerClient blobContainerClient = new BlobContainerClient(
+            BlobContainerClient blobContainerClient = new(
                 _azureStorageConnectionString, azureStorageContainerName
             );
 
@@ -230,7 +230,7 @@ namespace Catalog.API.Services.Data.Implementation
             };
         }
 
-        private IImageEncoder GetImageEncoder(string extension)
+        private static IImageEncoder GetImageEncoder(string extension)
         {
             IImageEncoder imageEncoder = null!;
             extension = extension.Replace(".", string.Empty);

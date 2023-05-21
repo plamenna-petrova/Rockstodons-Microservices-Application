@@ -10,7 +10,7 @@ import { IStreamUpdateDTO } from '../interfaces/streams/stream-update-dto';
   providedIn: 'root'
 })
 export class StreamsService {
-  private readonly streamsAPIUrl = `${environment.apiUrl}/tracks`;
+  private readonly streamsAPIUrl = `${environment.apiUrl}/streams`;
 
   constructor(private httpClient: HttpClient) {
 

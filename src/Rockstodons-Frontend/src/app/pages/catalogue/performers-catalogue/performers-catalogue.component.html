@@ -1,7 +1,7 @@
 <div style="background: #ececec; padding: 30px">
     <h2 nz-typography style="margin-top: 20px;">All Performers</h2>
     <div nz-row [nzGutter]="8">
-        <div nz-col [nzSpan]="4" *ngFor="let performer of performersForCatalogue">
+        <div nz-col [nzXs]="{ span: 12 }" [nzLg]="{ span: 4 }" *ngFor="let performer of performersForCatalogue">
             <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="performerCoverTemplate" [nzActions]="[performerCatalogue, actionEdit, actionEllipsis]">
                 <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country"></nz-card-meta>
             </nz-card>

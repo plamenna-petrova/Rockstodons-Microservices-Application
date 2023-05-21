@@ -42,6 +42,7 @@ import { PerformersManagementComponent } from './performers-management/performer
 import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 import { AddOrEditAlbumTypeFormComponent } from './forms/add-or-edit-album-type-form/add-or-edit-album-type-form.component';
 import { TracksManagementComponent } from './tracks-management/tracks-management.component';
+import { StreamsManagementComponent } from './streams-management/streams-management.component';
 
 registerLocaleData(en);
 
@@ -54,7 +55,8 @@ registerLocaleData(en);
     PerformersManagementComponent,
     RecycleBinComponent,
     AddOrEditAlbumTypeFormComponent,
-    TracksManagementComponent
+    TracksManagementComponent,
+    StreamsManagementComponent
   ],
   imports: [
     DashboardRoutingModule,

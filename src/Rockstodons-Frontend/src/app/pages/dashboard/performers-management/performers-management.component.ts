@@ -315,15 +315,16 @@ export class PerformersManagementComponent {
   listOfPerformersColumns = [
     {
       title: 'Name',
-      compare: (a: IPerformer, b: IPerformer) => a.name.localeCompare(b.name),
+      compare: (a: IPerformerTableData, b: IPerformerTableData) =>
+        a.performer.name.localeCompare(b.performer.name),
       priority: 1,
       isSearchTriggerVisible: this.isPerformersNameSearchTriggerVisible,
       searchValue: this.searchByNameValue,
     },
     {
       title: 'Country',
-      compare: (a: IPerformer, b: IPerformer) =>
-        a.country.localeCompare(b.country),
+      compare: (a: IPerformerTableData, b: IPerformerTableData) =>
+        a.performer.country.localeCompare(b.performer.country),
       priority: 2,
       isSearchTriggerVisible: this.isPerformersCountrySearchTriggerVisible,
       searchValue: this.searchByCountryValue,
@@ -611,7 +612,7 @@ export class PerformersManagementComponent {
   };
 
   executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs): any => {
-    this.fileStorageService.getAlbumsImages().subscribe((data: any) => {
+    this.fileStorageService.getPerformersImages().subscribe((data: any) => {
       if (
         data.map((image: any) => image.name).includes(nzUploadXHRArgs.file.name)
       ) {

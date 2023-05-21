@@ -316,7 +316,7 @@ export class TracksManagementComponent {
   };
 
   executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs): any => {
-    this.fileStorageService.getAlbumsImages().subscribe((data: any) => {
+    this.fileStorageService.getTracksMP3Files().subscribe((data: any) => {
       if (
         data
           .map((mp3File: any) => mp3File.name)

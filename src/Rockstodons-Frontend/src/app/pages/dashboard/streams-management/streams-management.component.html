@@ -1,0 +1,112 @@
+<button nz-button class="load-streams-data-button" [nzType]="'primary'" (click)="onLoadStreamsDataClick()">
+  Load Streams
+</button>
+
+<button nz-button class="create-new-stream-button" [nzType]="'dashed'" (click)="showStreamCreationModal()">
+  Create New Stream
+</button>
+
+<nz-modal [(nzVisible)]="isStreamCreationModalVisible" nzTitle="Create New Stream" (nzOnOk)="handleOkStreamCreationModal()" (nzOnCancel)="handleCancelStreamCreationModal()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="streamsCreationForm" (ngSubmit)="onStreamsCreationFormSubmit()">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="8">Name</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineStreamCreationNameValidationTemplate">
+                    <input nz-input formControlName="name" minlength="5" maxlength="30" required />
+                    <ng-template #combineStreamCreationNameValidationTemplate let-control>
+                        <ng-container *ngIf="control.hasError('maxlength')">The streams's name cannot be longer than 30 characters
+                        </ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The streams's name must be at least 5 character long</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">The streams's name is required</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="8">Cover Image</nz-form-label>
+                <nz-upload class="genre-presentation-image-uploader" [nzAction]="streamCoverImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" (nzChange)="handleStreamCoverImageChange($event)"
+                    [nzDownload]="downloadStreamCoverImage" [nzShowButton]="isStreamCreationCoverImageUploadButtonVisible" [nzPreview]="handleStreamImagePreview" [nzFileList]="streamCoverImagesFileList">
+                    <div>
+                        <span nz-icon nzType="plus"></span>
+                        <div style="margin-top: 8px">Upload</div>
+                    </div>
+                </nz-upload>
+                <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible = false">
+                    <ng-template #modalContent>
+                        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                    </ng-template>
+                </nz-modal>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-select nzMode="tags" formControlName="tracks" nzPlaceHolder="Tag Mode" [(ngModel)]="listOfStreamTracksTagsOptions">
+                    <nz-option *ngFor="let option of listOfTracksSelectOptions" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                </nz-select>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<nz-table #nzTable [nzData]="streamsDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
+    <thead>
+        <tr>
+            <th nzCustomFilter>
+                Name
+            </th>
+            <th nzCustomFilter>
+                Tracks
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of nzTable.data">
+            <td>{{ data.stream.name }}</td>
+            <td>
+                <div *ngIf="data.stream.tracks; else noTracksForStreamTemplate">
+                    <ul>
+                        <li *ngFor="let track of data.stream.tracks">
+
+                        </li>
+                    </ul>
+                </div>
+                <ng-template #noTracksForStreamTemplate></ng-template>
+            </td>
+            <td>
+                <button nz-button class="edit-track-button" (click)="showStreamEditModal(data)">
+          Edit
+        </button>
+                <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Track" (nzOnOk)="handleOkStreamEditModal(data)" (nzOnCancel)="handleCancelStreamEditModal(data)">
+                    <ng-container *nzModalContent>
+                        <form nz-form [formGroup]="streamsEditForm" (ngSubmit)="onStreamsEditFormSubmit(data.stream.id, data.stream.tracks)">
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="8">Name</nz-form-label>
+                                <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineStreamEditNameValidationTemplate">
+                                    <input nz-input formControlName="name" minlength="5" maxlength="30" required />
+                                    <ng-template #combineStreamEditNameValidationTemplate let-control>
+                                        <ng-container *ngIf="control.hasError('maxlength')">The streams's name cannot be longer than 30 characters
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('minlength')">The streams's name must be at least 5 character long
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('required')">The streams's name is required</ng-container>
+                                    </ng-template>
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="8">Cover Image</nz-form-label>
+                                <nz-upload class="stream-cover-image-uploader" [nzAction]="streamCoverImageUploadAPIUrl" [nzCustomRequest]="executeCustomUploadRequest" [nzHeaders]="setMediaUploadHeaders" [nzName]="'file'" nzListType="picture-card" [nzMultiple]="false" [nzDownload]="downloadStreamCoverImage"
+                                    [nzShowButton]="isStreamEditCoverImageUploadButtonVisible" (nzChange)="handleStreamEditCoverImageChange($event)" [(nzFileList)]="streamEditCoverImagesFileList">
+                                    <div>
+                                        <span nz-icon nzType="plus"></span>
+                                        <div style="margin-top: 8px">Upload</div>
+                                    </div>
+                                </nz-upload>
+                            </nz-form-item>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+                <button nz-button (click)="showStreamRemovalModal(data.stream)" nzDanger>
+          Delete
+        </button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

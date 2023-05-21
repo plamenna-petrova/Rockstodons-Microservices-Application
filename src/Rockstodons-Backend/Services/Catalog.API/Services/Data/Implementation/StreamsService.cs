@@ -74,7 +74,24 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task<StreamDTO> CreateStream(CreateStreamDTO createStreamDTO)
         {
+            var tracks = createStreamDTO.Tracks.ToList();
             var mappedStream = _mapper.Map<Stream>(createStreamDTO);
+
+            if (tracks.Any())
+            {
+                var tracksIds = tracks.Select(t => t.Id);
+
+                foreach (var trackId in tracksIds)
+                {
+                    var streamTrackToCreate = new StreamTrack
+                    {
+                        StreamId = mappedStream.Id,
+                        TrackId = trackId,
+                    };
+
+                    mappedStream.StreamTracks.Add(streamTrackToCreate);
+                }
+            }
 
             await _streamsRepository.AddAsync(mappedStream);
             await _streamsRepository.SaveChangesAsync();

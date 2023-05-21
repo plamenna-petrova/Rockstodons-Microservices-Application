@@ -4,7 +4,7 @@ export interface IStream {
   id: string;
   name: string;
   imageFileName: string;
-  imageFileUrl: string;
+  imageUrl: string;
   tracks: ITrack[];
   isDeleted: boolean;
 }
