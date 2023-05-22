@@ -200,6 +200,7 @@ export class GenresManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let newGenre = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The genre ${newGenre.name} is created successfully!`,
@@ -253,6 +254,7 @@ export class GenresManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let editedGenre = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The genre ${editedGenre.name} is edited successfully!`,
@@ -260,6 +262,7 @@ export class GenresManagementComponent {
               nzPauseOnHover: true,
             }
           );
+          
           this.retrieveGenresData();
         });
     } else {

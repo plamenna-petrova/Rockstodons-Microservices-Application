@@ -10,18 +10,28 @@ using Stream = Catalog.API.Data.Data.Models.Stream;
 using Catalog.API.DTOs.Streams;
 using Catalog.API.Services.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Catalog.API.Infrastructure;
 
 namespace Catalog.API.Services.Data.Implementation
 {
     public class StreamsService : IStreamsService
     {
         private readonly IDeletableEntityRepository<Stream> _streamsRepository;
+        private readonly IDeletableEntityRepository<Track> _tracksRepository;
+        private readonly CatalogDbContext _catalogDbContext;
 
         private readonly IMapper _mapper;
 
-        public StreamsService(IDeletableEntityRepository<Stream> streamsRepository, IMapper mapper)
+        public StreamsService(
+            IDeletableEntityRepository<Stream> streamsRepository,
+            IDeletableEntityRepository<Track> tracksRepository,
+            CatalogDbContext catalogDbContext,
+            IMapper mapper
+        )
         {
             _streamsRepository = streamsRepository;
+            _tracksRepository = tracksRepository;
+            _catalogDbContext = catalogDbContext;
             _mapper = mapper;
         }
 
@@ -77,6 +87,11 @@ namespace Catalog.API.Services.Data.Implementation
             var tracks = createStreamDTO.Tracks.ToList();
             var mappedStream = _mapper.Map<Stream>(createStreamDTO);
 
+            await _streamsRepository.AddAsync(mappedStream);
+            await _streamsRepository.SaveChangesAsync();
+
+            var createdStream = _mapper.Map<StreamDTO>(mappedStream);
+
             if (tracks.Any())
             {
                 var tracksIds = tracks.Select(t => t.Id);
@@ -85,25 +100,59 @@ namespace Catalog.API.Services.Data.Implementation
                 {
                     var streamTrackToCreate = new StreamTrack
                     {
-                        StreamId = mappedStream.Id,
+                        StreamId = createdStream.Id,
                         TrackId = trackId,
                     };
 
                     mappedStream.StreamTracks.Add(streamTrackToCreate);
                 }
+
+                await _streamsRepository.SaveChangesAsync();
             }
 
-            await _streamsRepository.AddAsync(mappedStream);
-            await _streamsRepository.SaveChangesAsync();
-
-            return _mapper.Map<StreamDTO>(mappedStream);
+            return createdStream;
         }
 
         public async Task UpdateStream(Stream streamToUpdate, UpdateStreamDTO updateStreamDTO)
         {
+            var selectedTracksIds = updateStreamDTO.Tracks.Select(t => t.Id);
+
             _mapper.Map(updateStreamDTO, streamToUpdate);
 
             _streamsRepository.Update(streamToUpdate);
+            await _streamsRepository.SaveChangesAsync();
+
+            var tracksOfStream = new HashSet<string>(
+               streamToUpdate.StreamTracks.Select(st => st.Track.Id)
+            );
+
+            var allTracks = _tracksRepository.GetAllAsNoTracking();
+
+            foreach (var track in allTracks)
+            {
+                if (selectedTracksIds.Contains(track.Id))
+                {
+                    if (!tracksOfStream.Contains(track.Id))
+                    {
+                        streamToUpdate.StreamTracks.Add(new StreamTrack
+                        {
+                            StreamId = streamToUpdate.Id,
+                            TrackId = track.Id
+                        });
+                    }
+                }
+                else
+                {
+                    if (tracksOfStream.Contains(track.Id))
+                    {
+                        StreamTrack streamTrackToRemove = streamToUpdate.StreamTracks
+                            .FirstOrDefault(st => st.TrackId == track.Id);
+
+                        _catalogDbContext.StreamTracks.Remove(streamTrackToRemove);
+                    }
+                }
+            }
+
             await _streamsRepository.SaveChangesAsync();
         }
 
@@ -127,6 +176,11 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task HardDeleteStream(Stream streamToHardDelete)
         {
+            var streamTracksByStream = _catalogDbContext.StreamTracks
+                  .Where(st => st.StreamId == streamToHardDelete.Id).ToArray();
+
+            _catalogDbContext.RemoveRange(streamTracksByStream);
+
             _streamsRepository.HardDelete(streamToHardDelete);
             await _streamsRepository.SaveChangesAsync();
         }

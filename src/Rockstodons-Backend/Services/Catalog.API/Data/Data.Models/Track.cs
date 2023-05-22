@@ -1,5 +1,6 @@
 ﻿using Catalog.API.Data.Data.Common.Models.Abstraction;
 using Catalog.API.Data.Models;
+using Newtonsoft.Json;
 
 namespace Catalog.API.Data.Data.Models
 {

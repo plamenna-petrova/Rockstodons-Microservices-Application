@@ -17,6 +17,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Catalog.API.Services.Messaging;
 using Catalog.API.Extensions;
+using Newtonsoft.Json;
 
 internal class Program
 {
@@ -96,6 +97,12 @@ internal class Program
         services.AddTransient<IFileStorageService, FileStorageService>();
 
         services.AddSwaggerExtension();
+
+        services.AddMvc().AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        });
+
         services.AddControllersExtension();
         services.AddCorsExtension();
         services.AddJWTAuthentication(configuration);

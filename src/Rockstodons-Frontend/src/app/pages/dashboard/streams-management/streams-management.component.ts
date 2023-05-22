@@ -5,7 +5,7 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -14,7 +14,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { Observable, of, take } from 'rxjs';
@@ -66,6 +66,8 @@ export class StreamsManagementComponent {
   listOfTracksSelectOptions: Array<{ label: string; value: ITrack }> = [];
   listOfStreamTracksTagsOptions = [];
 
+  isTemplateModalButtonLoading = false;
+
   constructor(
     private streamsService: StreamsService,
     private tracksService: TracksService,
@@ -115,8 +117,6 @@ export class StreamsManagementComponent {
     this.isStreamCreationModalVisible = true;
     this.isStreamCreationCoverImageUploadButtonVisible = true;
     this.streamsCreationForm.reset();
-
-    // TODO: handle multiple select here
   }
 
   handleOkStreamCreationModal(): void {
@@ -187,8 +187,6 @@ export class StreamsManagementComponent {
     };
 
     console.log(streamToCreate);
-
-    return;
 
     if (this.streamsCreationForm.valid) {
       this.streamsService
@@ -342,6 +340,28 @@ export class StreamsManagementComponent {
     }
   }
 
+  createStreamTracksDetailsModal(
+    streamTracksDetailsTemplateTitle: TemplateRef<{}>,
+    streamTracksDetailsTemplateContent: TemplateRef<{}>,
+    streamTracksDetailsTemplateFooter: TemplateRef<{}>
+  ): void {
+    this.nzModalService.create({
+      nzTitle: streamTracksDetailsTemplateTitle,
+      nzContent: streamTracksDetailsTemplateContent,
+      nzFooter: streamTracksDetailsTemplateFooter,
+      nzMaskClosable: true,
+      nzClosable: true
+    });
+  }
+
+  destroyStreamTracksDetailsTemplateModal(nzModalRef: NzModalRef): void {
+    this.isTemplateModalButtonLoading = true;
+    setTimeout(() => {
+      this.isTemplateModalButtonLoading = false;
+      nzModalRef.destroy();
+    }, 100);
+  }
+
   onStreamsEditFormSubmit(
     streamId: string,
     tracks: ITrack[]
@@ -441,9 +461,15 @@ export class StreamsManagementComponent {
       this.streamsData = [];
       data
         .filter((stream) => !stream.isDeleted)
-        .map((stream) => {
+        .map((stream: any) => {
           this.streamsData.push({
-            stream: stream,
+            stream: {
+              id: stream.id,
+              name: stream.name,
+              imageFileName: stream.imageFileName,
+              imageUrl: stream.imageUrl,
+              tracks: stream.streamTracks.map((streamTrack: any) => streamTrack.track)
+            } as IStream,
             isEditingModalVisible: false,
           });
         });

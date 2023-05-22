@@ -32,8 +32,18 @@ export class StreamsService {
     return this.httpClient.get<IStream>(`${this.streamsAPIUrl}/details/${streamDetailsId}`);
   }
 
-  createNewStream(streamToCreate: IStreamCreateDTO): Observable<IStreamCreateDTO> {
-    return this.httpClient.post<IStreamCreateDTO>(`${this.streamsAPIUrl}/create`, streamToCreate);
+  createNewStream(streamToCreate: IStreamCreateDTO): Observable<any> {
+    const mappedTracksForStreamCreation = streamToCreate.tracks
+      .map(({ id, name }) => ({ id, name }));
+
+    const mappedStreamToCreate = {
+      name: streamToCreate.name,
+      imageFileName: streamToCreate.imageFileName,
+      imageUrl: streamToCreate.imageUrl,
+      tracks: mappedTracksForStreamCreation
+    };
+
+    return this.httpClient.post<any>(`${this.streamsAPIUrl}/create`, mappedStreamToCreate);
   }
 
   updateStream(streamToUpdate: IStreamUpdateDTO): Observable<IStreamUpdateDTO> {

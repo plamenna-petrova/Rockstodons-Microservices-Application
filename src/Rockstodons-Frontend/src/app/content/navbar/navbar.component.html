@@ -10,7 +10,7 @@
         <li nz-menu-item [routerLink]="['/performers']">Performers</li>
         <li nz-menu-item [routerLink]="['/genres']">Genres</li>
         <li nz-menu-item>Streams</li>
-        <li nz-menu-item *ngIf="userDetails && userDetails['role'] == 'STSAdminRole'" [routerLink]="['/dashboard', { outlets: { dashboard: ['genres-management']}}]">Dashboard</li>
+        <li nz-menu-item *ngIf="((isAuthenticated | async) === true && userDetails && userDetails['role'] == 'STSAdminRole')" [routerLink]="['/dashboard', { outlets: { dashboard: ['genres-management']}}]">Dashboard</li>
         <li nz-menu-item *ngIf="(isAuthenticated | async) === false" (click)="login()">
             Login
         </li>

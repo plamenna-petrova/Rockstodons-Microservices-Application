@@ -16,7 +16,8 @@
                     <ng-template #combineStreamCreationNameValidationTemplate let-control>
                         <ng-container *ngIf="control.hasError('maxlength')">The streams's name cannot be longer than 30 characters
                         </ng-container>
-                        <ng-container *ngIf="control.hasError('minlength')">The streams's name must be at least 5 character long</ng-container>
+                        <ng-container *ngIf="control.hasError('minlength')">The streams's name must be at least 5 character long
+                        </ng-container>
                         <ng-container *ngIf="control.hasError('required')">The streams's name is required</ng-container>
                     </ng-template>
                 </nz-form-control>
@@ -48,12 +49,8 @@
 <nz-table #nzTable [nzData]="streamsDisplayData" nzTableLayout="fixed" [nzLoading]="isLoading">
     <thead>
         <tr>
-            <th nzCustomFilter>
-                Name
-            </th>
-            <th nzCustomFilter>
-                Tracks
-            </th>
+            <th nzCustomFilter>Name</th>
+            <th nzCustomFilter>Tracks</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -62,21 +59,48 @@
             <td>{{ data.stream.name }}</td>
             <td>
                 <div *ngIf="data.stream.tracks; else noTracksForStreamTemplate">
-                    <ul>
-                        <li *ngFor="let track of data.stream.tracks">
-
-                        </li>
-                    </ul>
+                    <button nz-button class="album-details-button" nzType="primary" (click)="
+              createStreamTracksDetailsModal(
+                streamTracksDetailsTemplateTitle,
+                streamTracksDetailsTemplateContent,
+                streamTracksDetailsTemplateFooter
+              )
+            " nzGhost>
+            <span>Details</span>
+          </button>
+                    <ng-template #streamTracksDetailsTemplateTitle>
+                        <span>{{ data.stream.name }}'s Details</span>
+                    </ng-template>
+                    <ng-template #streamTracksDetailsTemplateContent>
+                        <nz-list nzBordered nzSize="small">
+                            <nz-list-header>Tracks</nz-list-header>
+                            <ng-container *ngIf="data.stream.tracks.length !== 0; else noTracks">
+                                <nz-list-item *ngFor="let track of data.stream.tracks">{{ track.name }} from {{ track.album!.name }} by {{ track.album!.performer.name }}
+                                </nz-list-item>
+                            </ng-container>
+                            <ng-template #noTracks>
+                                <nz-list-item>There are currently no tracks under this stream</nz-list-item>
+                            </ng-template>
+                        </nz-list>
+                    </ng-template>
+                    <ng-template #streamTracksDetailsTemplateFooter let-ref="modalRef">
+                        <button nz-button (click)="ref.destroy()">Close</button>
+                        <button nz-button nzType="primary" (click)="destroyStreamTracksDetailsTemplateModal(ref)" [nzLoading]="isTemplateModalButtonLoading">
+              Close
+            </button>
+                    </ng-template>
                 </div>
-                <ng-template #noTracksForStreamTemplate></ng-template>
+                <ng-template #noTracksForStreamTemplate><span>-</span></ng-template>
             </td>
             <td>
-                <button nz-button class="edit-track-button" (click)="showStreamEditModal(data)">
+                <button nz-button class="edit-stream-button" (click)="showStreamEditModal(data)">
           Edit
         </button>
                 <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Track" (nzOnOk)="handleOkStreamEditModal(data)" (nzOnCancel)="handleCancelStreamEditModal(data)">
                     <ng-container *nzModalContent>
-                        <form nz-form [formGroup]="streamsEditForm" (ngSubmit)="onStreamsEditFormSubmit(data.stream.id, data.stream.tracks)">
+                        <form nz-form [formGroup]="streamsEditForm" (ngSubmit)="
+                onStreamsEditFormSubmit(data.stream.id, data.stream.tracks)
+              ">
                             <nz-form-item>
                                 <nz-form-label [nzSpan]="8">Name</nz-form-label>
                                 <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineStreamEditNameValidationTemplate">

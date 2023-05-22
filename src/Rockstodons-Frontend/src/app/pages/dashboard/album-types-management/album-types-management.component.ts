@@ -148,6 +148,7 @@ export class AlbumTypesManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let newAlbumType = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The album type ${newAlbumType.name} is created successfully!`,
@@ -183,6 +184,7 @@ export class AlbumTypesManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let editedAlbumType = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The album type ${editedAlbumType.name} is edited successfully!`,
@@ -190,6 +192,7 @@ export class AlbumTypesManagementComponent {
               nzPauseOnHover: true
             }
           );
+          
           this.retrieveAlbumTypesData();
         });
     } else {

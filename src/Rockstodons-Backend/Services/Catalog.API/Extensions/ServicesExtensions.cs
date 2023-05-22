@@ -60,9 +60,9 @@ namespace Catalog.API.Extensions
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = 
+                    options.JsonSerializerOptions.DictionaryKeyPolicy =
                         JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.PropertyNamingPolicy = 
+                    options.JsonSerializerOptions.PropertyNamingPolicy =
                         JsonNamingPolicy.CamelCase;
                 });
         }

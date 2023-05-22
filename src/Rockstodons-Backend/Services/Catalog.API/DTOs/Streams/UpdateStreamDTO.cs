@@ -15,6 +15,6 @@ namespace Catalog.API.DTOs.Streams
         public string? ImageUrl { get; set; }
 
         [Required]
-        public List<TrackDTO> Tracks { get; set; }
+        public List<TrackForStreamDTO> Tracks { get; set; }
     }
 }

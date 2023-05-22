@@ -532,6 +532,7 @@ export class PerformersManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let newPerformer = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The performer ${newPerformer.name} is created successfully!`,
@@ -582,6 +583,7 @@ export class PerformersManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let editedPerformer = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The performer ${editedPerformer.name} is edited successfully!`,
@@ -589,6 +591,7 @@ export class PerformersManagementComponent {
               nzPauseOnHover: true,
             }
           );
+          
           this.retrievePerformersData();
         });
     } else {

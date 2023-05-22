@@ -232,6 +232,7 @@ export class TracksManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let newTrack = response;
+          
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The track ${newTrack.name} is created successfully!`,
@@ -285,6 +286,7 @@ export class TracksManagementComponent {
         .pipe(take(1))
         .subscribe((response) => {
           let editedTrack = response;
+
           this.nzNotificationService.success(
             operationSuccessMessage,
             `The track ${editedTrack.name} is edited successfully!`,
