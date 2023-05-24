@@ -24,7 +24,7 @@ export class StreamsService {
     return this.httpClient.get<IStream[]>(`${this.streamsAPIUrl}/all`);
   }
 
-  getStreamByid(streamId: string): Observable<IStream> {
+  getStreamById(streamId: string): Observable<IStream> {
     return this.httpClient.get<IStream>(`${this.streamsAPIUrl}/${streamId}`);
   }
 

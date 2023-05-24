@@ -9,6 +9,7 @@ import { FallbackComponent } from './fallback.component';
 import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/album-details.component';
 import { PerformersDetailsComponent } from './pages/catalogue/details/performers-details/performers-details.component';
 import { StreamsCatalogueComponent } from './pages/catalogue/streams-catalogue/streams-catalogue.component';
+import { StreamDetailsComponent } from './pages/catalogue/details/stream-details/stream-details.component';
 
 const routes: Routes = [
   {
@@ -38,6 +39,10 @@ const routes: Routes = [
   {
     path: 'streams',
     component: StreamsCatalogueComponent
+  },
+  {
+    path: 'stream-details/:id',
+    component: StreamDetailsComponent
   },
   {
     path: 'should-login',
