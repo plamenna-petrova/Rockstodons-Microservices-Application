@@ -64,7 +64,9 @@ export class StreamsManagementComponent {
   streamEditCoverImagesFileList: NzUploadFile[] = [];
 
   listOfTracksSelectOptions: Array<{ label: string; value: ITrack }> = [];
-  listOfStreamTracksTagsOptions = [];
+  listOfStreamTracksTagsOptions: ITrack[] = [];
+  listOfTracksEditSelectOptions: Array<{ label: string; value: ITrack }> = [];
+  listOfStreamTracksEditTagsOptions: ITrack[] = [];
 
   isTemplateModalButtonLoading = false;
 
@@ -132,7 +134,6 @@ export class StreamsManagementComponent {
 
     this.streamsEditForm.patchValue({
       name: streamTableDatum.stream.name,
-      tracks: streamTableDatum.stream.tracks,
     });
 
     this.isStreamEditCoverImageUploadButtonVisible = true;
@@ -151,11 +152,42 @@ export class StreamsManagementComponent {
 
       this.isStreamEditCoverImageUploadButtonVisible = false;
     }
+
+    const tracksEditSelectList: Array<{ label: string; value: ITrack }> = [];
+    const existingStreamTracksToSelect: ITrack[] = [];
+
+    const streamTracksIds = streamTableDatum.stream.tracks.map(track => track.id);
+
+    this.tracksForStreams.forEach((trackForStream) => {
+      tracksEditSelectList.push({
+        label:
+          `${trackForStream.name} (from ${trackForStream.album!.name} ` +
+          `by ${trackForStream.album!.performer.name})`,
+        value: trackForStream,
+      });
+
+      if (streamTracksIds.includes(trackForStream.id)) {
+        existingStreamTracksToSelect.push(trackForStream);
+      }
+    });
+
+    this.listOfTracksEditSelectOptions = [...tracksEditSelectList];
+
+    this.streamsEditForm.patchValue({
+      tracks: existingStreamTracksToSelect,
+    });
+
+    this.listOfStreamTracksEditTagsOptions = [...existingStreamTracksToSelect];
   }
 
   handleOkStreamEditModal(streamTableDatum: IStreamTableData): void {
-    streamTableDatum.isEditingModalVisible = false;
-    // TODO: call edit form submit
+    this.onStreamsEditFormSubmit(streamTableDatum.stream.id).subscribe(
+      (success) => {
+        if (success) {
+          streamTableDatum.isEditingModalVisible = false;
+        }
+      }
+    );
   }
 
   handleCancelStreamEditModal(streamTableDatum: IStreamTableData): void {
@@ -185,8 +217,6 @@ export class StreamsManagementComponent {
       imageUrl: uploadedStreamCoverImage.response.blobDTO.uri,
       tracks: this.streamsCreationForm.value.tracks,
     };
-
-    console.log(streamToCreate);
 
     if (this.streamsCreationForm.valid) {
       this.streamsService
@@ -350,7 +380,7 @@ export class StreamsManagementComponent {
       nzContent: streamTracksDetailsTemplateContent,
       nzFooter: streamTracksDetailsTemplateFooter,
       nzMaskClosable: true,
-      nzClosable: true
+      nzClosable: true,
     });
   }
 
@@ -362,16 +392,16 @@ export class StreamsManagementComponent {
     }, 100);
   }
 
-  onStreamsEditFormSubmit(
-    streamId: string,
-    tracks: ITrack[]
-  ): Observable<boolean> {
+  onStreamsEditFormSubmit(streamId: string): Observable<boolean> {
     let isStreamsEditFormSubmitSuccessful = true;
+
+    console.log('stream tracks for updatee');
+    console.log(this.listOfStreamTracksEditTagsOptions);
 
     const streamToEdit = {
       id: streamId,
       name: this.streamsEditForm.value.name,
-      tracks: this.streamsEditForm.value.tracks,
+      tracks: this.listOfStreamTracksEditTagsOptions,
     } as IStreamUpdateDTO;
 
     const uploadedStreamCoverImage = this.streamEditCoverImagesFileList[0];
@@ -401,6 +431,8 @@ export class StreamsManagementComponent {
               nzPauseOnHover: true,
             }
           );
+
+          this.retrieveStreamsData();
         });
     } else {
       isStreamsEditFormSubmitSuccessful = false;
@@ -462,25 +494,31 @@ export class StreamsManagementComponent {
       data
         .filter((stream) => !stream.isDeleted)
         .map((stream: any) => {
+          console.log('single stream data');
+          console.log(stream);
           this.streamsData.push({
             stream: {
               id: stream.id,
               name: stream.name,
               imageFileName: stream.imageFileName,
               imageUrl: stream.imageUrl,
-              tracks: stream.streamTracks.map((streamTrack: any) => streamTrack.track)
+              tracks: stream.streamTracks.map(
+                (streamTrack: any) => streamTrack.track
+              ),
             } as IStream,
             isEditingModalVisible: false,
           });
         });
       this.streamsDisplayData = [...this.streamsData];
       this.tracksService.getAllTracks().subscribe((data) => {
-        this.tracksForStreams = data.filter(track =>
-          track.audioFileName !== null && track.audioFileUrl !== null);
+        this.tracksForStreams = data.filter(
+          (track) => track.audioFileName !== null && track.audioFileUrl !== null
+        );
         const tracksSelectList: Array<{ label: string; value: ITrack }> = [];
         this.tracksForStreams.forEach((trackForStream) => {
           tracksSelectList.push({
-            label: `${trackForStream.name} (from ${trackForStream.album!.name} ` +
+            label:
+              `${trackForStream.name} (from ${trackForStream.album!.name} ` +
               `by ${trackForStream.album!.performer.name})`,
             value: trackForStream,
           });

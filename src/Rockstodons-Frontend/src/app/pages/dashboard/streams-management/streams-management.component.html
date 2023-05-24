@@ -38,7 +38,7 @@
                 </nz-modal>
             </nz-form-item>
             <nz-form-item>
-                <nz-select nzMode="tags" formControlName="tracks" nzPlaceHolder="Tag Mode" [(ngModel)]="listOfStreamTracksTagsOptions">
+                <nz-select nzMode="tags" nzPlaceHolder="Please select tracks" [(ngModel)]="listOfStreamTracksTagsOptions">
                     <nz-option *ngFor="let option of listOfTracksSelectOptions" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
                 </nz-select>
             </nz-form-item>
@@ -96,10 +96,10 @@
                 <button nz-button class="edit-stream-button" (click)="showStreamEditModal(data)">
           Edit
         </button>
-                <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Track" (nzOnOk)="handleOkStreamEditModal(data)" (nzOnCancel)="handleCancelStreamEditModal(data)">
+                <nz-modal [(nzVisible)]="data.isEditingModalVisible" nzTitle="Edit Stream" (nzOnOk)="handleOkStreamEditModal(data)" (nzOnCancel)="handleCancelStreamEditModal(data)">
                     <ng-container *nzModalContent>
                         <form nz-form [formGroup]="streamsEditForm" (ngSubmit)="
-                onStreamsEditFormSubmit(data.stream.id, data.stream.tracks)
+                onStreamsEditFormSubmit(data.stream.id)
               ">
                             <nz-form-item>
                                 <nz-form-label [nzSpan]="8">Name</nz-form-label>
@@ -123,6 +123,12 @@
                                         <div style="margin-top: 8px">Upload</div>
                                     </div>
                                 </nz-upload>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-select formControlName="tracks" [nzMaxTagCount]="3" [nzMaxTagPlaceholder]="tagPlaceHolder" nzMode="multiple" nzPlaceHolder="Please select tracks" [(ngModel)]="listOfStreamTracksEditTagsOptions">
+                                    <nz-option *ngFor="let option of listOfTracksEditSelectOptions" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                                </nz-select>
+                                <ng-template #tagPlaceHolder let-selectedList>and {{ selectedList.length }} more selected</ng-template>
                             </nz-form-item>
                         </form>
                     </ng-container>
