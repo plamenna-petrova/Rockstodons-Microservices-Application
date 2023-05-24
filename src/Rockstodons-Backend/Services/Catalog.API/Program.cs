@@ -81,7 +81,7 @@ internal class Program
 
         services.AddSingleton(configuration);
 
-        services.AddAutoMapper(typeof(Program));
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(BaseDeletableEntityRepository<>));
         services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));

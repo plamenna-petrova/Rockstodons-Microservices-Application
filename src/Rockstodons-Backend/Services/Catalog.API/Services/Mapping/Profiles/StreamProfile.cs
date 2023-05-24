@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Catalog.API.Data.Data.Models;
 using Catalog.API.DTOs.Streams;
-using Catalog.API.DTOs.Tracks;
 using Stream = Catalog.API.Data.Data.Models.Stream;
 
 namespace Catalog.API.Services.Mapping.Profiles
@@ -11,7 +9,7 @@ namespace Catalog.API.Services.Mapping.Profiles
         public StreamProfile()
         {
             CreateMap<CreateStreamDTO, Stream>();
-            CreateMap<Stream, StreamDTO>();
+            CreateMap<Stream, StreamDTO>().ReverseMap();
             CreateMap<UpdateStreamDTO, Stream>().ReverseMap();
         }
     }

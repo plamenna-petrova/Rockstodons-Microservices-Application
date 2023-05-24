@@ -37,7 +37,9 @@ namespace Catalog.API.Services.Data.Implementation
 
         public async Task<List<StreamDTO>> GetAllStreams()
         {
-            return await _streamsRepository.GetAll().MapTo<StreamDTO>().ToListAsync();
+            var allStreams = await _streamsRepository.GetAll().ToListAsync();
+            var mappedStreams = _mapper.Map<List<StreamDTO>>(allStreams);
+            return mappedStreams;
         }
 
         public async Task<List<Stream>> GetAllStreamsWithDeletedRecords()

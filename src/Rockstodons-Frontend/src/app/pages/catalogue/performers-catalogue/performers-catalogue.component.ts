@@ -33,10 +33,10 @@ export class PerformersCatalogueComponent {
   }
 
   ngOnInit(): void {
-    this.retrieveCatalogueData();
+    this.retrievePerformersCatalogueData();
   }
 
-  private retrieveCatalogueData(): void {
+  private retrievePerformersCatalogueData(): void {
     this.isLoading = true;
     this.performersService.getAllPerformers().subscribe((data) => {
       this.performersForCatalogue = [...data];

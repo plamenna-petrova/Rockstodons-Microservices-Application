@@ -24,10 +24,10 @@ export class GenresCatalogueComponent {
   }
 
   ngOnInit(): void {
-    this.retrieveCatalogueData();
+    this.retrieveGenresCatalogueData();
   }
 
-  private retrieveCatalogueData(): void {
+  private retrieveGenresCatalogueData(): void {
     this.isLoading = true;
     this.genresService.getAllGenres().subscribe((data) => {
       this.genresForCatalogue = [...data];

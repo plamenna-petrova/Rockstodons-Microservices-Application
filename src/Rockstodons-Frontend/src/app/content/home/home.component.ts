@@ -4,9 +4,11 @@ import { Observable } from 'rxjs';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { IGenre } from 'src/app/core/interfaces/genres/genre';
 import { IPerformer } from 'src/app/core/interfaces/performers/performer';
+import { IStream } from 'src/app/core/interfaces/streams/stream';
 import { AlbumsService } from 'src/app/core/services/albums.service';
 import { GenresService } from 'src/app/core/services/genres.service';
 import { PerformersService } from 'src/app/core/services/performers.service';
+import { StreamsService } from 'src/app/core/services/streams.service';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +20,7 @@ export class HomeComponent {
   albumsPrimarySelection!: IAlbum[];
   albumsSecondarySelection!: IAlbum[];
   performersPrimarySelection!: IPerformer[];
+  streamsPrimarySelection!: IStream[];
   genresPrimarySelection!: IGenre[];
 
   mastheadBackgroundImageUrl!: String
@@ -34,6 +37,7 @@ export class HomeComponent {
   constructor(
     private albumsService: AlbumsService,
     private performersService: PerformersService,
+    private streamsService: StreamsService,
     private genresService: GenresService,
     private router: Router
   ) {
@@ -64,6 +68,9 @@ export class HomeComponent {
     });
     this.performersService.getAllPerformers().subscribe((data) => {
       this.performersPrimarySelection = [...data].slice(0, 6);
+    });
+    this.streamsService.getStreamsWithFullDetails().subscribe((data) => {
+      this.streamsPrimarySelection = [...data].slice(0, 6);
     });
     this.genresService.getAllGenres().subscribe((data) => {
       this.genresPrimarySelection = [...data].slice(0, 6);

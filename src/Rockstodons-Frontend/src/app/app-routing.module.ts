@@ -8,6 +8,7 @@ import { ShouldLoginComponent } from './should-login/should-login.component';
 import { FallbackComponent } from './fallback.component';
 import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/album-details.component';
 import { PerformersDetailsComponent } from './pages/catalogue/details/performers-details/performers-details.component';
+import { StreamsCatalogueComponent } from './pages/catalogue/streams-catalogue/streams-catalogue.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,10 @@ const routes: Routes = [
   {
     path: 'genres',
     component: GenresCatalogueComponent
+  },
+  {
+    path: 'streams',
+    component: StreamsCatalogueComponent
   },
   {
     path: 'should-login',

@@ -33,10 +33,10 @@ export class AlbumsCatalogueComponent {
   }
 
   ngOnInit(): void {
-    this.retrieveCatalogueData();
+    this.retrieveAlbumsCatalogueData();
   }
 
-  private retrieveCatalogueData(): void {
+  private retrieveAlbumsCatalogueData(): void {
     this.isLoading = true;
     this.albumsService.getAllAlbums().subscribe((data) => {
       this.albumsForCatalogue = [...data];
