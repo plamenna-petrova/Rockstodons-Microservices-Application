@@ -89,7 +89,6 @@ export class OAuth2Service {
       this.oauthService
         .loadDiscoveryDocument()
 
-        // For demo purposes, we pretend the previous call was very slow
         .then(() => new Promise<void>((resolve) => setTimeout(() => resolve(), 1500)))
 
         // 1. HASH LOGIN:
@@ -145,8 +144,6 @@ export class OAuth2Service {
   }
 
   public login(targetUrl?: string) {
-    // Note: before version 9.1.0 of the library you needed to
-    // call encodeURIComponent on the argument to the method.
     this.oauthService.initLoginFlow(targetUrl || this.router.url);
   }
 
@@ -162,8 +159,6 @@ export class OAuth2Service {
     return this.oauthService.hasValidAccessToken();
   }
 
-  // These normally won't be exposed from a service like this, but
-  // for debugging it makes sense.
   public get accessToken() {
     return this.oauthService.getAccessToken();
   }

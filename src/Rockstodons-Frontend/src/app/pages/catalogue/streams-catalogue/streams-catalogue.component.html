@@ -9,9 +9,48 @@
                 <img nz-image alt="example" [nzSrc]="stream.imageUrl ? stream.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #actionPlay>
-                <span nz-icon nzType="play-circle" nzTheme="outline" (click)="addCurrentAudioStreamingList(stream.tracks)"></span>
+                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
             </ng-template>
         </div>
     </div>
 </div>
-<app-music-player [audioList]="audioStreamingList"></app-music-player>
+<div id="audioPlayer" [class]="playerClass">
+    <!-- Begin | Audio -->
+    <div class="audio">
+        <div class="song-image"><img data-amplitude-song-info="cover_art_url" [src]="currentTrack?.imageUrl" alt=""></div>
+        <div class="song-info pl-3">
+            <span class="song-name d-inline-block text-truncate" data-amplitude-song-info="name"></span>
+            <span class="song-artists d-block text-muted" data-amplitude-song-info="producerUserName"></span>
+        </div>
+    </div>
+    <!-- End | Audio -->
+
+    <!-- Begin | Audio Controls -->
+    <div class="audio-controls">
+        <div class="audio-controls--main d-flex">
+            <button class="btn btn-air btn-pill btn-default btn-icon-only amplitude-play-pause">
+              <i class="ion-md-play"></i>
+              <i class="ion-md-pause"></i>
+          </button>
+        </div>
+    </div>
+    <!-- End | Audio Controls -->
+
+    <!-- Begin | Audio Info -->
+    <div class="audio-info d-flex align-items-center pr-4">
+        <span class="mr-4">
+          <span class="amplitude-current-minutes" ></span>:<span class="amplitude-current-seconds"></span> /
+        <span class="amplitude-duration-minutes"></span>:<span class="amplitude-duration-seconds"></span>
+        </span>
+        <div class="audio-volume dropdown">
+            <button class="btn btn-icon-only" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          </button>
+            <div class="dropdown-menu dropdown-menu-right volume-dropdown-menu">
+                <input type="range" class="amplitude-volume-slider" value="100">
+            </div>
+        </div>
+    </div>
+    <!-- End | Audio Info -->
+
+</div>
+<!-- End | Audio Player -->

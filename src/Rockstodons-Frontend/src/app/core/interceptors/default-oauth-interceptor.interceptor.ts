@@ -49,9 +49,6 @@ export class DefaultOauthInterceptorInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    console.log('access token from module config');
-    console.log(this.moduleConfig.resourceServer.sendAccessToken);
-
     let sendAccessToken = this.moduleConfig.resourceServer.sendAccessToken;
 
     if (sendAccessToken) {

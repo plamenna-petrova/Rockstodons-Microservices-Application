@@ -48,7 +48,6 @@ import { RouteReusableStrategy } from './core/utils/route-reusable-strategy';
 import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/album-details.component';
 import { PerformersDetailsComponent } from './pages/catalogue/details/performers-details/performers-details.component';
 import { StreamsCatalogueComponent } from './pages/catalogue/streams-catalogue/streams-catalogue.component';
-import { MusicPlayerModule } from './common/shared/music-player.module';
 
 registerLocaleData(en);
 
@@ -96,8 +95,7 @@ const icons: IconDefinition[] = [
     NzBreadCrumbModule,
     FileSaverModule,
     SharedModule,
-    CoreModule.forRoot(),
-    MusicPlayerModule
+    CoreModule.forRoot()
   ],
   providers: [
     {

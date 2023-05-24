@@ -26,20 +26,20 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
   // Customize the default error handler here if needed
   private errorHandler(response: HttpErrorResponse): Observable<HttpEvent<any>> {
     let errorTitle = 'System error!';
-    let errorMsg = 'Please contact system administrator';
+    let errorMessage = 'Please contact system administrator';
     // show detail error in development
     if (!environment.production) {
       if (response.error instanceof ErrorEvent) {
         console.error('This is client side error');
         errorTitle = `Client-side error`;
-        errorMsg = `Error: ${response.error.message}`;
-        console.error(errorMsg);
-        this.nzNotificationService.error(errorTitle, errorMsg);
+        errorMessage = `Error: ${response.error.message}`;
+        console.error(errorMessage);
+        this.nzNotificationService.error(errorTitle, errorMessage);
       } else {
         console.error('This is server side error');
         errorTitle = `Server-side error`;
-        errorMsg = `${response.message}`;
-        console.error(errorMsg);
+        errorMessage = `${response.message}`;
+        console.error(errorMessage);
         this.nzNotificationService
           .error(errorTitle, `errorMsg ${response.status.toString()}`);
       }
@@ -48,7 +48,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
     // show generic error in production
     {
       // Do something with the error
-      this.nzNotificationService.error(errorTitle, errorMsg);
+      this.nzNotificationService.error(errorTitle, errorMessage);
     }
 
     throw response;
