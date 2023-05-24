@@ -260,8 +260,6 @@ export class StreamsManagementComponent {
 
   executeCustomUploadRequest = (nzUploadXHRArgs: NzUploadXHRArgs): any => {
     this.fileStorageService.getStreamsImages().subscribe((data: any) => {
-      console.log('streams cover images');
-      console.log(data);
       if (
         data.map((image: any) => image.name).includes(nzUploadXHRArgs.file.name)
       ) {
@@ -395,9 +393,6 @@ export class StreamsManagementComponent {
   onStreamsEditFormSubmit(streamId: string): Observable<boolean> {
     let isStreamsEditFormSubmitSuccessful = true;
 
-    console.log('stream tracks for updatee');
-    console.log(this.listOfStreamTracksEditTagsOptions);
-
     const streamToEdit = {
       id: streamId,
       name: this.streamsEditForm.value.name,
@@ -494,8 +489,6 @@ export class StreamsManagementComponent {
       data
         .filter((stream) => !stream.isDeleted)
         .map((stream: any) => {
-          console.log('single stream data');
-          console.log(stream);
           this.streamsData.push({
             stream: {
               id: stream.id,

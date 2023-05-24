@@ -2,7 +2,7 @@
     <h2 nz-typography style="margin-top: 20px;">All Albums</h2>
     <div nz-row [nzGutter]="8">
         <div nz-col [nzXs]="{ span: 12 }" [nzLg]="{ span: 4 }" *ngFor="let album of albumsForCatalogue">
-            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit, actionEllipsis]">
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit]">
                 <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name" (click)="getAlbumDetails(album.id)"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
@@ -13,9 +13,6 @@
             </ng-template>
             <ng-template #actionEdit>
                 <span nz-icon nzType="play-circle" nzTheme="outline"></span>
-            </ng-template>
-            <ng-template #actionEllipsis>
-                <span nz-icon nzType="ellipsis"></span>
             </ng-template>
         </div>
     </div>

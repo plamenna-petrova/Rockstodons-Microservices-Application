@@ -13,6 +13,7 @@ import { PerformersService } from 'src/app/core/services/performers.service';
 export class PerformersDetailsComponent {
   id!: string;
   performerDetails!: IPerformer;
+  performerDescriptionsDetailsTitle!: string;
   size: NzDescriptionsSize = 'default';
 
   fallback = '../../../assets/images/alternative-image.png';
@@ -29,6 +30,7 @@ export class PerformersDetailsComponent {
       take(1)
     ).subscribe((response) => {
       this.performerDetails = response;
+      this.performerDescriptionsDetailsTitle = `${this.performerDetails.name}\`s Details`;
     });
   }
 }

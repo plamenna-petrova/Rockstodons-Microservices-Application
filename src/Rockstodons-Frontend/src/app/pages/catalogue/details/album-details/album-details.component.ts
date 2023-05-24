@@ -13,6 +13,7 @@ import { AlbumsService } from 'src/app/core/services/albums.service';
 export class AlbumDetailsComponent {
   id!: string;
   albumDetails!: IAlbum;
+  albumDescriptionsDetailsTitle!: string;
   size: NzDescriptionsSize = 'default';
 
   fallback = '../../../assets/images/alternative-image.png';
@@ -29,6 +30,7 @@ export class AlbumDetailsComponent {
       take(1)
     ).subscribe((response) => {
       this.albumDetails = response;
+      this.albumDescriptionsDetailsTitle = `${this.albumDetails.name}\`s Details`;
     });
   }
 }
