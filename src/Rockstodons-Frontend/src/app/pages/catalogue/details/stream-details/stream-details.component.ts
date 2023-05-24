@@ -17,14 +17,6 @@ export class StreamDetailsComponent {
   id!: string;
   streamDetails!: IStreamDetailsDTO;
 
-  initialSong: any;
-  currentTrack: any;
-  volumeIcon = 'play-circle';
-  showPlaylist = 'open-right-sidebar';
-  playerClass = 'player-primary';
-
-  fallback = '../../../assets/images/alternative-image.png';
-
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private streamsService: StreamsService,
@@ -33,17 +25,6 @@ export class StreamDetailsComponent {
     this.id = this.activatedRoute.snapshot.paramMap.get('id')!;
   }
 
-  changeVolumeIcon(event: any) {
-    const value = event.target.value;
-    if (value < 1) {
-      this.volumeIcon = 'pause-circle';
-    } else if (value > 0 && value < 70) {
-      this.volumeIcon = 'down';
-    } else if (value > 70) {
-      this.volumeIcon = 'up';
-    }
-  }
-  
   ngOnInit() {
     this.streamsService.getStreamById(this.id).pipe(
       take(1)
