@@ -54,6 +54,11 @@ export class HomeComponent {
     this.router.navigate([`${performerDetailsRouteToNavigate}`]);
   }
 
+  getStreamDetails(streamId: string): void {
+    const streamDetailsRouteToNavigate = `/stream-details/${streamId}`;
+    this.router.navigate([`${streamDetailsRouteToNavigate}`]);
+  }
+
   ngOnInit(): void {
     this.mastheadBackgroundImageUrl = "../../../assets/images/pexels-edward-eyer-811838.jpg";
     this.retrieveCatalogueData();

@@ -49,6 +49,7 @@ import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/a
 import { PerformersDetailsComponent } from './pages/catalogue/details/performers-details/performers-details.component';
 import { StreamsCatalogueComponent } from './pages/catalogue/streams-catalogue/streams-catalogue.component';
 import { StreamDetailsComponent } from './pages/catalogue/details/stream-details/stream-details.component';
+import { FooterComponent } from './content/footer/footer.component';
 
 registerLocaleData(en);
 
@@ -70,6 +71,7 @@ const icons: IconDefinition[] = [
     PerformersDetailsComponent,
     StreamsCatalogueComponent,
     StreamDetailsComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,

@@ -3,7 +3,7 @@
     <div nz-row [nzGutter]="8">
         <div nz-col [nzXs]="{ span: 12 }" [nzLg]="{ span: 4 }" *ngFor="let performer of performersForCatalogue">
             <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="performerCoverTemplate" [nzActions]="[performerCatalogue]">
-                <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country"></nz-card-meta>
+                <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country" (click)="getPerformerDetails(performer.id)"></nz-card-meta>
             </nz-card>
             <ng-template #performerCoverTemplate>
                 <img nz-image alt="example" [nzSrc]="performer.imageUrl ? performer.imageUrl : fallback" [nzFallback]="fallback" />

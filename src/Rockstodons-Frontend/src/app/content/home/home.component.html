@@ -18,33 +18,27 @@
     <h2 nz-typography style="margin-top: 20px;">Albums Selection</h2>
     <div nz-row [nzGutter]="8">
         <div nz-col [nzXs]="{ span: 12 }" [nzLg]="{ span: 6 }" *ngFor="let album of albumsPrimarySelection">
-            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit]">
-                <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue]">
+                <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name" (click)="getAlbumDetails(album.id)"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
                 <img nz-image alt="example" [nzSrc]="album.imageUrl ? album.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #albumCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline" (click)="getAlbumDetails(album.id)"></span>
-            </ng-template>
-            <ng-template #actionEdit>
-                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
             </ng-template>
         </div>
     </div>
     <div nz-row [nzGutter]="8">
         <div nz-col [nzXs]="{ span: 12 }" [nzLg]="{ span: 4 }" *ngFor="let album of albumsSecondarySelection">
-            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue, actionEdit]">
-                <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name"></nz-card-meta>
+            <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="albumCoverTemplate" [nzActions]="[albumCatalogue]">
+                <nz-card-meta [nzTitle]="album.name" [nzDescription]="album.performer.name" (click)="getAlbumDetails(album.id)"></nz-card-meta>
             </nz-card>
             <ng-template #albumCoverTemplate>
                 <img nz-image alt="example" [nzSrc]="album.imageUrl ? album.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #albumCatalogue>
                 <span nz-icon nzType="read" nzTheme="outline" (click)="getAlbumDetails(album.id)"></span>
-            </ng-template>
-            <ng-template #actionEdit>
-                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
             </ng-template>
         </div>
     </div>
@@ -54,7 +48,7 @@
     <div nz-row [nzGutter]="8">
         <div nz-col [nzXs]="{ span: 12 }" [nzLg]="{ span: 4 }" *ngFor="let performer of performersPrimarySelection">
             <nz-card nz-card-grid nzHoverable [nzBordered]="true" [nzLoading]="isLoading" [ngStyle]="gridSelectionStyle" style="margin-top: 20px;" [nzCover]="performerCoverTemplate" [nzActions]="[performerCatalogue]">
-                <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country"></nz-card-meta>
+                <nz-card-meta [nzTitle]="performer.name" [nzDescription]="performer.country" (click)="getPerformerDetails(performer.id)"></nz-card-meta>
             </nz-card>
             <ng-template #performerCoverTemplate>
                 <img nz-image alt="example" [nzSrc]="performer.imageUrl ? performer.imageUrl : fallback" [nzFallback]="fallback" />
@@ -76,7 +70,7 @@
                 <img nz-image alt="example" [nzSrc]="stream.imageUrl ? stream.imageUrl : fallback" [nzFallback]="fallback" />
             </ng-template>
             <ng-template #actionPlay>
-                <span nz-icon nzType="play-circle" nzTheme="outline"></span>
+                <span nz-icon nzType="play-circle" nzTheme="outline" (click)="getStreamDetails(stream.id)"></span>
             </ng-template>
         </div>
     </div>

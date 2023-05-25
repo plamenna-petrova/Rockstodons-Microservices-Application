@@ -18,7 +18,6 @@ export class StreamDetailsComponent {
   streamDetails!: IStreamDetailsDTO;
 
   constructor(
-    @Inject(DOCUMENT) private document: Document,
     private streamsService: StreamsService,
     private activatedRoute: ActivatedRoute
   ) {
@@ -42,9 +41,10 @@ export class StreamDetailsComponent {
             url: streamTrack.track.audioFileUrl,
             cover_art_url: streamTrack.track.album.imageUrl,
           } as ITrackDetailsDTO;
-          return mappedTrackDetails
+          return mappedTrackDetails;
         })
       } as IStreamDetailsDTO;
+      amplitude.stop();
       amplitude.init({
         songs: [...this.streamDetails.tracks],
       });
