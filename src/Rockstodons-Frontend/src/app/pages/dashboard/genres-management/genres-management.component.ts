@@ -16,7 +16,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
-import { Observable, of, retry, take } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { IGenre } from 'src/app/core/interfaces/genres/genre';
 import { IGenreCreateDTO } from 'src/app/core/interfaces/genres/genre-create-dto';
 import { IGenreUpdateDTO } from 'src/app/core/interfaces/genres/genre-update-dto';
@@ -262,7 +262,7 @@ export class GenresManagementComponent {
               nzPauseOnHover: true,
             }
           );
-          
+
           this.retrieveGenresData();
         });
     } else {

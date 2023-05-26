@@ -34,7 +34,6 @@ namespace Catalog.API.Services.Data.Implementation
         public async Task<List<Album>> GetAllAlbumsWithDeletedRecords()
         {
             var albums = await _albumsRepository.GetAllWithDeletedRecords().ToListAsync();
-            var allTest = await _albumsRepository.GetAll().ToListAsync();
 
             return await _albumsRepository.GetAllWithDeletedRecords().ToListAsync();
         }
@@ -42,7 +41,7 @@ namespace Catalog.API.Services.Data.Implementation
         public async Task<PagedList<AlbumDTO>> GetPaginatedAlbums(AlbumParameters albumParameters)
         {
             var albumsToPaginate = _albumsRepository.GetAllWithDeletedRecords()
-                .MapTo<AlbumDTO>().OrderBy(g => g.Name);
+                .MapTo<AlbumDTO>().OrderBy(a => a.Name);
 
             return PagedList<AlbumDTO>.ToPagedList(albumsToPaginate, albumParameters.PageNumber, albumParameters.PageSize);
         }
@@ -88,11 +87,11 @@ namespace Catalog.API.Services.Data.Implementation
             return _mapper.Map<AlbumDTO>(mappedAlbum);
         }
 
-        public async Task UpdateAlbum(Album AlbumToUpdate, UpdateAlbumDTO updateAlbumDTO)
+        public async Task UpdateAlbum(Album albumToUpdate, UpdateAlbumDTO updateAlbumDTO)
         {
-            _mapper.Map(updateAlbumDTO, AlbumToUpdate);
+            _mapper.Map(updateAlbumDTO, albumToUpdate);
 
-            _albumsRepository.Update(AlbumToUpdate);
+            _albumsRepository.Update(albumToUpdate);
             await _albumsRepository.SaveChangesAsync();
         }
 

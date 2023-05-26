@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 
 namespace Catalog.API.Controllers
@@ -21,12 +22,12 @@ namespace Catalog.API.Controllers
         private const string SingleAlbumName = "album";
         private const string AlbumDetailsRouteName = "AlbumDetails";
 
-        private readonly IAlbumsService _albumService;
+        private readonly IAlbumsService _albumsService;
         private ILogger<AlbumsController> _logger;
 
-        public AlbumsController(IAlbumsService AlbumsService, ILogger<AlbumsController> logger)
+        public AlbumsController(IAlbumsService albumsService, ILogger<AlbumsController> logger)
         {
-            _albumService = AlbumsService;
+            _albumsService = albumsService;
             _logger = logger;
         }
 
@@ -36,7 +37,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var allAlbums = await _albumService.GetAllAlbums();
+                var allAlbums = await _albumsService.GetAllAlbums();
 
                 if (allAlbums != null)
                 {
@@ -71,7 +72,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var allAlbumsWithDeletedRecords = await _albumService.GetAllAlbumsWithDeletedRecords();
+                var allAlbumsWithDeletedRecords = await _albumsService.GetAllAlbumsWithDeletedRecords();
 
                 if (allAlbumsWithDeletedRecords != null)
                 {
@@ -106,7 +107,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var paginatedAlbums = await _albumService.GetPaginatedAlbums(albumParameters);
+                var paginatedAlbums = await _albumsService.GetPaginatedAlbums(albumParameters);
 
                 if (paginatedAlbums != null)
                 {
@@ -156,7 +157,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var foundAlbums = await _albumService.SearchForAlbums(term);
+                var foundAlbums = await _albumsService.SearchForAlbums(term);
 
                 if (foundAlbums != null)
                 {
@@ -191,7 +192,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var paginatedSearchedAlbums = await _albumService.PaginateSearchedAlbums(albumParameters);
+                var paginatedSearchedAlbums = await _albumsService.PaginateSearchedAlbums(albumParameters);
 
                 if (paginatedSearchedAlbums != null)
                 {
@@ -235,11 +236,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Album>> GetalbumById(string id)
+        public async Task<ActionResult<Album>> GetAlbumById(string id)
         {
             try
             {
-                var albumById = await _albumService.GetAlbumById(id);
+                var albumById = await _albumsService.GetAlbumById(id);
 
                 if (albumById != null)
                 {
@@ -264,7 +265,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumDetails = await _albumService.GetAlbumDetails(id);
+                var albumDetails = await _albumsService.GetAlbumDetails(id);
 
                 if (albumDetails != null)
                 {
@@ -295,7 +296,7 @@ namespace Catalog.API.Controllers
                     return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumName, "creation"));
                 }
 
-                var createdAlbum = await _albumService.CreateAlbum(createAlbumDTO);
+                var createdAlbum = await _albumsService.CreateAlbum(createAlbumDTO);
 
                 return CreatedAtRoute(AlbumDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
             }
@@ -322,14 +323,14 @@ namespace Catalog.API.Controllers
                     return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumName, "update"));
                 }
 
-                var albumToUpdate = await _albumService.GetAlbumById(id);
+                var albumToUpdate = await _albumsService.GetAlbumById(id);
 
                 if (albumToUpdate == null)
                 {
                     return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
                 }
 
-                await _albumService.UpdateAlbum(albumToUpdate, updateAlbumDTO);
+                await _albumsService.UpdateAlbum(albumToUpdate, updateAlbumDTO);
 
                 return Ok(updateAlbumDTO);
             }
@@ -356,14 +357,14 @@ namespace Catalog.API.Controllers
                     return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumName, "patch"));
                 }
 
-                var albumToPartiallyUpdate = await _albumService.GetAlbumById(id);
+                var albumToPartiallyUpdate = await _albumsService.GetAlbumById(id);
 
                 if (albumToPartiallyUpdate == null)
                 {
                     return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
                 }
 
-                await _albumService.PartiallyUpdateAlbum(albumToPartiallyUpdate, albumJsonPatchDocument);
+                await _albumsService.PartiallyUpdateAlbum(albumToPartiallyUpdate, albumJsonPatchDocument);
 
                 return NoContent();
             }
@@ -383,7 +384,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumToDelete = await _albumService.GetAlbumById(id);
+                var albumToDelete = await _albumsService.GetAlbumById(id);
 
                 if (albumToDelete == null)
                 {
@@ -392,7 +393,7 @@ namespace Catalog.API.Controllers
                     return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
                 }
 
-                await _albumService.DeleteAlbum(albumToDelete);
+                await _albumsService.DeleteAlbum(albumToDelete);
 
                 return NoContent();
             }
@@ -412,7 +413,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumToHardDelete = await _albumService.GetAlbumById(id);
+                var albumToHardDelete = await _albumsService.GetAlbumById(id);
 
                 if (albumToHardDelete == null)
                 {
@@ -421,7 +422,7 @@ namespace Catalog.API.Controllers
                     return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
                 }
 
-                await _albumService.HardDeleteAlbum(albumToHardDelete);
+                await _albumsService.HardDeleteAlbum(albumToHardDelete);
 
                 return NoContent();
             }
@@ -441,7 +442,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumToRestore = await _albumService.GetAlbumById(id);
+                var albumToRestore = await _albumsService.GetAlbumById(id);
 
                 if (albumToRestore == null)
                 {
@@ -450,7 +451,7 @@ namespace Catalog.API.Controllers
                     return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
                 }
 
-                await _albumService.RestoreAlbum(albumToRestore);
+                await _albumsService.RestoreAlbum(albumToRestore);
 
                 Uri uri = new Uri(Url.Link(AlbumDetailsRouteName, new { albumToRestore.Id }));
 
