@@ -365,3 +365,5 @@ FodyWeavers.xsd
 
 /.history
 /src/Rockstodons-Backend/Services/Identity.API/appsettings.json
+/src/Rockstodons-Backend/Services/TokenService.STS.Identity/appsettings.json
+/src/Rockstodons-Backend/Services/TokenService.STS.Identity/appsettings.json
