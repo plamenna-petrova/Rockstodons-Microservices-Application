@@ -8,21 +8,56 @@
     <br />
     <br />
     <nz-descriptions [nzTitle]="albumDescriptionsDetailsTitle" nzBordered [nzSize]="size" [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }" *ngIf="albumDetails">
-        <nz-descriptions-item nzTitle="Album Name">{{ albumDetails.name }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Year Of Release">{{ albumDetails.yearOfRelease }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Number Of Tracks">{{ albumDetails.numberOfTracks }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Album Type">{{ albumDetails.albumType.name }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Performer">{{ albumDetails.performer.name }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Genre">{{ albumDetails.genre.name }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Album Name">{{ albumDetails.name }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Year Of Release">{{ albumDetails.yearOfRelease }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Number Of Tracks">{{ albumDetails.numberOfTracks }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Album Type">{{ albumDetails.albumType.name }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Performer">{{ albumDetails.performer.name }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Genre">{{ albumDetails.genre.name }}
+        </nz-descriptions-item>
         <nz-descriptions-item nzTitle="Presentation Image">
             <img nz-image alt="example" [nzSrc]="albumDetails.imageUrl ? albumDetails.imageUrl : fallback" [nzFallback]="fallback" />
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="Tracks">
             <div *ngFor="let track of albumDetails.tracks; let i = index">
-                <br /> <span>#Track {{ i + 1}} - {{ track.name }}</span>
+                <br />
+                <span>#Track {{ i + 1 }} - {{ track.name }}</span>
             </div>
         </nz-descriptions-item>
     </nz-descriptions>
     <br />
     <button nz-button nzType="default" [routerLink]="['/albums']">Go Back</button>
+    <h2 nz-typography style="margin-top: 20px">Comments</h2>
+    <div nz-row style="height: 100%">
+        <div nz-col nzSpan="6"></div>
+        <div nz-col nzSpan="12">
+            <nz-list *ngIf="albumComments" [nzDataSource]="albumComments" [nzRenderItem]="item" [nzItemLayout]="'horizontal'">
+                <ng-template #item let-item>
+                    <nz-comment [nzAuthor]="item.author" [nzDatetime]="item.createdOn">
+                        <nz-comment-content>
+                            <p>{{ item.content }}</p>
+                        </nz-comment-content>
+                    </nz-comment>
+                </ng-template>
+            </nz-list>
+            <nz-comment *ngIf="(isAuthenticated | async) === true">
+                <nz-comment-content>
+                    <nz-form-item>
+                        <textarea [(ngModel)]="commentContentInputValue" nz-input rows="4"></textarea>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <button nz-button nzType="primary" [nzLoading]="isCommentSubmitted" [disabled]="!commentContentInputValue" (click)="handleAlbumCommentSubmit()">
+              Add Comment
+            </button>
+                    </nz-form-item>
+                </nz-comment-content>
+            </nz-comment>
+        </div>
+        <div nz-col nzSpan="6"></div>
+    </div>
 </div>

@@ -30,6 +30,8 @@ namespace Catalog.API.Infrastructure
 
         public virtual DbSet<StreamTrack> StreamTracks { get; set;  } = default!;
 
+        public virtual DbSet<Comment> Comments { get; set; } = default!;
+
         public override int SaveChanges() => base.SaveChanges();
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

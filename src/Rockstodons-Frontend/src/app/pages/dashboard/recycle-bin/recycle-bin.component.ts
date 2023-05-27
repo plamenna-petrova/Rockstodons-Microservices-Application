@@ -11,6 +11,8 @@ import { TracksService } from 'src/app/core/services/tracks.service';
 import { ITrack } from 'src/app/core/interfaces/tracks/track';
 import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { FileStorageService } from 'src/app/core/services/file-storage.service';
+import { StreamsService } from 'src/app/core/services/streams.service';
+import { IStream } from 'src/app/core/interfaces/streams/stream';
 
 @Component({
   selector: 'app-recycle-bin',
@@ -23,6 +25,7 @@ export class RecycleBinComponent {
   recycledPerformers!: IPerformer[];
   recycledAlbums!: IAlbum[];
   recycledTracks!: ITrack[];
+  recycledStreams!: IStream[];
 
   recycleBinPanels = [
     {
@@ -60,6 +63,13 @@ export class RecycleBinComponent {
       group: 'tracks',
       list: [] as any[],
     },
+    {
+      active: false,
+      name: 'Streams',
+      disabled: false,
+      group: 'stream',
+      list: [] as any[]
+    }
   ];
 
   constructor(
@@ -68,9 +78,12 @@ export class RecycleBinComponent {
     private performersService: PerformersService,
     private albumsService: AlbumsService,
     private tracksService: TracksService,
+    private streamsService: StreamsService,
     private fileStorageService: FileStorageService,
     private nzNotificationService: NzNotificationService
-  ) {}
+  ) {
+
+  }
 
   deleteRecycledItemPermanently(item: any, group: string): void {
     switch (group) {
@@ -159,6 +172,17 @@ export class RecycleBinComponent {
           this.retrieveRecycledData();
         });
         break;
+      case 'streams':
+        this.streamsService.deleteStreamPermanently(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Successful Operation',
+            `The stream ${item.name} has been deleted permanently!`,
+            {
+              nzPauseOnHover: true
+            }
+          )
+        })
+        break;
     }
   }
 
@@ -223,6 +247,17 @@ export class RecycleBinComponent {
           );
         });
         break;
+      case 'streams':
+        this.streamsService.restoreStream(item.id).subscribe(() => {
+          this.nzNotificationService.success(
+            'Successful Operation',
+            `The stream ${item.name} has been restored!`,
+            {
+              nzPauseOnHover: true
+            }
+          )
+        });
+        break;
     }
   }
 
@@ -250,6 +285,10 @@ export class RecycleBinComponent {
     this.tracksService.getTracksWithFullDetails().subscribe((data) => {
       this.recycledTracks = data.filter((track) => track.isDeleted);
       this.recycleBinPanels[4].list = this.recycledTracks;
+    });
+    this.streamsService.getStreamsWithFullDetails().subscribe((data) => {
+      this.recycledStreams = data.filter((stream) => stream.isDeleted);
+      this.recycleBinPanels[5].list = this.recycledStreams;
     });
   }
 }

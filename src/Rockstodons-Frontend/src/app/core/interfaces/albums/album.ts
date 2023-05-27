@@ -1,4 +1,5 @@
 import { IAlbumType } from "../album-types/album-type";
+import { IComment } from "../comments/comment";
 import { IGenre } from "../genres/genre";
 import { IPerformer } from "../performers/performer";
 import { ITrack } from "../tracks/track";
@@ -17,4 +18,5 @@ export interface IAlbum {
   isDeleted: boolean;
   createdOn: Date;
   tracks: ITrack[];
+  comments: IComment[];
 }

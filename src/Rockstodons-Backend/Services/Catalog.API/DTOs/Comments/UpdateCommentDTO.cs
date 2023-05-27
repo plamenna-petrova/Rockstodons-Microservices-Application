@@ -11,5 +11,8 @@ namespace Catalog.API.DTOs.Comments
 
         [Required]
         public string UserId { get; set; }
+
+        [Required]
+        public string Author { get; set; }  
     }
 }

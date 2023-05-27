@@ -10,6 +10,7 @@ namespace Catalog.API.Data.Models
         public Album()
         {
             Tracks = new HashSet<Track>();
+            Comments = new HashSet<Comment>();
         }
 
         public string Name { get; set; } = default!;
@@ -40,6 +41,9 @@ namespace Catalog.API.Data.Models
         public virtual Performer Performer { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Track> Tracks { get; set; }  
+        public virtual ICollection<Track> Tracks { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

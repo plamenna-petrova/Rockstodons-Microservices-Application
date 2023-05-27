@@ -25,6 +25,10 @@ namespace Catalog.API.Infrastructure.EntityConfigurations
             albumEntityTypeBuilder.HasMany(a => a.Tracks)
                 .WithOne(t => t.Album)
                 .HasForeignKey(t => t.AlbumId);
+
+            albumEntityTypeBuilder.HasMany(a => a.Comments)
+                .WithOne(c => c.Album)
+                .HasForeignKey(c => c.AlbumId);
         }
     }
 }

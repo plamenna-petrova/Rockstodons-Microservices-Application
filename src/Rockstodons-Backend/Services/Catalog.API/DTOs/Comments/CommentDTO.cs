@@ -12,6 +12,8 @@ namespace Catalog.API.DTOs.Comments
 
         public string UserId { get; set; }
 
+        public string Author { get; set; }
+
         public DateTime CreatedOn { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace Catalog.API.Services.Data.Implementation
             return await _commentsRepository.GetAll().MapTo<CommentDTO>().ToListAsync();
         }
 
-        public async Task<List<Comment>> GetAllAlbumsWithDeletedRecords()
+        public async Task<List<Comment>> GetAllCommentsWithDeletedRecords()
         {
             return await _commentsRepository.GetAllWithDeletedRecords().ToListAsync();
         }

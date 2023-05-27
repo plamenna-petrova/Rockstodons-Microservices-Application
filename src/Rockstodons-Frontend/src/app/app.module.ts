@@ -12,10 +12,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 
 import { UserOutline, LockOutline } from '@ant-design/icons-angular/icons';
 import { IconDefinition } from '@ant-design/icons-angular';
-import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { en_US } from 'ng-zorro-antd/i18n';
-import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
 import { IconsProviderModule } from './icons-provider.module';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -30,6 +26,8 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzCommentModule } from 'ng-zorro-antd/comment';
 import { HomeComponent } from './content/home/home.component';
 import { SharedModule } from './common/shared/shared.module';
 
@@ -51,7 +49,20 @@ import { StreamsCatalogueComponent } from './pages/catalogue/streams-catalogue/s
 import { StreamDetailsComponent } from './pages/catalogue/details/stream-details/stream-details.component';
 import { FooterComponent } from './content/footer/footer.component';
 
+import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
 registerLocaleData(en);
+
+const customLanguagePack = {
+  en_US,
+  ...{
+    Pagination: {
+      items_per_page: 'results per page'
+    }
+  }
+};
 
 const icons: IconDefinition[] = [
   UserOutline,
@@ -91,6 +102,8 @@ const icons: IconDefinition[] = [
     NzPaginationModule,
     NzRadioModule,
     NzDescriptionsModule,
+    NzListModule,
+    NzCommentModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,
@@ -120,6 +133,10 @@ const icons: IconDefinition[] = [
       provide: RouteReuseStrategy,
       useClass: RouteReusableStrategy,
     },
+    {
+      provide: NZ_I18N,
+      useValue: customLanguagePack
+    }
   ],
   bootstrap: [AppComponent],
 })

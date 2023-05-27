@@ -93,6 +93,7 @@ internal class Program
         services.AddTransient<IAlbumsService, AlbumsService>();
         services.AddTransient<ITracksService, TracksService>();
         services.AddTransient<IStreamsService, StreamsService>();
+        services.AddTransient<ICommentsService, CommentsService>();
         services.AddTransient<IEmailSender, SendGridEmailSender>();
         services.AddTransient<IFileStorageService, FileStorageService>();
 
