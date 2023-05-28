@@ -33,8 +33,6 @@ export class CommentsService {
   }
 
   createNewComment(commentToCreate: ICommentCreateDTO): Observable<IComment> {
-    console.log('comment to create');
-    console.log(commentToCreate);
     return this.httpClient.post<IComment>(`${this.commentsAPIUrl}/create`, commentToCreate);
   }
 

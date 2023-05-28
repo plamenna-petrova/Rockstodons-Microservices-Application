@@ -28,6 +28,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzCommentModule } from 'ng-zorro-antd/comment';
+import { NzModalModule  } from 'ng-zorro-antd/modal';
 import { HomeComponent } from './content/home/home.component';
 import { SharedModule } from './common/shared/shared.module';
 
@@ -104,6 +105,7 @@ const icons: IconDefinition[] = [
     NzDescriptionsModule,
     NzListModule,
     NzCommentModule,
+    NzModalModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,

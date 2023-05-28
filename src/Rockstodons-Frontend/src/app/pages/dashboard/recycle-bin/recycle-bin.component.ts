@@ -14,6 +14,7 @@ import { FileStorageService } from 'src/app/core/services/file-storage.service';
 import { StreamsService } from 'src/app/core/services/streams.service';
 import { IStream } from 'src/app/core/interfaces/streams/stream';
 import { operationSuccessMessage } from 'src/app/core/utils/global-constants';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-recycle-bin',
@@ -27,6 +28,8 @@ export class RecycleBinComponent {
   recycledAlbums!: IAlbum[];
   recycledTracks!: ITrack[];
   recycledStreams!: IStream[];
+
+  recycleBinConfirmationModal!: NzModalRef;
 
   recycleBinPanels = [
     {
@@ -69,8 +72,8 @@ export class RecycleBinComponent {
       name: 'Streams',
       disabled: false,
       group: 'stream',
-      list: [] as any[]
-    }
+      list: [] as any[],
+    },
   ];
 
   constructor(
@@ -81,108 +84,170 @@ export class RecycleBinComponent {
     private tracksService: TracksService,
     private streamsService: StreamsService,
     private fileStorageService: FileStorageService,
+    private nzModalService: NzModalService,
     private nzNotificationService: NzNotificationService
-  ) {
-
-  }
+  ) {}
 
   deleteRecycledItemPermanently(item: any, group: string): void {
     switch (group) {
       case 'genres':
-        this.genresService.deleteGenrePermanently(item.id).subscribe(() => {
-          this.nzNotificationService.success(
-            'Successful Operation',
-            `The genre ${item.name} has been deleted permanently!`,
-            {
-              nzPauseOnHover: true,
-            }
-          );
-          this.fileStorageService
-            .deleteGenreImage(item.imageFileName)
-            .subscribe(() => {});
-          this.retrieveRecycledData();
+        this.recycleBinConfirmationModal = this.nzModalService.confirm({
+          nzTitle: 'Do you really wish to delete this genre?',
+          nzContent:
+            'When you click on the OK button, the genre will be deleted permanently',
+          nzOnOk: () => {
+            this.genresService.deleteGenrePermanently(item.id).subscribe(() => {
+              this.nzNotificationService.success(
+                'Successful Operation',
+                `The genre ${item.name} has been deleted permanently!`,
+                {
+                  nzPauseOnHover: true,
+                }
+              );
+              this.fileStorageService
+                .deleteGenreImage(item.imageFileName)
+                .subscribe(() => {});
+              this.retrieveRecycledData();
+            });
+          },
         });
         break;
       case 'albumTypes':
-        this.albumTypesService
-          .deleteAlbumTypePermanently(item.id)
-          .subscribe(() => {
-            this.nzNotificationService.success(
-              operationSuccessMessage,
-              `The album type ${item.name} has been deleted permanently!`,
-              {
-                nzPauseOnHover: true,
-              }
-            );
-            this.retrieveRecycledData();
-          });
-        break;
-      case 'performers':
-        this.performersService
-          .deletePerformerPermanently(item.id)
-          .subscribe(() => {
-            this.nzNotificationService.success(
-              operationSuccessMessage,
-              `The performer ${item.name} has been deleted permanently!`,
-              {
-                nzPauseOnHover: true,
-              }
-            );
-            this.fileStorageService
-              .deletePerformerImage(item.imageFileName)
-              .subscribe(() => {});
-            this.retrieveRecycledData();
-          });
-        break;
-      case 'albums':
-        this.albumsService.deleteAlbumPermanently(item.id).subscribe({
-          next: () => {
-            this.nzNotificationService.success(
-              operationSuccessMessage,
-              `The album ${item.name} has been deleted permanently!`,
-              {
-                nzPauseOnHover: true,
-              }
-            );
-            this.fileStorageService
-              .deleteAlbumImage(item.imageFileName)
-              .subscribe(() => {});
-          },
-          error: (error) => {
-            this.nzNotificationService.error(
-              'Error',
-              "Couldn't delete the album. Please delete all the tracks " +
-                'belonging to this album before trying again'
-            );
-          },
-          complete: () => {
-            this.retrieveRecycledData();
+        this.recycleBinConfirmationModal = this.nzModalService.confirm({
+          nzTitle: 'Do you really wish to delete this album type?',
+          nzContent:
+            'When you click on the OK button, the album type will be deleted permanently',
+          nzOnOk: () => {
+            this.albumTypesService
+              .deleteAlbumTypePermanently(item.id)
+              .subscribe(() => {
+                this.nzNotificationService.success(
+                  operationSuccessMessage,
+                  `The album type ${item.name} has been deleted permanently!`,
+                  {
+                    nzPauseOnHover: true,
+                  }
+                );
+                this.retrieveRecycledData();
+              });
           },
         });
-
+        break;
+      case 'performers':
+        this.recycleBinConfirmationModal = this.nzModalService.confirm({
+          nzTitle: 'Do you really wish to delete this performer?',
+          nzContent:
+            'When you click on the OK button, the performer will be deleted permanently',
+          nzOnOk: () => {
+            this.performersService
+              .deletePerformerPermanently(item.id)
+              .subscribe(() => {
+                this.nzNotificationService.success(
+                  operationSuccessMessage,
+                  `The performer ${item.name} has been deleted permanently!`,
+                  {
+                    nzPauseOnHover: true,
+                  }
+                );
+                this.fileStorageService
+                  .deletePerformerImage(item.imageFileName)
+                  .subscribe(() => {});
+                this.retrieveRecycledData();
+              });
+          },
+        });
+        break;
+      case 'albums':
+        this.recycleBinConfirmationModal = this.nzModalService.confirm({
+          nzTitle: 'Do you really wish to delete this album?',
+          nzContent:
+            'When you click on the OK button, the album will be deleted permanently',
+          nzOnOk: () => {
+            this.albumsService.deleteAlbumPermanently(item.id).subscribe({
+              next: () => {
+                this.nzNotificationService.success(
+                  operationSuccessMessage,
+                  `The album ${item.name} has been deleted permanently!`,
+                  {
+                    nzPauseOnHover: true,
+                  }
+                );
+                this.fileStorageService
+                  .deleteAlbumImage(item.imageFileName)
+                  .subscribe(() => {});
+              },
+              error: (error) => {
+                console.log(error);
+                this.nzNotificationService.error(
+                  'Error',
+                  "Couldn't delete the album. Please delete all the tracks " +
+                    'belonging to this album before trying again'
+                );
+              },
+              complete: () => {
+                this.retrieveRecycledData();
+              },
+            });
+          },
+        });
         break;
       case 'tracks':
-        this.tracksService.deleteTrackPermanently(item.id).subscribe(() => {
-          this.nzNotificationService.success(
-            operationSuccessMessage,
-            `The track ${item.name} has been deleted permanently!`,
-            {
-              nzPauseOnHover: true,
-            }
-          );
-          this.retrieveRecycledData();
+        this.recycleBinConfirmationModal = this.nzModalService.create({
+          nzTitle: 'Do you really wish to delete this track?',
+          nzContent:
+            'When you click on the OK button, the track will be deleted permanently',
+          nzOnOk: () => {
+            this.tracksService.deleteTrackPermanently(item.id).subscribe({
+              next: () => {
+                this.nzNotificationService.success(
+                  operationSuccessMessage,
+                  `The track ${item.name} has been deleted permanently!`,
+                  {
+                    nzPauseOnHover: true,
+                  }
+                );
+                this.fileStorageService
+                  .deleteTrackMP3File(item.audioFileName)
+                  .subscribe(() => {});
+              },
+              error: (error) => {
+                console.log(error);
+              },
+              complete: () => {
+                this.retrieveRecycledData();
+              },
+            });
+          },
         });
         break;
       case 'streams':
-        this.streamsService.deleteStreamPermanently(item.id).subscribe(() => {
-          this.nzNotificationService.success(
-            operationSuccessMessage,
-            `The stream ${item.name} has been deleted permanently!`,
-            {
-              nzPauseOnHover: true
-            }
-          )
-        })
+        this.recycleBinConfirmationModal = this.nzModalService.create({
+          nzTitle: 'Do you really wish to delete this stream?',
+          nzContent:
+            'When you click on the OK button, the stream will be deleted permanently',
+          nzOnOk: () => {
+            this.streamsService.deleteStreamPermanently(item.id).subscribe({
+              next: () => {
+                this.nzNotificationService.success(
+                  operationSuccessMessage,
+                  `The stream ${item.name} has been deleted permanently!`,
+                  {
+                    nzPauseOnHover: true,
+                  }
+                );
+                this.fileStorageService
+                  .deleteStreamImage(item.imageFileName)
+                  .subscribe(() => {});
+              },
+              error: (error) => {
+                console.log(error);
+              },
+              complete: () => {
+                this.retrieveRecycledData();
+              },
+            });
+          },
+        });
         break;
     }
   }
@@ -246,6 +311,7 @@ export class RecycleBinComponent {
               nzPauseOnHover: true,
             }
           );
+          this.retrieveRecycledData();
         });
         break;
       case 'streams':
@@ -254,9 +320,10 @@ export class RecycleBinComponent {
             operationSuccessMessage,
             `The stream ${item.name} has been restored!`,
             {
-              nzPauseOnHover: true
+              nzPauseOnHover: true,
             }
-          )
+          );
+          this.retrieveRecycledData();
         });
         break;
     }

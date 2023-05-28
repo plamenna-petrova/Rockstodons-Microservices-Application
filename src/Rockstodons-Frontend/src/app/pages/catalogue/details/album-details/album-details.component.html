@@ -31,33 +31,73 @@
         </nz-descriptions-item>
     </nz-descriptions>
     <br />
-    <button nz-button nzType="default" [routerLink]="['/albums']">Go Back</button>
     <h2 nz-typography style="margin-top: 20px">Comments</h2>
     <div nz-row style="height: 100%">
         <div nz-col nzSpan="6"></div>
         <div nz-col nzSpan="12">
-            <nz-list *ngIf="albumComments" [nzDataSource]="albumComments" [nzRenderItem]="item" [nzItemLayout]="'horizontal'">
-                <ng-template #item let-item>
-                    <nz-comment [nzAuthor]="item.author" [nzDatetime]="item.createdOn">
-                        <nz-comment-content>
-                            <p>{{ item.content }}</p>
-                        </nz-comment-content>
-                    </nz-comment>
-                </ng-template>
+            <nz-list *ngIf="albumComments" [nzDataSource]="albumComments" [nzItemLayout]="'horizontal'">
+                <nz-list-item *ngFor="let albumComment of albumComments">
+                    <ng-template #commentTemplateRef let-comment="comment">
+                        <nz-comment [nzAuthor]="comment.author" [nzDatetime]="comment.createdOn">
+                            <nz-comment-content>
+                                <p>{{ comment.content }}</p>
+                            </nz-comment-content>
+                            <button *ngIf="comment.albumId" nz-button nzType="link" (click)="showSubcommentCreationModal()">Reply to</button>
+                            <ng-container *ngIf="comment.subcomments && comment.subcomments.length">
+                                <ng-template ngFor let-child [ngForOf]="comment.subcomments">
+                                    <ng-template [ngTemplateOutlet]="commentTemplateRef" [ngTemplateOutletContext]="{ comment: child }"></ng-template>
+                                </ng-template>
+                            </ng-container>
+                        </nz-comment>
+                    </ng-template>
+                    <ng-template [ngTemplateOutlet]="commentTemplateRef" [ngTemplateOutletContext]="{ comment: albumComment }"></ng-template>
+                    <nz-modal [(nzVisible)]="isSubcommentCreationModalVisible" nzTitle="Reply To Comment" (nzOnOk)="handleOkSubcommentCreationModal(albumComment)" (nzOnCancel)="handleCancelSubcommentCreationModal()">
+                        <ng-container *nzModalContent>
+                            <form nz-form [formGroup]="subcommentCreationForm">
+                                <nz-form-item>
+                                    <nz-form-control nzHasFeedback [nzErrorTip]="combineSubcommentContentValidationTemplate">
+                                        <nz-textarea-count [nzMaxCharacterCount]="200">
+                                            <textarea nz-input formControlName="content" placeholder="Enter comment content" [nzAutosize]="{ minRows: 3, maxRows: 5 }"></textarea>
+                                            <ng-template #combineSubcommentContentValidationTemplate let-control>
+                                                <ng-container *ngIf="control.hasError('maxlength')">The comment's content cannot be longer than 200 characters
+                                                </ng-container>
+                                                <ng-container *ngIf="control.hasError('minlength')">The comment's content must be at least 3 character long
+                                                </ng-container>
+                                                <ng-container *ngIf="control.hasError('required')">The comment's content is required</ng-container>
+                                            </ng-template>
+                                        </nz-textarea-count>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </form>
+                        </ng-container>
+                    </nz-modal>
+                </nz-list-item>
             </nz-list>
             <nz-comment *ngIf="(isAuthenticated | async) === true">
                 <nz-comment-content>
-                    <nz-form-item>
-                        <textarea [(ngModel)]="commentContentInputValue" nz-input rows="4"></textarea>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <button nz-button nzType="primary" [nzLoading]="isCommentSubmitted" [disabled]="!commentContentInputValue" (click)="handleAlbumCommentSubmit()">
-              Add Comment
-            </button>
-                    </nz-form-item>
+                    <form nz-form [formGroup]="commentCreationForm">
+                        <nz-form-item>
+                            <nz-form-control nzHasFeedback [nzErrorTip]="combineCommentContentValidationTemplate">
+                                <nz-textarea-count [nzMaxCharacterCount]="200">
+                                    <textarea nz-input formControlName="content" placeholder="Enter comment content" [nzAutosize]="{ minRows: 3, maxRows: 5 }"></textarea>
+                                    <ng-template #combineCommentContentValidationTemplate let-control>
+                                        <ng-container *ngIf="control.hasError('maxlength')">The comment's content cannot be longer than 200 characters
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('minlength')">The comment's content must be at least 3 character long
+                                        </ng-container>
+                                        <ng-container *ngIf="control.hasError('required')">The comment's content is required</ng-container>
+                                    </ng-template>
+                                </nz-textarea-count>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </form>
+                    <button nz-button nzType="primary" [nzLoading]="isCommentSubmitted" [disabled]="!commentCreationForm.value.content" (click)="handleAlbumCommentSubmit()" style="margin-top: 10px;">
+            Add Comment
+          </button>
                 </nz-comment-content>
             </nz-comment>
         </div>
         <div nz-col nzSpan="6"></div>
     </div>
+    <button nz-button nzType="default" [routerLink]="['/albums']">Go Back</button>
 </div>

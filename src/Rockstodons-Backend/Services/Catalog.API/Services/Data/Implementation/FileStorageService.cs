@@ -50,7 +50,8 @@ namespace Catalog.API.Services.Data.Implementation
             return blobFiles;
         }
 
-        public async Task<BlobResponseDTO> UploadImageAsync(IFormFile blobFile, string azureStorageContainerName)
+        public async Task<BlobResponseDTO> UploadImageAsync(
+            IFormFile blobFile, string azureStorageContainerName)
         {
             BlobResponseDTO blobResponseDTO = new();
 
@@ -114,7 +115,8 @@ namespace Catalog.API.Services.Data.Implementation
         }
 
 
-        public async Task<BlobResponseDTO> UploadMP3FileAsync(IFormFile blobFile, string azureStorageContainerName)
+        public async Task<BlobResponseDTO> UploadMP3FileAsync(
+            IFormFile blobFile, string azureStorageContainerName)
         {
             BlobResponseDTO blobResponseDTO = new();
 
@@ -199,7 +201,8 @@ namespace Catalog.API.Services.Data.Implementation
             return null!;
         }
 
-        public async Task<BlobResponseDTO> DeleteAsync(string blobFileName, string azureStorageContainerName)
+        public async Task<BlobResponseDTO> DeleteAsync(
+            string blobFileName, string azureStorageContainerName)
         {
             BlobContainerClient blobContainerClient = new(
                 _azureStorageConnectionString, azureStorageContainerName
