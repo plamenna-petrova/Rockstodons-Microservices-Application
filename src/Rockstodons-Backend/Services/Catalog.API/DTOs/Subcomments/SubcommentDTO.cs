@@ -1,10 +1,13 @@
 ﻿using Catalog.API.Data.Data.Models;
+using Catalog.API.DTOs.Comments;
 using Catalog.API.Services.Mapping;
 
-namespace Catalog.API.DTOs.Comments
+namespace Catalog.API.DTOs.Subcomments
 {
-    public class CommentDetailsDTO : IMapFrom<Comment>
+    public class SubcommentDTO : IMapFrom<Subcomment>
     {
+        public string Id { get; set; }
+
         public string Content { get; set; }
 
         public string UserId { get; set; }
@@ -13,6 +16,6 @@ namespace Catalog.API.DTOs.Comments
 
         public DateTime CreatedOn { get; set; }
 
-        public DateTime? ModifiedOn { get; set; }
+        public CommentDTO Comment { get; set; }
     }
 }

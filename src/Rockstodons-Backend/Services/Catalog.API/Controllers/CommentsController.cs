@@ -101,7 +101,9 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
-        public async Task<ActionResult<List<CommentDTO>>> GetPaginatedComments([FromQuery] CommentParameters commentParameters)
+        public async Task<ActionResult<List<CommentDTO>>> GetPaginatedComments(
+            [FromQuery] CommentParameters commentParameters
+        )
         {
             try
             {
@@ -185,7 +187,9 @@ namespace Catalog.API.Controllers
 
         [HttpGet]
         [Route("search")]
-        public async Task<ActionResult<CommentDetailsDTO>> PaginateSearchedComments([FromQuery] CommentParameters commentParameters)
+        public async Task<ActionResult<CommentDetailsDTO>> PaginateSearchedComments(
+            [FromQuery] CommentParameters commentParameters
+        )
         {
             try
             {
@@ -213,7 +217,8 @@ namespace Catalog.API.Controllers
 
                     Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedCommentsMetaData));
 
-                    _logger.LogInformation($"Returned {paginatedSearchedComments.TotalItemsCount} {CommentsName} from database");
+                    _logger.LogInformation($"Returned {paginatedSearchedComments.TotalItemsCount} " +
+                        $"{CommentsName} from database");
 
                     return Ok(paginatedSearchedComments);
                 }
@@ -309,7 +314,7 @@ namespace Catalog.API.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
-        public async Task<ActionResult> UpdateComments(string id, [FromBody] UpdateCommentDTO updateCommentDTO)
+        public async Task<ActionResult> UpdateComment(string id, [FromBody] UpdateCommentDTO updateCommentDTO)
         {
             try
             {
@@ -343,7 +348,9 @@ namespace Catalog.API.Controllers
 
         [HttpPatch]
         [Route("patch/{id}")]
-        public async Task<ActionResult> PartiallyUpdateComment(string id, [FromBody] JsonPatchDocument<UpdateCommentDTO> commentJsonPatchDocument)
+        public async Task<ActionResult> PartiallyUpdateComment(
+            string id, [FromBody] JsonPatchDocument<UpdateCommentDTO> commentJsonPatchDocument
+        )
         {
             try
             {
@@ -397,7 +404,12 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.EntityDeletionExceptionMessage, SingleCommentName, id, exception.Message)
+                    string.Format(
+                        GlobalConstants.EntityDeletionExceptionMessage, 
+                        SingleCommentName, 
+                        id, 
+                        exception.Message
+                    )
                 );
 
                 return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
@@ -426,7 +438,12 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                   string.Format(GlobalConstants.EntityHardDeletionExceptionMessage, SingleCommentName, id, exception.Message)
+                   string.Format(
+                       GlobalConstants.EntityHardDeletionExceptionMessage, 
+                       SingleCommentName, 
+                       id, 
+                       exception.Message
+                   )
                 );
 
                 return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);

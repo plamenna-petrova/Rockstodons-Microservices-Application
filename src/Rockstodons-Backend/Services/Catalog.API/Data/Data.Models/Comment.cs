@@ -5,6 +5,11 @@ namespace Catalog.API.Data.Data.Models
 {
     public class Comment : BaseDeletableModel<string>
     {
+        public Comment()
+        {
+            Subcomments = new HashSet<Subcomment>();
+        }
+
         public string Content { get; set; } = default!;
 
         public string UserId { get; set; }
@@ -14,5 +19,7 @@ namespace Catalog.API.Data.Data.Models
         public string AlbumId { get; set; }
 
         public virtual Album Album { get; set; }
+
+        public virtual ICollection<Subcomment> Subcomments { get; set; }
     }
 }

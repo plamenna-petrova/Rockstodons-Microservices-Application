@@ -8,13 +8,6 @@ using Catalog.API.Services.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Catalog.API.Infrastructure.Seeding;
-using Catalog.API.Data.Data.Models;
-using Catalog.API.Utils;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
 using Catalog.API.Services.Messaging;
 using Catalog.API.Extensions;
 using Newtonsoft.Json;
@@ -37,18 +30,16 @@ internal class Program
         {
             app.UseDeveloperExceptionPage();
 
-            using (var serviceScope = app.Services.CreateScope())
+            using var serviceScope = app.Services.CreateScope();
+            var catalogDbContext = serviceScope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+
+            if (catalogDbContext.Database.GetPendingMigrations().Any())
             {
-                var catalogDbContext = serviceScope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-
-                if (catalogDbContext.Database.GetPendingMigrations().Any())
-                {
-                    catalogDbContext.Database.Migrate();
-                }
-
-                new CatalogDbContextSeeder()
-                    .SeedAsync(catalogDbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
+                catalogDbContext.Database.Migrate();
             }
+
+            new CatalogDbContextSeeder()
+                .SeedAsync(catalogDbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
         }
 
         AutomapperConfig.RegisterMappings(Assembly.GetExecutingAssembly());
@@ -94,6 +85,7 @@ internal class Program
         services.AddTransient<ITracksService, TracksService>();
         services.AddTransient<IStreamsService, StreamsService>();
         services.AddTransient<ICommentsService, CommentsService>();
+        services.AddTransient<ISubcommentsService, SubcommentsService>();
         services.AddTransient<IEmailSender, SendGridEmailSender>();
         services.AddTransient<IFileStorageService, FileStorageService>();
 

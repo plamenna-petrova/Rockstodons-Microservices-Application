@@ -13,6 +13,7 @@ import { IAlbum } from 'src/app/core/interfaces/albums/album';
 import { FileStorageService } from 'src/app/core/services/file-storage.service';
 import { StreamsService } from 'src/app/core/services/streams.service';
 import { IStream } from 'src/app/core/interfaces/streams/stream';
+import { operationSuccessMessage } from 'src/app/core/utils/global-constants';
 
 @Component({
   selector: 'app-recycle-bin',
@@ -107,7 +108,7 @@ export class RecycleBinComponent {
           .deleteAlbumTypePermanently(item.id)
           .subscribe(() => {
             this.nzNotificationService.success(
-              'Successful Operation',
+              operationSuccessMessage,
               `The album type ${item.name} has been deleted permanently!`,
               {
                 nzPauseOnHover: true,
@@ -121,7 +122,7 @@ export class RecycleBinComponent {
           .deletePerformerPermanently(item.id)
           .subscribe(() => {
             this.nzNotificationService.success(
-              'Successful Operation',
+              operationSuccessMessage,
               `The performer ${item.name} has been deleted permanently!`,
               {
                 nzPauseOnHover: true,
@@ -137,7 +138,7 @@ export class RecycleBinComponent {
         this.albumsService.deleteAlbumPermanently(item.id).subscribe({
           next: () => {
             this.nzNotificationService.success(
-              'Successful Operation',
+              operationSuccessMessage,
               `The album ${item.name} has been deleted permanently!`,
               {
                 nzPauseOnHover: true,
@@ -163,7 +164,7 @@ export class RecycleBinComponent {
       case 'tracks':
         this.tracksService.deleteTrackPermanently(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The track ${item.name} has been deleted permanently!`,
             {
               nzPauseOnHover: true,
@@ -175,7 +176,7 @@ export class RecycleBinComponent {
       case 'streams':
         this.streamsService.deleteStreamPermanently(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The stream ${item.name} has been deleted permanently!`,
             {
               nzPauseOnHover: true
@@ -191,7 +192,7 @@ export class RecycleBinComponent {
       case 'genres':
         this.genresService.restoreGenre(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The genre ${item.name} has been restored!`,
             {
               nzPauseOnHover: true,
@@ -203,7 +204,7 @@ export class RecycleBinComponent {
       case 'albumTypes':
         this.albumTypesService.restoreAlbumType(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The album type ${item.name} has been restored!`,
             {
               nzPauseOnHover: true,
@@ -215,7 +216,7 @@ export class RecycleBinComponent {
       case 'performers':
         this.performersService.restorePerformer(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The performer ${item.name} has been restored!`,
             {
               nzPauseOnHover: true,
@@ -227,7 +228,7 @@ export class RecycleBinComponent {
       case 'albums':
         this.albumsService.restoreAlbum(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The album ${item.name} has been restored!`,
             {
               nzPauseOnHover: true,
@@ -239,7 +240,7 @@ export class RecycleBinComponent {
       case 'tracks':
         this.tracksService.restoreTrack(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The track ${item.name} has been restored!`,
             {
               nzPauseOnHover: true,
@@ -250,7 +251,7 @@ export class RecycleBinComponent {
       case 'streams':
         this.streamsService.restoreStream(item.id).subscribe(() => {
           this.nzNotificationService.success(
-            'Successful Operation',
+            operationSuccessMessage,
             `The stream ${item.name} has been restored!`,
             {
               nzPauseOnHover: true

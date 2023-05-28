@@ -14,7 +14,7 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<List<Comment>> GetAllCommentsWithDeletedRecords();
 
-        Task<PagedList<CommentDTO>> GetPaginatedComments(CommentParameters albumsParameters);
+        Task<PagedList<CommentDTO>> GetPaginatedComments(CommentParameters commentParameters);
 
         Task<List<CommentDetailsDTO>> SearchForComments(string commentsSearchTerm);
 
