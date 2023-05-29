@@ -36,7 +36,6 @@ import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { AlbumsManagementComponent } from './albums-management/albums-management.component';
-import { SharedModule } from 'src/app/common/shared/shared.module';
 import { GenresManagementComponent } from './genres-management/genres-management.component';
 import { AlbumTypesManagementComponent } from './album-types-management/album-types-management.component';
 import { PerformersManagementComponent } from './performers-management/performers-management.component';
@@ -88,8 +87,7 @@ registerLocaleData(en);
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,
-    NzBreadCrumbModule,
-    SharedModule
+    NzBreadCrumbModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }

@@ -28,9 +28,9 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzCommentModule } from 'ng-zorro-antd/comment';
-import { NzModalModule  } from 'ng-zorro-antd/modal';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { HomeComponent } from './content/home/home.component';
-import { SharedModule } from './common/shared/shared.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FileSaverModule } from 'ngx-filesaver';
@@ -54,6 +54,7 @@ import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
+import { TermsAndConditionsComponent } from './content/terms-and-conditions/terms-and-conditions.component';
 registerLocaleData(en);
 
 const customLanguagePack = {
@@ -84,6 +85,7 @@ const icons: IconDefinition[] = [
     StreamsCatalogueComponent,
     StreamDetailsComponent,
     FooterComponent,
+    TermsAndConditionsComponent,
   ],
   imports: [
     BrowserModule,
@@ -106,6 +108,7 @@ const icons: IconDefinition[] = [
     NzListModule,
     NzCommentModule,
     NzModalModule,
+    NzCollapseModule,
     NzIconModule.forChild(icons),
     BrowserAnimationsModule,
     IconsProviderModule,
@@ -113,7 +116,6 @@ const icons: IconDefinition[] = [
     NzMenuModule,
     NzBreadCrumbModule,
     FileSaverModule,
-    SharedModule,
     CoreModule.forRoot()
   ],
   providers: [

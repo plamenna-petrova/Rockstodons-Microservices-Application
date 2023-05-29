@@ -86,7 +86,8 @@ export class AlbumDetailsComponent {
         albumId: this.albumDetails.id,
       };
 
-      this.commentsService
+      if (this.commentCreationForm.valid) {
+        this.commentsService
         .createNewComment(commentToCreate)
         .pipe(take(1))
         .subscribe({
@@ -105,12 +106,19 @@ export class AlbumDetailsComponent {
             console.log(error);
           },
         });
+      } else {
+        Object.values(this.commentCreationForm.controls).forEach((control) => {
+          if (control.invalid) {
+            control.markAsDirty();
+            control.updateValueAndValidity({ onlySelf: true });
+          }
+        });
+      }
     }, 800);
   }
 
   showSubcommentCreationModal(): void {
     this.isSubcommentCreationModalVisible = true;
-    console.log('here');
   }
 
   handleOkSubcommentCreationModal(comment: IComment): void {
@@ -131,7 +139,8 @@ export class AlbumDetailsComponent {
       commentId: comment.id
     };
 
-    this.subcommentsService
+    if (this.subcommentCreationForm.valid) {
+      this.subcommentsService
       .createNewSubcomment(subcommentToCreate)
       .pipe(take(1))
       .subscribe({
@@ -152,7 +161,15 @@ export class AlbumDetailsComponent {
         complete: () => {
           this.isSubcommentCreationModalVisible = false;
         }
-      })
+      });
+    } else {
+      Object.values(this.subcommentCreationForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true});
+        }
+      });
+    }
   }
 
   private retrieveAlbumDetails(): void {
@@ -161,7 +178,6 @@ export class AlbumDetailsComponent {
     .pipe(take(1))
     .subscribe((response) => {
       this.albumDetails = response;
-      console.log('album details');
       this.albumComments = [...this.albumDetails.comments];
       this.albumComments = this.albumComments.map(comment => {
         comment.createdOn = format(

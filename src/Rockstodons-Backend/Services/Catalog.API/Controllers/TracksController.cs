@@ -42,28 +42,31 @@ namespace Catalog.API.Controllers
 
                 if (allTracks != null)
                 {
-                    allTracks.ForEach(t =>
-                    {
-                        if (t != null)
-                        {
-                            t.Name = HtmlEncoder.Default.Encode(t.Name);
-                        }
-                    });
-
                     return Ok(allTracks);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                );
             }
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, TracksName, exception.Message)
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesExceptionMessage, 
+                        TracksName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -76,33 +79,37 @@ namespace Catalog.API.Controllers
 
                 if (allTracksWithDeletedRecords != null)
                 {
-                    allTracksWithDeletedRecords.ForEach(t =>
-                    {
-                        if (t != null)
-                        {
-                            t.Name = HtmlEncoder.Default.Encode(t.Name);
-                        }
-                    });
-
                     return Ok(allTracksWithDeletedRecords);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, TracksName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        TracksName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpGet("paginate")]
-        public async Task<ActionResult<List<Track>>> GetPaginatedTracks([FromQuery] TrackParameters trackParameters)
+        public async Task<ActionResult<List<Track>>> GetPaginatedTracks(
+            [FromQuery] TrackParameters trackParameters)
         {
             try
             {
@@ -110,14 +117,6 @@ namespace Catalog.API.Controllers
 
                 if (paginatedTracks != null)
                 {
-                    paginatedTracks.ForEach(t =>
-                    {
-                        if (t != null)
-                        {
-                            t.Name = HtmlEncoder.Default.Encode(t.Name);
-                        }
-                    });
-
                     var paginatedTracksMetaData = new
                     {
                         paginatedTracks.TotalItemsCount,
@@ -128,24 +127,39 @@ namespace Catalog.API.Controllers
                         paginatedTracks.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedTracksMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedTracksMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedTracks.TotalItemsCount} {TracksName} from database");
+                    _logger.LogInformation($"Returned {paginatedTracks.TotalItemsCount} " +
+                        $"{TracksName} from database");
 
                     return Ok(paginatedTracks);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                  GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, TracksName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        TracksName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -159,28 +173,30 @@ namespace Catalog.API.Controllers
 
                 if (foundTracks != null)
                 {
-                    foundTracks.ForEach(t =>
-                    {
-                        if (t != null)
-                        {
-                            t.Name = HtmlEncoder.Default.Encode(t.Name);
-                        }
-                    });
-
                     return Ok(foundTracks);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, TracksName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        TracksName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -194,14 +210,6 @@ namespace Catalog.API.Controllers
 
                 if (paginatedSearchedTracks != null)
                 {
-                    paginatedSearchedTracks.ForEach(t =>
-                    {
-                        if (t != null)
-                        {
-                            t.Name = HtmlEncoder.Default.Encode(t.Name);
-                        }
-                    });
-
                     var paginatedTracksMetaData = new
                     {
                         paginatedSearchedTracks.TotalItemsCount,
@@ -212,24 +220,37 @@ namespace Catalog.API.Controllers
                         paginatedSearchedTracks.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedTracksMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedTracksMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedSearchedTracks.TotalItemsCount} {TracksName} from database");
+                    _logger.LogInformation($"Returned {paginatedSearchedTracks.TotalItemsCount} " +
+                        $"{TracksName} from database");
 
                     return Ok(paginatedSearchedTracks);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName)
+                 );
 
                 return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, TracksName));
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, TracksName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        TracksName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -245,14 +266,32 @@ namespace Catalog.API.Controllers
                     return Ok(trackById);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleTrackName, id));
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, SingleTrackName, id
+                    )
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleTrackName, id));
+                return NotFound(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, SingleTrackName, id
+                    )
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityByIdExceptionMessage, 
+                        id, 
+                        exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -270,14 +309,28 @@ namespace Catalog.API.Controllers
                     return Ok(trackDetails);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityDetailsExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityDetailsExceptionMessage, 
+                        id, 
+                        exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -290,9 +343,17 @@ namespace Catalog.API.Controllers
             {
                 if (createTrackDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleTrackName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityCreation, SingleTrackName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleTrackName, "creation"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleTrackName, "creation"
+                        )
+                    );
                 }
 
                 var createdTrack = await _tracksService.CreateTrack(createTrackDTO);
@@ -301,11 +362,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityCreationExceptionMessage, SingleTrackName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityCreationExceptionMessage, 
+                        SingleTrackName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -317,16 +385,26 @@ namespace Catalog.API.Controllers
             {
                 if (updateTrackDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityUpdate, SingleTrackName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityUpdate, SingleTrackName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleTrackName, "update"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleTrackName, "update"
+                        )
+                    );
                 }
 
                 var trackToUpdate = await _tracksService.GetTrackById(id);
 
                 if (trackToUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
                 }
 
                 await _tracksService.UpdateTrack(trackToUpdate, updateTrackDTO);
@@ -335,45 +413,72 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleTrackName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleTrackName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpPatch]
         [Route("patch/{id}")]
-        public async Task<ActionResult> PartiallyUpdateTrack(string id, [FromBody] JsonPatchDocument<UpdateTrackDTO> trackJsonPatchDocument)
+        public async Task<ActionResult> PartiallyUpdateTrack(
+            string id, [FromBody] JsonPatchDocument<UpdateTrackDTO> trackJsonPatchDocument)
         {
             try
             {
                 if (trackJsonPatchDocument == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleTrackName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityPatch, SingleTrackName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleTrackName, "patch"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleTrackName, "patch"
+                        )
+                    );
                 }
 
                 var trackToPartiallyUpdate = await _tracksService.GetTrackById(id);
 
                 if (trackToPartiallyUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
                 }
 
-                await _tracksService.PartiallyUpdateTrack(trackToPartiallyUpdate, trackJsonPatchDocument);
+                await _tracksService.PartiallyUpdateTrack(
+                    trackToPartiallyUpdate, trackJsonPatchDocument
+                );
 
                 return NoContent();
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleTrackName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleTrackName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -387,9 +492,13 @@ namespace Catalog.API.Controllers
 
                 if (trackToDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
                 }
 
                 await _tracksService.DeleteTrack(trackToDelete);
@@ -399,10 +508,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.EntityDeletionExceptionMessage, SingleTrackName, id, exception.Message)
+                    string.Format(
+                        GlobalConstants.EntityDeletionExceptionMessage, 
+                        SingleTrackName, 
+                        id, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -416,9 +533,13 @@ namespace Catalog.API.Controllers
 
                 if (trackToHardDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
                 }
 
                 await _tracksService.HardDeleteTrack(trackToHardDelete);
@@ -428,10 +549,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                   string.Format(GlobalConstants.EntityHardDeletionExceptionMessage, SingleTrackName, id, exception.Message)
+                   string.Format(
+                       GlobalConstants.EntityHardDeletionExceptionMessage, 
+                       SingleTrackName, 
+                       id, 
+                       exception.Message
+                   )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -445,9 +574,13 @@ namespace Catalog.API.Controllers
 
                 if (trackToRestore == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, TracksName)
+                    );
                 }
 
                 await _tracksService.RestoreTrack(trackToRestore);
@@ -459,10 +592,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                  string.Format(GlobalConstants.EntityRestoreExceptionMessage, SingleTrackName, id, exception.Message)
+                  string.Format(
+                      GlobalConstants.EntityRestoreExceptionMessage, 
+                      SingleTrackName, 
+                      id, 
+                      exception.Message
+                  )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
     }

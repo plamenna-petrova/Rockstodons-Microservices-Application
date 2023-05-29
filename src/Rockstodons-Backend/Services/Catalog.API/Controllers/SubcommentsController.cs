@@ -43,14 +43,6 @@ namespace Catalog.API.Controllers
 
                 if (allSubcomments != null)
                 {
-                    allSubcomments.ForEach(sc =>
-                    {
-                        if (sc != null)
-                        {
-                            sc.Content = HtmlEncoder.Default.Encode(sc.Content);
-                        }
-                    });
-
                     return Ok(allSubcomments);
                 }
 
@@ -85,14 +77,6 @@ namespace Catalog.API.Controllers
 
                 if (allSubcommentsWithDeletedRecords != null)
                 {
-                    allSubcommentsWithDeletedRecords.ForEach(sc =>
-                    {
-                        if (sc != null)
-                        {
-                            sc.Content = HtmlEncoder.Default.Encode(sc.Content);
-                        }
-                    });
-
                     return Ok(allSubcommentsWithDeletedRecords);
                 }
 
@@ -127,15 +111,7 @@ namespace Catalog.API.Controllers
                     .GetPaginatedSubcomments(subcommentParameters);
 
                 if (paginatedSubcomments != null)
-                {
-                    paginatedSubcomments.ForEach(sc =>
-                    {
-                        if (sc != null)
-                        {
-                            sc.Content = HtmlEncoder.Default.Encode(sc.Content);
-                        }
-                    });
-
+                { 
                     var paginatedSubcommentsMetaData = new
                     {
                         paginatedSubcomments.TotalItemsCount,
@@ -188,14 +164,6 @@ namespace Catalog.API.Controllers
 
                 if (foundSubcomments != null)
                 {
-                    foundSubcomments.ForEach(sc =>
-                    {
-                        if (sc != null)
-                        {
-                            sc.Content = HtmlEncoder.Default.Encode(sc.Content);
-                        }
-                    });
-
                     return Ok(foundSubcomments);
                 }
 
@@ -232,14 +200,6 @@ namespace Catalog.API.Controllers
 
                 if (paginatedSearchedSubcomments != null)
                 {
-                    paginatedSearchedSubcomments.ForEach(sc =>
-                    {
-                        if (sc != null)
-                        {
-                            sc.Content = HtmlEncoder.Default.Encode(sc.Content);
-                        }
-                    });
-
                     var paginatedSubcommentsMetaData = new
                     {
                         paginatedSearchedSubcomments.TotalItemsCount,

@@ -1,14 +1,8 @@
 ﻿using Catalog.API.Data.Data.Models;
 using Catalog.API.Data.Models;
-using Catalog.API.Extensions;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
-using System.Globalization;
-using System.IO.Compression;
-using System.Text.RegularExpressions;
-
 namespace Catalog.API.Infrastructure.Seeding
 {
     public class EntitiesSeeder : ISeeder
@@ -85,8 +79,7 @@ namespace Catalog.API.Infrastructure.Seeding
                     History = "Saxon was formed in November 1975 by former " +
                     "Coast members Peter \"Biff\" Byford on vocals, Paul Quinn, and former " +
                     "SOB and Blue Condition members Graham Oliver on guitars, Steve \"Dobby\" " +
-                    "Dawson on bass;and former Glitter " +
-                    "Band member Pete Gill on drums who replaced original drummer John Walker in 1977."
+                    "Dawson on bass"
                 },
                 new()
                 {
@@ -95,11 +88,7 @@ namespace Catalog.API.Infrastructure.Seeding
                     History = "Metallica is an American heavy metal band. " +
                     "The band was formed in 1981 in Los Angeles by vocalist and " +
                     "guitarist James Hetfield and drummer Lars Ulrich, and has " +
-                    "been based in San Francisco for most of its career." +
-                    "The band's fast tempos, instrumentals and aggressive musicianship made them one of the " +
-                    "founding \"big four\" bands of thrash metal, alongside Megadeth, Anthrax and Slayer. " +
-                    "Metallica's current lineup comprises founding members and primary songwriters Hetfield and " +
-                    "Ulrich, longtime lead guitarist Kirk Hammett, and bassist Robert Trujillo. "
+                    "been based in San Francisco for most of its career."
                 },
                 new()
                 {
@@ -108,10 +97,7 @@ namespace Catalog.API.Infrastructure.Seeding
                     History = "Gojira is a French heavy metal band from Ondres. " +
                     "Founded as Godzilla in 1996, the band's lineup—brothers Joe (lead vocals, rhythm guitar) " +
                     "and Mario Duplantier (drums), Christian Andreu (lead guitar), " +
-                    "and Jean-Michel Labadie (bass)—has been the same since the band changed its name to Gojira in 2001. " +
-                    "Gojira has been known for their progressive and technical death metal styles and their spiritual, " +
-                    "philosophical, and environmentally-themed lyrics. The band has gone \"from the utmost obscurity " +
-                    "during the first half of their career to widespread global recognition in the second\""
+                    "and Jean-Michel Labadie (bass)—has been the same since the band changed its name to Gojira in 2001. "
                 },
                 new()
                 {
@@ -119,10 +105,7 @@ namespace Catalog.API.Infrastructure.Seeding
                     Country = "USA",
                     History = "Tool is an American rock band from Los Angeles. " +
                     "Formed in 1990, the group's line-up includes vocalist Maynard James Keenan, " +
-                    "guitarist Adam Jones and drummer Danny Carey. " +
-                    "Justin Chancellor has been the band's bassist since 1995, replacing their original " +
-                    "bassist Paul D'Amour. Tool has won four Grammy Awards, performed worldwide tours, " +
-                    "and produced albums topping the charts in several countries."
+                    "guitarist Adam Jones and drummer Danny Carey. "
                 },
                 new()
                 {
@@ -131,11 +114,7 @@ namespace Catalog.API.Infrastructure.Seeding
                     History = "Mastodon is an American heavy metal band from Atlanta, Georgia. " +
                     "Formed in 2000, the band's lineup of Troy Sanders (bass/vocals), " +
                     "Brent Hinds (lead guitar/vocals), Bill Kelliher (rhythm guitar/backing vocals) and " +
-                    "Brann Dailor (drums/vocals) has remained the same since 2001. Mastodon has released eight studio " +
-                    "albums, as well as a number of other releases. The band's 2002 debut album, Remission, " +
-                    "garnered significant critical acclaim for its unique sound.[1] Mastodon's second full-length release, " +
-                    "Leviathan, is a concept album based on the novel Moby-Dick by Herman Melville. Three magazines " +
-                    "awarded the record \"Album of the Year\" in 2004: Revolver, Kerrang! and Terrorizer."
+                    "Brann Dailor (drums/vocals) has remained the same since 2001."
                 },
                 new()
                 {
@@ -276,7 +255,8 @@ namespace Catalog.API.Infrastructure.Seeding
                     sleepDurationProvider: retry => TimeSpan.FromSeconds(5),
                     onRetry: (exception, timespan, retry, context) =>
                     {
-                        logger.LogWarning(exception, "[{prefix}] Exception {ExceptionType} with message {Message} " +
+                        logger.LogWarning(
+                            exception, "[{prefix}] Exception {ExceptionType} with message {Message} " +
                             "detected on attempt {retry} of {retries}",
                             prefix, exception.GetType().Name, exception.Message,
                             retry, retries

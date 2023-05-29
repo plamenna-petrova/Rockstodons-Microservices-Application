@@ -41,15 +41,6 @@ namespace Catalog.API.Controllers
 
                 if (allAlbums != null)
                 {
-                    allAlbums.ForEach(a =>
-                    {
-                        if (a != null)
-                        {
-                            a.Name = HtmlEncoder.Default.Encode(a.Name);
-                            a.Description = HtmlEncoder.Default.Encode(a.Description);
-                        }
-                    });
-
                     return Ok(allAlbums);
                 }
 
@@ -60,10 +51,17 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, AlbumsName, exception.Message)
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesExceptionMessage, 
+                        AlbumsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -76,15 +74,6 @@ namespace Catalog.API.Controllers
 
                 if (allAlbumsWithDeletedRecords != null)
                 {
-                    allAlbumsWithDeletedRecords.ForEach(a =>
-                    {
-                        if (a != null)
-                        {
-                            a.Name = HtmlEncoder.Default.Encode(a.Name);
-                            a.Description = HtmlEncoder.Default.Encode(a.Description);
-                        }
-                    });
-
                     return Ok(allAlbumsWithDeletedRecords);
                 }
 
@@ -94,16 +83,24 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, AlbumsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        AlbumsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpGet("paginate")]
-        public async Task<ActionResult<List<AlbumDTO>>> GetPaginatedAlbums([FromQuery] AlbumParameters albumParameters)
+        public async Task<ActionResult<List<AlbumDTO>>> GetPaginatedAlbums(
+            [FromQuery] AlbumParameters albumParameters)
         {
             try
             {
@@ -111,15 +108,6 @@ namespace Catalog.API.Controllers
 
                 if (paginatedAlbums != null)
                 {
-                    paginatedAlbums.ForEach(a =>
-                    {
-                        if (a != null)
-                        {
-                            a.Name = HtmlEncoder.Default.Encode(a.Name);
-                            a.Description = HtmlEncoder.Default.Encode(a.Description);   
-                        }
-                    });
-
                     var paginatedAlbumsMetaData = new
                     {
                         paginatedAlbums.TotalItemsCount,
@@ -130,9 +118,13 @@ namespace Catalog.API.Controllers
                         paginatedAlbums.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedAlbumsMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedAlbumsMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedAlbums.TotalItemsCount} {AlbumsName} from database");
+                    _logger.LogInformation($"Returned {paginatedAlbums.TotalItemsCount} " +
+                        $"{AlbumsName} from database");
 
                     return Ok(paginatedAlbums);
                 }
@@ -143,11 +135,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                  GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, AlbumsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        AlbumsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -161,14 +160,6 @@ namespace Catalog.API.Controllers
 
                 if (foundAlbums != null)
                 {
-                    foundAlbums.ForEach(a =>
-                    {
-                        if (a != null)
-                        {
-                            a.Name = HtmlEncoder.Default.Encode(a.Name);
-                        }
-                    });
-
                     return Ok(foundAlbums);
                 }
 
@@ -178,17 +169,24 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, AlbumsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        AlbumsName, exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpGet]
         [Route("search")]
-        public async Task<ActionResult<AlbumDetailsDTO>> PaginateSearchedAlbums([FromQuery] AlbumParameters albumParameters)
+        public async Task<ActionResult<AlbumDetailsDTO>> PaginateSearchedAlbums(
+            [FromQuery] AlbumParameters albumParameters)
         {
             try
             {
@@ -196,14 +194,6 @@ namespace Catalog.API.Controllers
 
                 if (paginatedSearchedAlbums != null)
                 {
-                    paginatedSearchedAlbums.ForEach(a =>
-                    {
-                        if (a != null)
-                        {
-                            a.Name = HtmlEncoder.Default.Encode(a.Name);
-                        }
-                    });
-
                     var paginatedAlbumsMetaData = new
                     {
                         paginatedSearchedAlbums.TotalItemsCount,
@@ -214,9 +204,12 @@ namespace Catalog.API.Controllers
                         paginatedSearchedAlbums.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedAlbumsMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", JsonConvert.SerializeObject(paginatedAlbumsMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedSearchedAlbums.TotalItemsCount} {AlbumsName} from database");
+                    _logger.LogInformation($"Returned {paginatedSearchedAlbums.TotalItemsCount} " +
+                        $"{AlbumsName} from database");
 
                     return Ok(paginatedSearchedAlbums);
                 }
@@ -227,11 +220,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, AlbumsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        AlbumsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -247,14 +247,32 @@ namespace Catalog.API.Controllers
                     return Ok(albumById);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id));
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id
+                    )
+                 );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id));
+                return NotFound(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id
+                    )
+                 );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityByIdExceptionMessage, 
+                        id, 
+                        exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -278,8 +296,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityDetailsExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityDetailsExceptionMessage, 
+                        id, 
+                        exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -291,9 +319,18 @@ namespace Catalog.API.Controllers
             {
                 if (createAlbumDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleAlbumName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityCreation, 
+                            SingleAlbumName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumName, "creation"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleAlbumName, "creation"
+                        )
+                    );
                 }
 
                 var createdAlbum = await _albumsService.CreateAlbum(createAlbumDTO);
@@ -302,11 +339,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityCreationExceptionMessage, SingleAlbumName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityCreationExceptionMessage, 
+                        SingleAlbumName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -318,9 +362,18 @@ namespace Catalog.API.Controllers
             {
                 if (updateAlbumDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityUpdate, SingleAlbumName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityUpdate, 
+                            SingleAlbumName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumName, "update"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleAlbumName, "update"
+                        )
+                    );
                 }
 
                 var albumToUpdate = await _albumsService.GetAlbumById(id);
@@ -336,32 +389,51 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleAlbumName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleAlbumName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpPatch]
         [Route("patch/{id}")]
-        public async Task<ActionResult> PartiallyUpdateAlbum(string id, [FromBody] JsonPatchDocument<UpdateAlbumDTO> albumJsonPatchDocument)
+        public async Task<ActionResult> PartiallyUpdateAlbum(
+            string id, [FromBody] JsonPatchDocument<UpdateAlbumDTO> albumJsonPatchDocument)
         {
             try
             {
                 if (albumJsonPatchDocument == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleAlbumName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityPatch, 
+                            SingleAlbumName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleAlbumName, "patch"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleAlbumName, "patch"
+                        )
+                    );
                 }
 
                 var albumToPartiallyUpdate = await _albumsService.GetAlbumById(id);
 
                 if (albumToPartiallyUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName)
+                    );
                 }
 
                 await _albumsService.PartiallyUpdateAlbum(albumToPartiallyUpdate, albumJsonPatchDocument);
@@ -370,11 +442,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleAlbumName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleAlbumName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -400,10 +479,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.EntityDeletionExceptionMessage, SingleAlbumName, id, exception.Message)
+                    string.Format(
+                        GlobalConstants.EntityDeletionExceptionMessage, 
+                        SingleAlbumName, 
+                        id, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -429,10 +516,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                   string.Format(GlobalConstants.EntityHardDeletionExceptionMessage, SingleAlbumName, id, exception.Message)
+                   string.Format(
+                       GlobalConstants.EntityHardDeletionExceptionMessage, 
+                       SingleAlbumName, 
+                       id, 
+                       exception.Message
+                   )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -460,10 +555,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                  string.Format(GlobalConstants.EntityRestoreExceptionMessage, SingleAlbumName, id, exception.Message)
+                  string.Format(
+                      GlobalConstants.EntityRestoreExceptionMessage, 
+                      SingleAlbumName, 
+                      id, 
+                      exception.Message
+                  )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
     }

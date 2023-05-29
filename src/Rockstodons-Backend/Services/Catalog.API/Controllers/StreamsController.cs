@@ -42,29 +42,32 @@ namespace Catalog.API.Controllers
                 var allStreams = await _streamsService.GetAllStreams();
 
                 if (allStreams != null)
-                {
-                    allStreams.ForEach(s =>
-                    {
-                        if (s != null)
-                        {
-                            s.Name = HtmlEncoder.Default.Encode(s.Name);
-                        }
-                    });
-
+                {   
                     return Ok(allStreams);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName)
+                );
             }
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, StreamsName, exception.Message)
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesExceptionMessage, 
+                        StreamsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -77,33 +80,41 @@ namespace Catalog.API.Controllers
 
                 if (allStreamsWithDeletedRecords != null)
                 {
-                    allStreamsWithDeletedRecords.ForEach(s =>
-                    {
-                        if (s != null)
-                        {
-                            s.Name = HtmlEncoder.Default.Encode(s.Name);
-                        }
-                    });
-
                     return Ok(allStreamsWithDeletedRecords);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntitiesNotFoundResult, StreamsName
+                    )
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                return NotFound(
+                    string.Format(
+                        GlobalConstants.EntitiesNotFoundResult, StreamsName
+                    )
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, StreamsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        StreamsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpGet("paginate")]
-        public async Task<ActionResult<List<Stream>>> GetPaginatedStreams([FromQuery] StreamParameters streamParameters)
+        public async Task<ActionResult<List<Stream>>> GetPaginatedStreams(
+            [FromQuery] StreamParameters streamParameters)
         {
             try
             {
@@ -111,14 +122,6 @@ namespace Catalog.API.Controllers
 
                 if (paginatedStreams != null)
                 {
-                    paginatedStreams.ForEach(s =>
-                    {
-                        if (s != null)
-                        {
-                            s.Name = HtmlEncoder.Default.Encode(s.Name);
-                        }
-                    });
-
                     var paginatedStreamsMetaData = new
                     {
                         paginatedStreams.TotalItemsCount,
@@ -129,9 +132,13 @@ namespace Catalog.API.Controllers
                         paginatedStreams.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedStreamsMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedStreamsMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedStreams.TotalItemsCount} {StreamsName} from database");
+                    _logger.LogInformation($"Returned {paginatedStreams.TotalItemsCount} " +
+                        $"{StreamsName} from database");
 
                     return Ok(paginatedStreams);
                 }
@@ -142,11 +149,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                  GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, StreamsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        StreamsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -160,49 +174,46 @@ namespace Catalog.API.Controllers
 
                 if (foundStreams != null)
                 {
-                    foundStreams.ForEach(s =>
-                    {
-                        if (s != null)
-                        {
-                            s.Name = HtmlEncoder.Default.Encode(s.Name);
-                        }
-                    });
-
                     return Ok(foundStreams);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, StreamsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        StreamsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpGet]
         [Route("search")]
-        public async Task<ActionResult<StreamDetailsDTO>> PaginateSearchedStreams([FromQuery] StreamParameters streamParameters)
+        public async Task<ActionResult<StreamDetailsDTO>> PaginateSearchedStreams(
+            [FromQuery] StreamParameters streamParameters)
         {
             try
             {
-                var paginatedSearchedStreams = await _streamsService.PaginateSearchedStreams(streamParameters);
+                var paginatedSearchedStreams = await _streamsService
+                    .PaginateSearchedStreams(streamParameters);
 
                 if (paginatedSearchedStreams != null)
                 {
-                    paginatedSearchedStreams.ForEach(s =>
-                    {
-                        if (s != null)
-                        {
-                            s.Name = HtmlEncoder.Default.Encode(s.Name);
-                        }
-                    });
-
                     var paginatedStreamsMetaData = new
                     {
                         paginatedSearchedStreams.TotalItemsCount,
@@ -213,24 +224,39 @@ namespace Catalog.API.Controllers
                         paginatedSearchedStreams.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedStreamsMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedStreamsMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedSearchedStreams.TotalItemsCount} {StreamsName} from database");
+                    _logger.LogInformation($"Returned {paginatedSearchedStreams.TotalItemsCount} " +
+                        $"{StreamsName} from database");
 
                     return Ok(paginatedSearchedStreams);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, StreamsName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, StreamsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        StreamsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -246,14 +272,30 @@ namespace Catalog.API.Controllers
                     return Ok(streamById);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleStreamName, id));
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, SingleStreamName, id
+                    )
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleStreamName, id));
+                return NotFound(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, SingleStreamName, id
+                    )
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -271,14 +313,28 @@ namespace Catalog.API.Controllers
                     return Ok(streamDetails);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityDetailsExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityDetailsExceptionMessage, 
+                        id, 
+                        exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -291,9 +347,17 @@ namespace Catalog.API.Controllers
             {
                 if (createStreamDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleStreamName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityCreation, SingleStreamName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleStreamName, "creation"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleStreamName, "creation"
+                        )
+                    );
                 }
 
                 var createdStream = await _streamsService.CreateStream(createStreamDTO);
@@ -302,11 +366,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityCreationExceptionMessage, SingleStreamName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityCreationExceptionMessage, 
+                        SingleStreamName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -318,16 +389,26 @@ namespace Catalog.API.Controllers
             {
                 if (updateStreamDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityUpdate, SingleStreamName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityUpdate, SingleStreamName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleStreamName, "update"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleStreamName, "update"
+                        )
+                    );
                 }
 
                 var streamToUpdate = await _streamsService.GetStreamById(id);
 
                 if (streamToUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                    );
                 }
 
                 await _streamsService.UpdateStream(streamToUpdate, updateStreamDTO);
@@ -336,45 +417,71 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleStreamName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleStreamName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpPatch]
         [Route("patch/{id}")]
-        public async Task<ActionResult> PartiallyUpdateTrack(string id, [FromBody] JsonPatchDocument<UpdateStreamDTO> streamJsonPatchDocument)
+        public async Task<ActionResult> PartiallyUpdateTrack(
+            string id, [FromBody] JsonPatchDocument<UpdateStreamDTO> streamJsonPatchDocument)
         {
             try
             {
                 if (streamJsonPatchDocument == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleStreamName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityPatch, SingleStreamName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleStreamName, "patch"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleStreamName, "patch"
+                        )
+                    );
                 }
 
                 var streamToPartiallyUpdate = await _streamsService.GetStreamById(id);
 
                 if (streamToPartiallyUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                    );
                 }
 
-                await _streamsService.PartiallyUpdateStream(streamToPartiallyUpdate, streamJsonPatchDocument);
+                await _streamsService
+                    .PartiallyUpdateStream(streamToPartiallyUpdate, streamJsonPatchDocument);
 
                 return NoContent();
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleStreamName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleStreamName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -388,9 +495,13 @@ namespace Catalog.API.Controllers
 
                 if (streamToDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                    );
                 }
 
                 await _streamsService.DeleteStream(streamToDelete);
@@ -400,10 +511,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.EntityDeletionExceptionMessage, SingleStreamName, id, exception.Message)
+                    string.Format(
+                        GlobalConstants.EntityDeletionExceptionMessage, 
+                        SingleStreamName, 
+                        id, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -417,9 +536,13 @@ namespace Catalog.API.Controllers
 
                 if (streamToHardDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, StreamsName)
+                    );
                 }
 
                 await _streamsService.HardDeleteStream(streamToHardDelete);
@@ -429,10 +552,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                   string.Format(GlobalConstants.EntityHardDeletionExceptionMessage, SingleStreamName, id, exception.Message)
+                   string.Format(
+                       GlobalConstants.EntityHardDeletionExceptionMessage, 
+                       SingleStreamName, 
+                       id, 
+                       exception.Message
+                   )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -460,10 +591,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                  string.Format(GlobalConstants.EntityRestoreExceptionMessage, SingleStreamName, id, exception.Message)
+                  string.Format(
+                      GlobalConstants.EntityRestoreExceptionMessage, 
+                      SingleStreamName, 
+                      id, 
+                      exception.Message
+                  )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
     }

@@ -23,7 +23,10 @@ namespace Catalog.API.Controllers
         private readonly IPerformersService _performersService;
         private ILogger<PerformersController> _logger;
 
-        public PerformersController(IPerformersService performersService, ILogger<PerformersController> logger)
+        public PerformersController(
+            IPerformersService performersService, 
+            ILogger<PerformersController> logger
+        )
         {
             _performersService = performersService;
             _logger = logger;
@@ -42,17 +45,28 @@ namespace Catalog.API.Controllers
                     return Ok(allPerformers);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
             }
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, PerformersName, exception.Message)
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesExceptionMessage, 
+                        PerformersName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -61,56 +75,50 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var allPerformersWithDeletedRecords = await _performersService.GetAllPerformersWithDeletedRecords();
+                var allPerformersWithDeletedRecords = await _performersService
+                    .GetAllPerformersWithDeletedRecords();
 
                 if (allPerformersWithDeletedRecords != null)
                 {
-                    allPerformersWithDeletedRecords.ForEach(p =>
-                    {
-                        if (p != null)
-                        {
-                            p.Name = HtmlEncoder.Default.Encode(p.Name);
-                            p.Country = HtmlEncoder.Default.Encode(p.Country);
-                            p.History = HtmlEncoder.Default.Encode(p.History);
-                        }
-                    });
-
                     return Ok(allPerformersWithDeletedRecords);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, PerformersName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        PerformersName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpGet("paginate")]
-        public async Task<ActionResult<List<Performer>>> GetPaginatedPerformers([FromQuery] PerformerParameters performerParameters)
+        public async Task<ActionResult<List<Performer>>> GetPaginatedPerformers(
+            [FromQuery] PerformerParameters performerParameters)
         {
             try
             {
-                var paginatedPerformers = await _performersService.GetPaginatedPerformers(performerParameters);
+                var paginatedPerformers = await _performersService
+                    .GetPaginatedPerformers(performerParameters);
 
                 if (paginatedPerformers != null)
                 {
-                    paginatedPerformers.ForEach(p =>
-                    {
-                        if (p != null)
-                        {
-                            p.Name = HtmlEncoder.Default.Encode(p.Name);
-                            p.Country = HtmlEncoder.Default.Encode(p.Country);
-                            p.History = HtmlEncoder.Default.Encode(p.History);
-                        }
-                    });
-
                     var paginatedPerformersMetaData = new
                     {
                         paginatedPerformers.TotalItemsCount,
@@ -121,24 +129,39 @@ namespace Catalog.API.Controllers
                         paginatedPerformers.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedPerformersMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedPerformersMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedPerformers.TotalItemsCount} {PerformersName} from database");
+                    _logger.LogInformation($"Returned {paginatedPerformers.TotalItemsCount} " +
+                        $"{PerformersName} from database");
 
                     return Ok(paginatedPerformers);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                  GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, PerformersName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        PerformersName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -152,51 +175,46 @@ namespace Catalog.API.Controllers
 
                 if (foundPerformers != null)
                 {
-                    foundPerformers.ForEach(p =>
-                    {
-                        if (p != null)
-                        {
-                            p.Name = HtmlEncoder.Default.Encode(p.Name);
-                            p.Country = HtmlEncoder.Default.Encode(p.Country);
-                        }
-                    });
-
                     return Ok(foundPerformers);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, PerformersName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        PerformersName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpGet]
         [Route("search")]
-        public async Task<ActionResult<PerformerDetailsDTO>> PaginateSearchedPerformers([FromQuery] PerformerParameters performerParameters)
+        public async Task<ActionResult<PerformerDetailsDTO>> PaginateSearchedPerformers(
+            [FromQuery] PerformerParameters performerParameters)
         {
             try
             {
-                var paginatedSearchedPerformers = await _performersService.PaginateSearchedPerformers(performerParameters);
+                var paginatedSearchedPerformers = await _performersService
+                    .PaginateSearchedPerformers(performerParameters);
 
                 if (paginatedSearchedPerformers != null)
                 {
-                    paginatedSearchedPerformers.ForEach(p =>
-                    {
-                        if (p != null)
-                        {
-                            p.Name = HtmlEncoder.Default.Encode(p.Name);
-                            p.Country = HtmlEncoder.Default.Encode(p.Country);
-                        }
-                    });
-
                     var paginatedPerformersMetaData = new
                     {
                         paginatedSearchedPerformers.TotalItemsCount,
@@ -207,24 +225,39 @@ namespace Catalog.API.Controllers
                         paginatedSearchedPerformers.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedPerformersMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedPerformersMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedSearchedPerformers.TotalItemsCount} {PerformersName} from database");
+                    _logger.LogInformation($"Returned {paginatedSearchedPerformers.TotalItemsCount} " +
+                        $"{PerformersName} from database");
 
                     return Ok(paginatedSearchedPerformers);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, PerformersName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, PerformersName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        PerformersName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -240,14 +273,34 @@ namespace Catalog.API.Controllers
                     return Ok(performerById);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, SinglePerformerName, id));
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, 
+                        SinglePerformerName, 
+                        id
+                    )
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, SinglePerformerName, id));
+                return NotFound(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, SinglePerformerName, id
+                    )
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityByIdExceptionMessage, 
+                        id, 
+                        exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -265,14 +318,28 @@ namespace Catalog.API.Controllers
                     return Ok(performerDetails);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityDetailsExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityDetailsExceptionMessage, 
+                        id, 
+                        exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -284,43 +351,73 @@ namespace Catalog.API.Controllers
             {
                 if (createPerformerDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityCreation, SinglePerformerName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityCreation, SinglePerformerName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SinglePerformerName, "creation"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SinglePerformerName, "creation"
+                        )
+                    );
                 }
 
                 var createdPerformer = await _performersService.CreatePerformer(createPerformerDTO);
 
-                return CreatedAtRoute(PerformerDetailsRouteName, new { createdPerformer.Id }, createdPerformer);
+                return CreatedAtRoute(
+                    PerformerDetailsRouteName, new { createdPerformer.Id }, createdPerformer
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityCreationExceptionMessage, SinglePerformerName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityCreationExceptionMessage, 
+                        SinglePerformerName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpPut]
         [Route("update/{id}")]
-        public async Task<ActionResult> UpdatePerformer(string id, [FromBody] UpdatePerformerDTO updatePerformerDTO)
+        public async Task<ActionResult> UpdatePerformer(
+            string id, [FromBody] UpdatePerformerDTO updatePerformerDTO)
         {
             try
             {
                 if (updatePerformerDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityUpdate, SinglePerformerName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityUpdate, SinglePerformerName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SinglePerformerName, "update"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SinglePerformerName, "update"
+                        )
+                    );
                 }
 
                 var performerToUpdate = await _performersService.GetPerformerById(id);
 
                 if (performerToUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    return NotFound(
+                        string.Format(
+                            GlobalConstants.EntityByIdNotFoundResult, PerformersName
+                        )
+                    );
                 }
 
                 await _performersService.UpdatePerformer(performerToUpdate, updatePerformerDTO);
@@ -329,45 +426,72 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SinglePerformerName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SinglePerformerName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
         [HttpPatch]
         [Route("patch/{id}")]
-        public async Task<ActionResult> PartiallyUpdatePerformer(string id, [FromBody] JsonPatchDocument<UpdatePerformerDTO> performerJsonPatchDocument)
+        public async Task<ActionResult> PartiallyUpdatePerformer(
+            string id, [FromBody] JsonPatchDocument<UpdatePerformerDTO> performerJsonPatchDocument)
         {
             try
             {
                 if (performerJsonPatchDocument == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityPatch, SinglePerformerName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityPatch, SinglePerformerName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SinglePerformerName, "patch"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SinglePerformerName, "patch"
+                        )
+                    );
                 }
 
                 var performerToPartiallyUpdate = await _performersService.GetPerformerById(id);
 
                 if (performerToPartiallyUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName)
+                    );
                 }
 
-                await _performersService.PartiallyUpdatePerformer(performerToPartiallyUpdate, performerJsonPatchDocument);
+                await _performersService.PartiallyUpdatePerformer(
+                    performerToPartiallyUpdate, performerJsonPatchDocument
+                );
 
                 return NoContent();
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SinglePerformerName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SinglePerformerName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -381,9 +505,17 @@ namespace Catalog.API.Controllers
 
                 if (performerToDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.EntityByIdNotFoundResult, PerformersName
+                        )
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    return NotFound(
+                        string.Format(
+                            GlobalConstants.EntityByIdNotFoundResult, PerformersName
+                        )
+                    );
                 }
 
                 await _performersService.DeletePerformer(performerToDelete);
@@ -393,10 +525,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.EntityDeletionExceptionMessage, SinglePerformerName, id, exception.Message)
+                    string.Format(
+                        GlobalConstants.EntityDeletionExceptionMessage, 
+                        SinglePerformerName, 
+                        id, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -410,9 +550,17 @@ namespace Catalog.API.Controllers
 
                 if (performerToHardDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.EntityByIdNotFoundResult, PerformersName
+                        )
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    return NotFound(
+                        string.Format(
+                            GlobalConstants.EntityByIdNotFoundResult, PerformersName
+                        )
+                    );
                 }
 
                 await _performersService.HardDeletePerformer(performerToHardDelete);
@@ -422,10 +570,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                   string.Format(GlobalConstants.EntityHardDeletionExceptionMessage, SinglePerformerName, id, exception.Message)
+                   string.Format(
+                       GlobalConstants.EntityHardDeletionExceptionMessage, 
+                       SinglePerformerName, 
+                       id, 
+                       exception.Message
+                   )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -439,9 +595,17 @@ namespace Catalog.API.Controllers
 
                 if (performerToRestore == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.EntityByIdNotFoundResult, PerformersName
+                        )
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, PerformersName));
+                    return NotFound(
+                        string.Format(
+                            GlobalConstants.EntityByIdNotFoundResult, PerformersName
+                        )
+                    );
                 }
 
                 await _performersService.RestorePerformer(performerToRestore);
@@ -453,10 +617,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                  string.Format(GlobalConstants.EntityRestoreExceptionMessage, SinglePerformerName, id, exception.Message)
+                  string.Format(
+                      GlobalConstants.EntityRestoreExceptionMessage, 
+                      SinglePerformerName, 
+                      id, 
+                      exception.Message
+                  )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
     }

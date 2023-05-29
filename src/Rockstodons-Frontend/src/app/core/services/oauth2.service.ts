@@ -63,12 +63,12 @@ export class OAuth2Service {
     this.isAuthenticatedSubject$.next(this.oauthService.hasValidAccessToken());
 
     this.oauthService.events
-      .pipe(filter((e) => ['token_received'].includes(e.type)))
-      .subscribe((e) => this.oauthService.loadUserProfile());
+      .pipe(filter((event) => ['token_received'].includes(event.type)))
+      .subscribe((event) => this.oauthService.loadUserProfile());
 
     this.oauthService.events
-      .pipe(filter((e) => ['session_terminated', 'session_error'].includes(e.type)))
-      .subscribe((e) => this.navigateToLoginPage());
+      .pipe(filter((event) => ['session_terminated', 'session_error'].includes(event.type)))
+      .subscribe((event) => this.navigateToLoginPage());
 
     this.oauthService.setupAutomaticSilentRefresh();
   }

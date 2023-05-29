@@ -41,14 +41,6 @@ namespace Catalog.API.Controllers
 
                 if (allComments != null)
                 {
-                    allComments.ForEach(c =>
-                    {
-                        if (c != null)
-                        {
-                            c.Content = HtmlEncoder.Default.Encode(c.Content);
-                        }
-                    });
-
                     return Ok(allComments);
                 }
 
@@ -59,10 +51,15 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                    string.Format(GlobalConstants.GetAllEntitiesExceptionMessage, CommentsName, exception.Message)
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesExceptionMessage, CommentsName, exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -75,28 +72,31 @@ namespace Catalog.API.Controllers
 
                 if (allCommentsWithDeletedRecords != null)
                 {
-                    allCommentsWithDeletedRecords.ForEach(c =>
-                    {
-                        if (c != null)
-                        {
-                            c.Content = HtmlEncoder.Default.Encode(c.Content);
-                        }
-                    });
-
                     return Ok(allCommentsWithDeletedRecords);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, CommentsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        CommentsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -111,14 +111,6 @@ namespace Catalog.API.Controllers
 
                 if (paginatedComments != null)
                 {
-                    paginatedComments.ForEach(c =>
-                    {
-                        if (c != null)
-                        {
-                            c.Content = HtmlEncoder.Default.Encode(c.Content);
-                        }
-                    });
-
                     var paginatedCommentsMetaData = new
                     {
                         paginatedComments.TotalItemsCount,
@@ -129,9 +121,13 @@ namespace Catalog.API.Controllers
                         paginatedComments.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedCommentsMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedCommentsMetaData)
+                    );
 
-                    _logger.LogInformation($"Returned {paginatedComments.TotalItemsCount} {CommentsName} from database");
+                    _logger.LogInformation($"Returned {paginatedComments.TotalItemsCount} " +
+                        $"{CommentsName} from database");
 
                     return Ok(paginatedComments);
                 }
@@ -142,11 +138,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                  GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, CommentsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        CommentsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -160,28 +163,31 @@ namespace Catalog.API.Controllers
 
                 if (foundComments != null)
                 {
-                    foundComments.ForEach(c =>
-                    {
-                        if (c != null)
-                        {
-                            c.Content = HtmlEncoder.Default.Encode(c.Content);
-                        }
-                    });
-
                     return Ok(foundComments);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, CommentsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        CommentsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -193,18 +199,11 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var paginatedSearchedComments = await _commentsService.PaginateSearchedComments(commentParameters);
+                var paginatedSearchedComments = await _commentsService
+                    .PaginateSearchedComments(commentParameters);
 
                 if (paginatedSearchedComments != null)
                 {
-                    paginatedSearchedComments.ForEach(c =>
-                    {
-                        if (c != null)
-                        {
-                            c.Content = HtmlEncoder.Default.Encode(c.Content);
-                        }
-                    });
-
                     var paginatedCommentsMetaData = new
                     {
                         paginatedSearchedComments.TotalItemsCount,
@@ -215,7 +214,10 @@ namespace Catalog.API.Controllers
                         paginatedSearchedComments.HasPreviousPage
                     };
 
-                    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginatedCommentsMetaData));
+                    Response.Headers.Add(
+                        "X-Pagination", 
+                        JsonConvert.SerializeObject(paginatedCommentsMetaData)
+                    );
 
                     _logger.LogInformation($"Returned {paginatedSearchedComments.TotalItemsCount} " +
                         $"{CommentsName} from database");
@@ -223,17 +225,28 @@ namespace Catalog.API.Controllers
                     return Ok(paginatedSearchedComments);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, CommentsName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
+                        CommentsName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -249,14 +262,26 @@ namespace Catalog.API.Controllers
                     return Ok(commentById);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id));
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message
+                    )
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -274,14 +299,25 @@ namespace Catalog.API.Controllers
                     return Ok(commentDetails);
                 }
 
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                _logger.LogError(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                );
 
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                );
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(GlobalConstants.GetEntityDetailsExceptionMessage, id, exception.Message));
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.GetEntityDetailsExceptionMessage, id, exception.Message)
+                );
+
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -293,9 +329,15 @@ namespace Catalog.API.Controllers
             {
                 if (createCommentDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleCommentName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleCommentName)
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleCommentName, "creation"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleCommentName, "creation"
+                        )
+                    );
                 }
 
                 var createdAlbum = await _commentsService.CreateComment(createCommentDTO);
@@ -304,11 +346,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityCreationExceptionMessage, SingleCommentName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityCreationExceptionMessage, 
+                        SingleCommentName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -320,16 +369,26 @@ namespace Catalog.API.Controllers
             {
                 if (updateCommentDTO == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityUpdate, SingleCommentName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityUpdate, SingleCommentName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleCommentName, "update"));
+                    return BadRequest(
+                        string.Format(
+                            GlobalConstants.BadRequestMessage, SingleCommentName, "update"
+                        )
+                    );
                 }
 
                 var commentToUpdate = await _commentsService.GetCommentById(id);
 
                 if (commentToUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
                 }
 
                 await _commentsService.UpdateComment(commentToUpdate, updateCommentDTO);
@@ -338,11 +397,18 @@ namespace Catalog.API.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleCommentName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleCommentName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -356,29 +422,45 @@ namespace Catalog.API.Controllers
             {
                 if (commentJsonPatchDocument == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleCommentName));
+                    _logger.LogError(
+                        string.Format(
+                            GlobalConstants.InvalidObjectForEntityPatch, SingleCommentName
+                        )
+                    );
 
-                    return BadRequest(string.Format(GlobalConstants.BadRequestMessage, SingleCommentName, "patch"));
+                    return BadRequest(
+                        string.Format(GlobalConstants.BadRequestMessage, SingleCommentName, "patch")
+                    );
                 }
 
                 var commentToPartiallyUpdate = await _commentsService.GetCommentById(id);
 
                 if (commentToPartiallyUpdate == null)
                 {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
                 }
 
-                await _commentsService.PartiallyUpdateComment(commentToPartiallyUpdate, commentJsonPatchDocument);
+                await _commentsService
+                    .PartiallyUpdateComment(commentToPartiallyUpdate, commentJsonPatchDocument);
 
                 return NoContent();
             }
             catch (Exception exception)
             {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityUpdateExceptionMessage, SingleCommentName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.EntityUpdateExceptionMessage, 
+                        SingleCommentName, 
+                        exception.Message
+                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -392,9 +474,13 @@ namespace Catalog.API.Controllers
 
                 if (commentToDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
                 }
 
                 await _commentsService.DeleteComment(commentToDelete);
@@ -412,7 +498,10 @@ namespace Catalog.API.Controllers
                     )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -426,9 +515,13 @@ namespace Catalog.API.Controllers
 
                 if (commentToHardDelete == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
                 }
 
                 await _commentsService.HardDeleteComment(commentToHardDelete);
@@ -446,7 +539,10 @@ namespace Catalog.API.Controllers
                    )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
 
@@ -460,9 +556,13 @@ namespace Catalog.API.Controllers
 
                 if (commentToRestore == null)
                 {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    _logger.LogError(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
 
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName));
+                    return NotFound(
+                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                    );
                 }
 
                 await _commentsService.RestoreComment(commentToRestore);
@@ -474,10 +574,18 @@ namespace Catalog.API.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(
-                  string.Format(GlobalConstants.EntityRestoreExceptionMessage, SingleCommentName, id, exception.Message)
+                  string.Format(
+                      GlobalConstants.EntityRestoreExceptionMessage, 
+                      SingleCommentName, 
+                      id, 
+                      exception.Message
+                  )
                 );
 
-                return StatusCode(StatusCodes.Status500InternalServerError, GlobalConstants.InternalServerErrorMessage);
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError, 
+                    GlobalConstants.InternalServerErrorMessage
+                );
             }
         }
     }
