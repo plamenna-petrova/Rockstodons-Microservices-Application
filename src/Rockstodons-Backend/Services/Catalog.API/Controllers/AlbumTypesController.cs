@@ -1,8 +1,21 @@
-﻿using Catalog.API.Common;
+﻿using Catalog.API.Application.Features.AlbumTypes.Commands.CreateAlbumType;
+using Catalog.API.Application.Features.AlbumTypes.Commands.DeleteAlbumType;
+using Catalog.API.Application.Features.AlbumTypes.Commands.HardDeleteAlbumType;
+using Catalog.API.Application.Features.AlbumTypes.Commands.PartiallyUpdateAlbumType;
+using Catalog.API.Application.Features.AlbumTypes.Commands.RestoreAlbumType;
+using Catalog.API.Application.Features.AlbumTypes.Commands.UpdateAlbumType;
+using Catalog.API.Application.Features.AlbumTypes.Queries.GetAlbumTypeById;
+using Catalog.API.Application.Features.AlbumTypes.Queries.GetAlbumTypeDetails;
+using Catalog.API.Application.Features.AlbumTypes.Queries.GetAllAlbumTypes;
+using Catalog.API.Application.Features.AlbumTypes.Queries.GetAllAlbumTypesWithDeletedRecords;
+using Catalog.API.Application.Features.AlbumTypes.Queries.GetPaginatedAlbumTypes;
+using Catalog.API.Application.Features.AlbumTypes.Queries.SearchForAlbumTypes;
+using Catalog.API.Common;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +35,17 @@ namespace Catalog.API.Controllers
         private const string AlbumTypeDetailsRouteName = "AlbumTypeDetails";
 
         private readonly IAlbumTypesService _albumTypesService;
+        private readonly IMediator _mediator;
         private ILogger<AlbumTypesController> _logger;
 
         public AlbumTypesController(
             IAlbumTypesService albumTypesService,
+            IMediator mediator,
             ILogger<AlbumTypesController> logger
         )
         {
             _albumTypesService = albumTypesService;
+            _mediator = mediator;   
             _logger = logger;
         }
 
@@ -39,7 +55,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var allAlbumTypes = await _albumTypesService.GetAllAlbumTypes();
+                var allAlbumTypes = await _mediator.Send(new GetAllAlbumTypesQuery());
 
                 if (allAlbumTypes != null)
                 {
@@ -76,8 +92,9 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var allAlbumTypesWithDeletedRecords = await _albumTypesService
-                    .GetAllAlbumTypesWithDeletedRecords();
+                var allAlbumTypesWithDeletedRecords = await _mediator.Send(
+                    new GetAllAlbumTypesWithDeletedRecordsQuery()
+                );
 
                 if (allAlbumTypesWithDeletedRecords != null)
                 {
@@ -110,11 +127,12 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
-        public async Task<ActionResult<List<Genre>>> GetPaginatedGenres(
+        public async Task<ActionResult<List<Genre>>> GetPaginatedAlbumTypes(
             [FromQuery] AlbumTypeParameters albumTypeParameters)
         {
-            var paginatedAlbumTypes = await _albumTypesService
-                .GetPaginatedAlbumTypes(albumTypeParameters);
+            var paginatedAlbumTypes = await _mediator.Send(
+                new GetPaginatedAlbumTypesQuery(albumTypeParameters)
+            );
 
             if (paginatedAlbumTypes != null)
             {
@@ -150,7 +168,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var foundAlbumTypes = await _albumTypesService.SearchForAlbumTypes(term);
+                var foundAlbumTypes = await _mediator.Send(new SearchForAlbumTypesQuery(term));
 
                 if (foundAlbumTypes != null)
                 {
@@ -185,8 +203,9 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var paginatedSearchedAlbumTypes = await _albumTypesService
-                    .PaginateSearchedAlbumTypes(albumTypeParameters);
+                var paginatedSearchedAlbumTypes = await _mediator.Send(
+                    new GetPaginatedAlbumTypesQuery(albumTypeParameters)
+                );
 
                 if (paginatedSearchedAlbumTypes != null)
                 {
@@ -238,7 +257,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumTypeById = await _albumTypesService.GetAlbumTypeById(id);
+                var albumTypeById = await _mediator.Send(new GetAlbumTypeByIdQuery(id));
 
                 if (albumTypeById != null)
                 {
@@ -273,7 +292,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumTypeDetails = await _albumTypesService.GetAlbumTypeDetails(id);
+                var albumTypeDetails = await _mediator.Send(new GetAlbumTypeDetailsQuery(id));
 
                 if (albumTypeDetails != null)
                 {
@@ -303,41 +322,29 @@ namespace Catalog.API.Controllers
         [Route("create")]
         public async Task<ActionResult> CreateAlbumType([FromBody] CreateAlbumTypeDTO createAlbumTypeDTO)
         {
-            try
+            if (createAlbumTypeDTO == null)
             {
-                if (createAlbumTypeDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityCreation, 
-                            SingleAlbumTypeName
-                        )
-                    );
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.InvalidObjectForEntityCreation,
+                        SingleAlbumTypeName
+                    )
+                );
 
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleAlbumTypeName, "creation"
-                        )
-                    );
-                }
-
-                var createdAlbumType = await _albumTypesService.CreateAlbumType(createAlbumTypeDTO);
-
-                return CreatedAtRoute(
-                    AlbumTypeDetailsRouteName, new { createdAlbumType.Id }, createdAlbumType
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleAlbumTypeName, "creation"
+                    )
                 );
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityCreationExceptionMessage, SingleAlbumTypeName, exception.Message)
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            var createdAlbumType = await _mediator.Send(
+                new CreateAlbumTypeCommand(createAlbumTypeDTO)
+            );
+
+            return CreatedAtRoute(
+                AlbumTypeDetailsRouteName, new { createdAlbumType.Id }, createdAlbumType
+            );
         }
 
         [HttpPut]
@@ -362,14 +369,14 @@ namespace Catalog.API.Controllers
                     );
                 }
 
-                var albumTypeToUpdate = await _albumTypesService.GetAlbumTypeById(id);
+                var albumTypeToUpdate = await _mediator.Send(new GetAlbumTypeByIdQuery(id));
 
                 if (albumTypeToUpdate == null)
                 {
                     return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumTypesName));
                 }
 
-                await _albumTypesService.UpdateAlbumType(albumTypeToUpdate, updateAlbumTypeDTO);
+                await _mediator.Send(new UpdateAlbumTypeCommand(albumTypeToUpdate, updateAlbumTypeDTO));
 
                 return Ok(albumTypeToUpdate);
             }
@@ -408,7 +415,7 @@ namespace Catalog.API.Controllers
                     );
                 }
 
-                var albumTypeToPartiallyUpdate = await _albumTypesService.GetAlbumTypeById(id);
+                var albumTypeToPartiallyUpdate = await _mediator.Send(new GetAlbumTypeByIdQuery(id));
 
                 if (albumTypeToPartiallyUpdate == null)
                 {
@@ -417,8 +424,12 @@ namespace Catalog.API.Controllers
                     );
                 }
 
-                await _albumTypesService
-                    .PartiallyUpdateAlbumType(albumTypeToPartiallyUpdate, albumTypeJsonPatchDocument);
+                await _mediator.Send(
+                    new PartiallyUpdateAlbumTypeCommand(
+                        albumTypeToPartiallyUpdate, 
+                        albumTypeJsonPatchDocument
+                    )
+                );
 
                 return NoContent();
             }
@@ -441,7 +452,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumTypeToDelete = await _albumTypesService.GetAlbumTypeById(id);
+                var albumTypeToDelete = await _mediator.Send(new GetAlbumTypeByIdQuery(id));
 
                 if (albumTypeToDelete == null)
                 {
@@ -454,7 +465,7 @@ namespace Catalog.API.Controllers
                     );
                 }
 
-                await _albumTypesService.DeleteAlbumType(albumTypeToDelete);
+                await _mediator.Send(new DeleteAlbumTypeCommand(albumTypeToDelete));
 
                 return NoContent();
             }
@@ -482,7 +493,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumTypeToHardDelete = await _albumTypesService.GetAlbumTypeById(id);
+                var albumTypeToHardDelete = await _mediator.Send(new GetAlbumTypeByIdQuery(id));
 
                 if (albumTypeToHardDelete == null)
                 {
@@ -495,7 +506,7 @@ namespace Catalog.API.Controllers
                     );
                 }
 
-                await _albumTypesService.HardDeleteAlbumType(albumTypeToHardDelete);
+                await _mediator.Send(new HardDeleteAlbumTypeCommand(albumTypeToHardDelete));
 
                 return NoContent();
             }
@@ -523,7 +534,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var albumTypeToRestore = await _albumTypesService.GetAlbumTypeById(id);
+                var albumTypeToRestore = await _mediator.Send(new GetAlbumTypeByIdQuery(id));
 
                 if (albumTypeToRestore == null)
                 {
@@ -536,7 +547,7 @@ namespace Catalog.API.Controllers
                     );
                 }
 
-                await _albumTypesService.RestoreAlbumType(albumTypeToRestore);
+                await _mediator.Send(new RestoreAlbumTypeCommand(albumTypeToRestore));
 
                 Uri uri = new Uri(Url.Link(AlbumTypeDetailsRouteName, new { albumTypeToRestore.Id }));
 

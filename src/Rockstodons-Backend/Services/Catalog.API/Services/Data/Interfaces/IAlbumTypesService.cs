@@ -25,14 +25,14 @@ namespace Catalog.API.Services.Data.Interfaces
 
         Task<AlbumTypeDTO> CreateAlbumType(CreateAlbumTypeDTO createAlbumTypeDTO);
 
-        Task UpdateAlbumType(AlbumType AlbumTypeToUpdate, UpdateAlbumTypeDTO updateAlbumTypeDTO);
+        Task UpdateAlbumType(AlbumType albumTypeToUpdate, UpdateAlbumTypeDTO updateAlbumTypeDTO);
 
         Task PartiallyUpdateAlbumType(AlbumType albumTypeToPartiallyUpdate, JsonPatchDocument<UpdateAlbumTypeDTO> albumTypeJsonPatchDocument);
 
-        Task DeleteAlbumType(AlbumType AlbumTypeToDelete);
+        Task DeleteAlbumType(AlbumType albumTypeToDelete);
 
-        Task HardDeleteAlbumType(AlbumType AlbumTypeToHardDelete);
+        Task HardDeleteAlbumType(AlbumType albumTypeToHardDelete);
 
-        Task RestoreAlbumType(AlbumType AlbumTypeToRestore);
+        Task RestoreAlbumType(AlbumType albumTypeToRestore);
     }
 }

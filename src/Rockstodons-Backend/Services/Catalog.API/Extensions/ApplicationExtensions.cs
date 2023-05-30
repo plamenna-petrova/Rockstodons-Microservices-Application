@@ -13,9 +13,9 @@ namespace Catalog.API.Extensions
             });
         }
 
-        public static void UseErrorHandlingMiddleware(this IApplicationBuilder applicationBuilder)
+        public static void UseExceptionHandlingMiddleware(this IApplicationBuilder applicationBuilder)
         {
-            applicationBuilder.UseMiddleware<ErrorHandlingMiddleware>();
+            applicationBuilder.UseMiddleware<ExceptionHandlingMiddleware>();
         }
     }
 }

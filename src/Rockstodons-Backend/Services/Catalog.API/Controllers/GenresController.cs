@@ -1,8 +1,12 @@
-﻿using Catalog.API.Common;
+﻿using Catalog.API.Application.Features.Genres.Commands.CreateGenre;
+using Catalog.API.Application.Features.Genres.Queries.GetAllGenres;
+using Catalog.API.Application.Features.Genres.Queries.GetGenreById;
+using Catalog.API.Common;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +26,13 @@ namespace Catalog.API.Controllers
         private const string GenreDetailsRouteName = "GenreDetails";
 
         private readonly IGenresService _genresService;
+        private readonly IMediator _mediator;
         private ILogger<GenresController> _logger;
 
-        public GenresController(IGenresService genresService, ILogger<GenresController> logger)
+        public GenresController(IGenresService genresService, IMediator mediator, ILogger<GenresController> logger)
         {
             _genresService = genresService;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -36,7 +42,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var allGenres = await _genresService.GetAllGenres();
+                var allGenres = await _mediator.Send(new GetAllGenresQuery());
 
                 if (allGenres != null)
                 {
@@ -257,7 +263,7 @@ namespace Catalog.API.Controllers
         {
             try
             {
-                var genreById = await _genresService.GetGenreById(id);
+                var genreById = await _mediator.Send(new GetGenreByIdQuery(id));
 
                 if (genreById != null)
                 {
@@ -347,7 +353,9 @@ namespace Catalog.API.Controllers
                     );
                 }
 
-                var createdGenre = await _genresService.CreateGenre(createGenreDTO);
+                //var createdGenre = await _genresService.CreateGenre(createGenreDTO);
+
+                var createdGenre = await _mediator.Send(new CreateGenreCommand(createGenreDTO));
 
                 return CreatedAtRoute(GenreDetailsRouteName, new { createdGenre.Id }, createdGenre);
             }

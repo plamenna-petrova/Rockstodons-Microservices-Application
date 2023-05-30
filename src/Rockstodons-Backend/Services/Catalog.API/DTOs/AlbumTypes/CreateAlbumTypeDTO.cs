@@ -6,7 +6,6 @@ namespace Catalog.API.DTOs.AlbumTypes
 {
     public class CreateAlbumTypeDTO : IMapFrom<AlbumType>
     {
-        [Required]
         public string Name { get; set; }
     }
 }

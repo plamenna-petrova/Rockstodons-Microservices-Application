@@ -11,6 +11,10 @@ using Catalog.API.Infrastructure.Seeding;
 using Catalog.API.Services.Messaging;
 using Catalog.API.Extensions;
 using Newtonsoft.Json;
+using MediatR;
+using Catalog.API.Application.Behaviors;
+using FluentValidation;
+using Catalog.API.Middlewares;
 
 internal class Program
 {
@@ -50,7 +54,7 @@ internal class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseSwaggerExtension();
-        app.UseErrorHandlingMiddleware();
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         app.UseEndpoints(endpoints =>
         {
@@ -72,8 +76,6 @@ internal class Program
 
         services.AddSingleton(configuration);
 
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
         services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(BaseDeletableEntityRepository<>));
         services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IDbQueryRunner, DbQueryRunner>();
@@ -88,6 +90,14 @@ internal class Program
         services.AddTransient<ISubcommentsService, SubcommentsService>();
         services.AddTransient<IEmailSender, SendGridEmailSender>();
         services.AddTransient<IFileStorageService, FileStorageService>();
+
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Program).GetTypeInfo().Assembly));
+        AssemblyScanner.FindValidatorsInAssembly(typeof(Program).Assembly)
+            .ForEach(item => services.AddScoped(item.InterfaceType, item.ValidatorType));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CustomValidationBehavior<,>));
+
+        services.AddTransient<ExceptionHandlingMiddleware>();
 
         services.AddSwaggerExtension();
 

@@ -81,11 +81,11 @@ namespace Catalog.API.Services.Data.Implementation
             return _mapper.Map<AlbumTypeDTO>(mappedAlbumType);
         }
 
-        public async Task UpdateAlbumType(AlbumType AlbumTypeToUpdate, UpdateAlbumTypeDTO updateAlbumTypeDTO)
+        public async Task UpdateAlbumType(AlbumType albumTypeToUpdate, UpdateAlbumTypeDTO updateAlbumTypeDTO)
         {
-            _mapper.Map(updateAlbumTypeDTO, AlbumTypeToUpdate);
+            _mapper.Map(updateAlbumTypeDTO, albumTypeToUpdate);
 
-            _albumTypesRepository.Update(AlbumTypeToUpdate);
+            _albumTypesRepository.Update(albumTypeToUpdate);
             await _albumTypesRepository.SaveChangesAsync();
         }
 
@@ -100,21 +100,21 @@ namespace Catalog.API.Services.Data.Implementation
             await _albumTypesRepository.SaveChangesAsync();
         }
 
-        public async Task DeleteAlbumType(AlbumType AlbumTypeToDelete)
+        public async Task DeleteAlbumType(AlbumType albumTypeToDelete)
         {
-            _albumTypesRepository.Delete(AlbumTypeToDelete);
+            _albumTypesRepository.Delete(albumTypeToDelete);
             await _albumTypesRepository.SaveChangesAsync();
         }
 
-        public async Task HardDeleteAlbumType(AlbumType AlbumTypeToHardDelete)
+        public async Task HardDeleteAlbumType(AlbumType albumTypeToHardDelete)
         {
-            _albumTypesRepository.HardDelete(AlbumTypeToHardDelete);
+            _albumTypesRepository.HardDelete(albumTypeToHardDelete);
             await _albumTypesRepository.SaveChangesAsync();
         }
 
-        public async Task RestoreAlbumType(AlbumType AlbumTypeToRestore)
+        public async Task RestoreAlbumType(AlbumType albumTypeToRestore)
         {
-            _albumTypesRepository.Restore(AlbumTypeToRestore);
+            _albumTypesRepository.Restore(albumTypeToRestore);
             await _albumTypesRepository.SaveChangesAsync();
         }
 
