@@ -1,21 +1,19 @@
 ﻿using AutoMapper;
 using Catalog.API.Application.Contracts;
-using Catalog.API.Application.Features.AlbumTypes.Commands.CreateAlbumType;
+using Catalog.API.Application.Features.AlbumTypes.Commands.UpdateAlbumType;
 using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Data.Models;
-using Catalog.API.DTOs.AlbumTypes;
-using Catalog.API.DTOs.Genres;
 using MediatR;
 
-namespace Catalog.API.Application.Features.Genres.Commands.CreateGenre
+namespace Catalog.API.Application.Features.Genres.Commands.UpdateGenre
 {
-    public class CreateGenreTypeHandler : ICommandHandler<CreateGenreCommand, GenreDTO>
+    public class UpdateGenreHandler : ICommandHandler<UpdateGenreCommand, Unit>
     {
         private readonly IDeletableEntityRepository<Genre> _genresRepository;
 
         private readonly IMapper _mapper;
 
-        public CreateGenreTypeHandler(
+        public UpdateGenreHandler(
             IDeletableEntityRepository<Genre> genresRepository,
             IMapper mapper
         )
@@ -24,19 +22,20 @@ namespace Catalog.API.Application.Features.Genres.Commands.CreateGenre
             _mapper = mapper;
         }
 
-        public async Task<GenreDTO> Handle(
-            CreateGenreCommand createGenreCommand,
+        public async Task<Unit> Handle(
+            UpdateGenreCommand updateGenreCommand,
             CancellationToken cancellationToken
         )
         {
-            var mappedGenre = _mapper.Map<Genre>(
-                createGenreCommand.createGenreDTO
+            _mapper.Map(
+                updateGenreCommand.updateGenreDTO,
+                updateGenreCommand.genreToUpdate
             );
 
-            await _genresRepository.AddAsync(mappedGenre);
+            _genresRepository.Update(updateGenreCommand.genreToUpdate);
             await _genresRepository.SaveChangesAsync();
 
-            return _mapper.Map<GenreDTO>(mappedGenre);
+            return Unit.Value;
         }
     }
 }

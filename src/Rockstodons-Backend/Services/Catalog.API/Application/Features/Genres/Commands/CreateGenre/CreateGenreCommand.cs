@@ -1,7 +1,8 @@
-﻿using Catalog.API.DTOs.Genres;
-using MediatR;
+﻿using Catalog.API.Application.Contracts;
+using Catalog.API.DTOs.Genres;
 
 namespace Catalog.API.Application.Features.Genres.Commands.CreateGenre
 {
-    public sealed record CreateGenreCommand(CreateGenreDTO createGenreDTO) : IRequest<GenreDTO>;
+    public sealed record CreateGenreCommand(CreateGenreDTO createGenreDTO)
+            : ICommand<GenreDTO>;
 }

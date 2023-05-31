@@ -3,12 +3,11 @@ using Catalog.API.Data.Models;
 using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Utils;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Catalog.API.Application.Contracts;
 using Catalog.API.Services.Mapping;
-using Catalog.API.Utils.Parameters;
+using Catalog.API.Application.Features.AlbumTypes.Queries.PaginatedSearchedAlbumTypes;
 
-namespace Catalog.API.Application.Features.AlbumTypes.Queries.PaginatedSearchedAlbumTypes
+namespace Catalog.API.Application.Features.AlbumTypes.Queries.PaginateSearchedAlbumTypes
 {
     public class PaginateSearchedAlbumTypesHandler
         : IQueryHandler<PaginateSearchedAlbumTypesQuery, PagedList<AlbumTypeDetailsDTO>>

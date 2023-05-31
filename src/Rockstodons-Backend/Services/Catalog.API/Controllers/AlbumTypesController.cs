@@ -17,13 +17,10 @@ using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Data;
 using System.Net;
-using System.Text.Encodings.Web;
 
 namespace Catalog.API.Controllers
 {
@@ -35,17 +32,11 @@ namespace Catalog.API.Controllers
         private const string SingleAlbumTypeName = "album type";
         private const string AlbumTypeDetailsRouteName = "AlbumTypeDetails";
 
-        private readonly IAlbumTypesService _albumTypesService;
         private readonly IMediator _mediator;
         private ILogger<AlbumTypesController> _logger;
 
-        public AlbumTypesController(
-            IAlbumTypesService albumTypesService,
-            IMediator mediator,
-            ILogger<AlbumTypesController> logger
-        )
+        public AlbumTypesController(IMediator mediator, ILogger<AlbumTypesController> logger)
         {
-            _albumTypesService = albumTypesService;
             _mediator = mediator;   
             _logger = logger;
         }

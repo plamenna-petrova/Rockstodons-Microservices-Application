@@ -1,19 +1,27 @@
 ﻿using Catalog.API.Application.Features.Genres.Commands.CreateGenre;
+using Catalog.API.Application.Features.Genres.Commands.DeleteGenre;
+using Catalog.API.Application.Features.Genres.Commands.HardDeleteGenre;
+using Catalog.API.Application.Features.Genres.Commands.PartiallyUpdateGenre;
+using Catalog.API.Application.Features.Genres.Commands.RestoreGenre;
+using Catalog.API.Application.Features.Genres.Commands.UpdateGenre;
 using Catalog.API.Application.Features.Genres.Queries.GetAllGenres;
+using Catalog.API.Application.Features.Genres.Queries.GetAllGenresWithDeletedRecords;
 using Catalog.API.Application.Features.Genres.Queries.GetGenreById;
+using Catalog.API.Application.Features.Genres.Queries.GetGenreDetails;
+using Catalog.API.Application.Features.Genres.Queries.GetPaginatedGenres;
+using Catalog.API.Application.Features.Genres.Queries.PaginateSearchedGenres;
+using Catalog.API.Application.Features.Genres.Queries.SearchForGenres;
 using Catalog.API.Common;
 using Catalog.API.Data.Models;
 using Catalog.API.DTOs.Genres;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
 using System.Net;
-using System.Text.Encodings.Web;
 
 namespace Catalog.API.Controllers
 {
@@ -25,13 +33,11 @@ namespace Catalog.API.Controllers
         private const string SingleGenreName = "genre";
         private const string GenreDetailsRouteName = "GenreDetails";
 
-        private readonly IGenresService _genresService;
         private readonly IMediator _mediator;
         private ILogger<GenresController> _logger;
 
-        public GenresController(IGenresService genresService, IMediator mediator, ILogger<GenresController> logger)
+        public GenresController(IMediator mediator, ILogger<GenresController> logger)
         {
-            _genresService = genresService;
             _mediator = mediator;
             _logger = logger;
         }
@@ -40,169 +46,97 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(List<GenreDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<GenreDTO>>> GetAllGenres()
         {
-            try
+            var allGenres = await _mediator.Send(new GetAllGenresQuery());
+
+            if (allGenres != null)
             {
-                var allGenres = await _mediator.Send(new GetAllGenresQuery());
-
-                if (allGenres != null)
-                {
-                    return Ok(allGenres);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
-                );
+                return Ok(allGenres);
             }
-            catch (Exception exception) 
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesExceptionMessage, 
-                        GenresName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
         }
 
         [HttpGet("all")]
         public async Task<ActionResult<List<Genre>>> GetGenresWithDeletedRecords()
         {
-            try
+            var allGenresWithDeletedRecords = await _mediator.Send(new GetAllGenresWithDeletedRecordsQuery());
+
+            if (allGenresWithDeletedRecords != null)
             {
-                var allGenresWithDeletedRecords = await _genresService.GetAllGenresWithDeletedRecords();
-
-                if (allGenresWithDeletedRecords != null)
-                {
-                    return Ok(allGenresWithDeletedRecords);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
-                );
+                return Ok(allGenresWithDeletedRecords);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        GenresName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
         }
 
         [HttpGet("paginate")]
         public async Task<ActionResult<List<Genre>>> GetPaginatedGenres(
             [FromQuery] GenreParameters genreParameters)
         {
-            try
-            {
-                var paginatedGenres = await _genresService.GetPaginatedGenres(genreParameters);
+            var paginatedGenres = await _mediator.Send(new GetPaginatedGenresQuery(genreParameters));
 
-                if (paginatedGenres != null)
+            if (paginatedGenres != null)
+            {
+                var paginatedGenresMetaData = new
                 {
-                    var paginatedGenresMetaData = new
-                    {
-                        paginatedGenres.TotalItemsCount,
-                        paginatedGenres.PageSize,
-                        paginatedGenres.CurrentPage,
-                        paginatedGenres.TotalPages,
-                        paginatedGenres.HasNextPage,
-                        paginatedGenres.HasPreviousPage
-                    };
+                    paginatedGenres.TotalItemsCount,
+                    paginatedGenres.PageSize,
+                    paginatedGenres.CurrentPage,
+                    paginatedGenres.TotalPages,
+                    paginatedGenres.HasNextPage,
+                    paginatedGenres.HasPreviousPage
+                };
 
-                    Response.Headers.Add(
-                        "X-Pagination", 
-                        JsonConvert.SerializeObject(paginatedGenresMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedGenres.TotalItemsCount} " +
-                        $"{GenresName} from database");
-
-                    return Ok(paginatedGenres);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+                Response.Headers.Add(
+                    "X-Pagination",
+                    JsonConvert.SerializeObject(paginatedGenresMetaData)
                 );
 
-                return NotFound(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
-                );
+                _logger.LogInformation($"Returned {paginatedGenres.TotalItemsCount} " +
+                    $"{GenresName} from database");
+
+                return Ok(paginatedGenres);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                  string.Format(
-                    GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                    GenresName, 
-                    exception.Message
-                  )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
         }
 
         [HttpGet]
         [Route("search/{term}")]
         public async Task<ActionResult<GenreDetailsDTO>> SearchForGenres(string term)
         {
-            try
+            var foundGenres = await _mediator.Send(new SearchForGenresQuery(term));
+
+            if (foundGenres != null)
             {
-                var foundGenres = await _genresService.SearchForGenres(term);
-
-                if (foundGenres != null)
-                {
-                    return Ok(foundGenres);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
-                );
+                return Ok(foundGenres);
             }
-            catch (Exception exception) 
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        GenresName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName)
+            );
         }
 
         [HttpGet]
@@ -210,91 +144,57 @@ namespace Catalog.API.Controllers
         public async Task<ActionResult<GenreDetailsDTO>> PaginateSearchedGenres(
             [FromQuery] GenreParameters genreParameters)
         {
-            try
-            {
-                var paginatedSearchedGenres = await _genresService.PaginateSearchedGenres(genreParameters);
+            var paginatedSearchedGenres = await _mediator.Send(new PaginateSearchedGenresQuery(genreParameters));
 
-                if (paginatedSearchedGenres != null)
+            if (paginatedSearchedGenres != null)
+            {
+                var paginatedGenresMetaData = new
                 {
-                    var paginatedGenresMetaData = new
-                    {
-                        paginatedSearchedGenres.TotalItemsCount,
-                        paginatedSearchedGenres.PageSize,
-                        paginatedSearchedGenres.CurrentPage,
-                        paginatedSearchedGenres.TotalPages,
-                        paginatedSearchedGenres.HasNextPage,
-                        paginatedSearchedGenres.HasPreviousPage
-                    };
+                    paginatedSearchedGenres.TotalItemsCount,
+                    paginatedSearchedGenres.PageSize,
+                    paginatedSearchedGenres.CurrentPage,
+                    paginatedSearchedGenres.TotalPages,
+                    paginatedSearchedGenres.HasNextPage,
+                    paginatedSearchedGenres.HasPreviousPage
+                };
 
-                    Response.Headers.Add(
-                        "X-Pagination", 
-                        JsonConvert.SerializeObject(paginatedGenresMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedSearchedGenres.TotalItemsCount} " +
-                        $"{GenresName} from database");
-
-                    return Ok(paginatedSearchedGenres);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        GenresName, 
-                        exception.Message
-                    )
+                Response.Headers.Add(
+                    "X-Pagination",
+                    JsonConvert.SerializeObject(paginatedGenresMetaData)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
+                _logger.LogInformation($"Returned {paginatedSearchedGenres.TotalItemsCount} " +
+                    $"{GenresName} from database");
+
+                return Ok(paginatedSearchedGenres);
             }
+
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, GenresName));
         }
  
         [HttpGet("{id}")]
         public async Task<ActionResult<Genre>> GetGenreById(string id)
         {
-            try
+            var genreById = await _mediator.Send(new GetGenreByIdQuery(id));
+
+            if (genreById != null)
             {
-                var genreById = await _mediator.Send(new GetGenreByIdQuery(id));
-
-                if (genreById != null)
-                {
-                    return Ok(genreById);
-                }
-
-                _logger.LogError(
-                    string.Format(
-                       GlobalConstants.EntityByIdNotFoundResult, SingleGenreName, id
-                    )
-                );
-
-                return NotFound(
-                    string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SingleGenreName, id
-                    )
-                );
+                return Ok(genreById);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(
+                   GlobalConstants.EntityByIdNotFoundResult, SingleGenreName, id
+                )
+            );
+
+            return NotFound(
+                string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SingleGenreName, id
+                )
+            );
         }
 
         [HttpGet]
@@ -302,127 +202,75 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(GenreDetailsDTO), (int) HttpStatusCode.OK)]
         public async Task<ActionResult<GenreDetailsDTO>> GetGenreDetails(string id)
         {
-            try
+            var genreDetails = await _mediator.Send(new GetGenreDetailsQuery(id));
+
+            if (genreDetails != null)
             {
-                var genreDetails = await _genresService.GetGenreDetails(id);
-
-                if (genreDetails != null)
-                {
-                    return Ok(genreDetails);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName));
-
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName));
+                return Ok(genreDetails);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetEntityDetailsExceptionMessage, 
-                        id, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName));
+
+            return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName));
         }
 
         [HttpPost]
         [Route("create")]
         public async Task<ActionResult> CreateGenre([FromBody] CreateGenreDTO createGenreDTO)
         {
-            try
+            if (createGenreDTO == null)
             {
-                if (createGenreDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityCreation, SingleGenreName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleGenreName, "creation"
-                        )
-                    );
-                }
-
-                //var createdGenre = await _genresService.CreateGenre(createGenreDTO);
-
-                var createdGenre = await _mediator.Send(new CreateGenreCommand(createGenreDTO));
-
-                return CreatedAtRoute(GenreDetailsRouteName, new { createdGenre.Id }, createdGenre);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityCreationExceptionMessage, SingleGenreName, exception.Message)
+                _logger.LogError(
+                    string.Format(
+                        GlobalConstants.InvalidObjectForEntityCreation, SingleGenreName
+                    )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleGenreName, "creation"
+                    )
                 );
             }
+
+            var createdGenre = await _mediator.Send(new CreateGenreCommand(createGenreDTO));
+
+            return CreatedAtRoute(GenreDetailsRouteName, new { createdGenre.Id }, createdGenre);
         }
 
         [HttpPut]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateGenre(string id, [FromBody] UpdateGenreDTO updateGenreDTO)
         {
-            try
-            {
-                if (updateGenreDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityUpdate, SingleGenreName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleGenreName, "update"
-                        )
-                    );
-                }
-
-                var genreToUpdate = await _genresService.GetGenreById(id);
-
-                if (genreToUpdate == null)
-                {
-                    return NotFound(
-                        string.Format(
-                            GlobalConstants.EntityByIdNotFoundResult, GenresName
-                        )
-                    );
-                }
-
-                await _genresService.UpdateGenre(genreToUpdate, updateGenreDTO);
-
-                return Ok(updateGenreDTO);
-            }
-            catch (Exception exception)
+            if (updateGenreDTO == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleGenreName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityUpdate, SingleGenreName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleGenreName, "update"
+                    )
                 );
             }
+
+            var genreToUpdate = await _mediator.Send(new GetGenreByIdQuery(id));
+
+            if (genreToUpdate == null)
+            {
+                return NotFound(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, GenresName
+                    )
+                );
+            }
+
+            await _mediator.Send(new UpdateGenreCommand(genreToUpdate, updateGenreDTO));
+
+            return Ok(updateGenreDTO);
         }
 
         [HttpPatch]
@@ -430,176 +278,103 @@ namespace Catalog.API.Controllers
         public async Task<ActionResult> PartiallyUpdateGenre(
             string id, [FromBody] JsonPatchDocument<UpdateGenreDTO> genreJsonPatchDocument)
         {
-            try
-            {
-                if (genreJsonPatchDocument == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityPatch, SingleGenreName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleGenreName, "patch"
-                        )
-                    );
-                }
-
-                var genreToPartiallyUpdate = await _genresService.GetGenreById(id);
-
-                if (genreToPartiallyUpdate == null)
-                {
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
-                    );
-                }
-
-                await _genresService.PartiallyUpdateGenre(genreToPartiallyUpdate, genreJsonPatchDocument);
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (genreJsonPatchDocument == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleGenreName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityPatch, SingleGenreName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleGenreName, "patch"
+                    )
                 );
             }
+
+            var genreToPartiallyUpdate = await _mediator.Send(new GetGenreByIdQuery(id));
+
+            if (genreToPartiallyUpdate == null)
+            {
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
+                );
+            }
+
+            await _mediator.Send(new PartiallyUpdateGenreCommand(
+                genreToPartiallyUpdate, genreJsonPatchDocument)
+            );
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteGenre(string id)
         {
-            try
-            {
-                var genreToDelete = await _genresService.GetGenreById(id);
+            var genreToDelete = await _mediator.Send(new GetGenreByIdQuery(id));
 
-                if (genreToDelete == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
-                    );
-
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
-                    );
-                }
-
-                await _genresService.DeleteGenre(genreToDelete);
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (genreToDelete == null)
             {
                 _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityDeletionExceptionMessage, 
-                        SingleGenreName, 
-                        id, 
-                        exception.Message
-                    )
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
                 );
             }
+
+            await _mediator.Send(new DeleteGenreCommand(genreToDelete));
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteGenre(string id)
         {
-            try
-            {
-                var genreToHardDelete = await _genresService.GetGenreById(id);
+            var genreToHardDelete = await _mediator.Send(new GetGenreByIdQuery(id));
 
-                if (genreToHardDelete == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
-                    );
-
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
-                    );
-                }
-
-                await _genresService.HardDeleteGenre(genreToHardDelete);
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (genreToHardDelete == null)
             {
                 _logger.LogError(
-                   string.Format(
-                       GlobalConstants.EntityHardDeletionExceptionMessage, 
-                       SingleGenreName, 
-                       id, 
-                       exception.Message
-                   )
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
                 );
             }
+
+            await _mediator.Send(new HardDeleteGenreCommand(genreToHardDelete));
+
+            return NoContent();
         }
 
         [HttpPost]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreGenre(string id)
         {
-            try
-            {
-                var genreToRestore = await _genresService.GetGenreById(id);
+            var genreToRestore = await _mediator.Send(new GetGenreByIdQuery(id));
 
-                if (genreToRestore == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
-                    );
-
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
-                    );
-                }
-
-                await _genresService.RestoreGenre(genreToRestore);
-
-                Uri uri = new Uri(Url.Link(GenreDetailsRouteName, new { genreToRestore.Id }));
-
-                return Redirect(uri.ToString());
-            }
-            catch (Exception exception)
+            if (genreToRestore == null)
             {
                 _logger.LogError(
-                  string.Format(
-                      GlobalConstants.EntityRestoreExceptionMessage, 
-                      SingleGenreName, 
-                      id, 
-                      exception.Message
-                  )
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, GenresName)
                 );
             }
+
+            await _mediator.Send(new RestoreGenreCommand(genreToRestore));
+
+            Uri uri = new Uri(Url.Link(GenreDetailsRouteName, new { genreToRestore.Id }));
+
+            return Redirect(uri.ToString());
         }
     }
 }
