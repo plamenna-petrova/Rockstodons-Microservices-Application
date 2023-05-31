@@ -1,1 +1,10 @@
-<p>terms-and-conditions works!</p>
+<div class="terms-and-conditions-wrapper">
+    <h2 nz-typography class="terms-and-conditions-heading">Terms And Conditions</h2>
+    <nz-collapse>
+        <nz-collapse-panel *ngFor="let panel of panels" [nzHeader]="panel.name" [nzActive]="panel.active" [nzDisabled]="panel.disabled">
+            <p style="margin:0;">
+                {{ panel.content }}
+            </p>
+        </nz-collapse-panel>
+    </nz-collapse>
+</div>

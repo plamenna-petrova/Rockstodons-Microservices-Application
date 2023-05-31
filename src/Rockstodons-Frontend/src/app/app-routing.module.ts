@@ -10,6 +10,7 @@ import { AlbumDetailsComponent } from './pages/catalogue/details/album-details/a
 import { PerformersDetailsComponent } from './pages/catalogue/details/performers-details/performers-details.component';
 import { StreamsCatalogueComponent } from './pages/catalogue/streams-catalogue/streams-catalogue.component';
 import { StreamDetailsComponent } from './pages/catalogue/details/stream-details/stream-details.component';
+import { TermsAndConditionsComponent } from './content/terms-and-conditions/terms-and-conditions.component';
 
 const routes: Routes = [
   {
@@ -47,6 +48,10 @@ const routes: Routes = [
   {
     path: 'should-login',
     component: ShouldLoginComponent
+  },
+  {
+    path: 'terms-and-conditions',
+    component: TermsAndConditionsComponent
   },
   {
     path: '',
