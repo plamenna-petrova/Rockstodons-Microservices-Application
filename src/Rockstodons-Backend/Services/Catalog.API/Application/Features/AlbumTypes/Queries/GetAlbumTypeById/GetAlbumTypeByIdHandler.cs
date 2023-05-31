@@ -1,7 +1,6 @@
-﻿using Catalog.API.Application.Abstractions;
+﻿using Catalog.API.Application.Contracts;
 using Catalog.API.Data.Data.Common.Repositories;
 using Catalog.API.Data.Models;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Application.Features.AlbumTypes.Queries.GetAlbumTypeById

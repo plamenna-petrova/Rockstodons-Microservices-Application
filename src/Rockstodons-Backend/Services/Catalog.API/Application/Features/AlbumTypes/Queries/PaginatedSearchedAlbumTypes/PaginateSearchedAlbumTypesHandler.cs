@@ -4,12 +4,14 @@ using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Utils;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Catalog.API.Application.Abstractions;
+using Catalog.API.Application.Contracts;
+using Catalog.API.Services.Mapping;
+using Catalog.API.Utils.Parameters;
 
 namespace Catalog.API.Application.Features.AlbumTypes.Queries.PaginatedSearchedAlbumTypes
 {
     public class PaginateSearchedAlbumTypesHandler
-        : IQueryHandler<PaginateSearchedAlbumTypesQuery, List<AlbumTypeDetailsDTO>>
+        : IQueryHandler<PaginateSearchedAlbumTypesQuery, PagedList<AlbumTypeDetailsDTO>>
     {
         private readonly IDeletableEntityRepository<AlbumType> _albumTypesRepository;
 
@@ -24,27 +26,25 @@ namespace Catalog.API.Application.Features.AlbumTypes.Queries.PaginatedSearchedA
             _mapper = mapper;
         }
 
-        public async Task<List<AlbumTypeDetailsDTO>> Handle(
-            PaginateSearchedAlbumTypesQuery paginateSearchAlbumTypesQuery,
+        public async Task<PagedList<AlbumTypeDetailsDTO>> Handle(
+            PaginateSearchedAlbumTypesQuery paginateSearchedAlbumTypesQuery,
             CancellationToken cancellationToken
         )
         {
-            var albumTypesToPaginate = await _albumTypesRepository
-                .GetAllWithDeletedRecords().ToListAsync();
-
-            var mappedAlbumsForPagination =
-                _mapper.Map<List<AlbumTypeDetailsDTO>>(albumTypesToPaginate).AsQueryable();
+            var albumTypesToPaginate = _albumTypesRepository
+                .GetAllWithDeletedRecords().MapTo<AlbumTypeDetailsDTO>();
 
             SearchByAlbumTypeName(
-                ref mappedAlbumsForPagination,
-                paginateSearchAlbumTypesQuery.albumTypeParameters.Name!
+                ref albumTypesToPaginate, 
+                paginateSearchedAlbumTypesQuery.albumTypeParameters.Name!
             );
 
-            return PagedList<AlbumTypeDetailsDTO>.ToPagedList(
-                mappedAlbumsForPagination.OrderBy(at => at.Name),
-                paginateSearchAlbumTypesQuery.albumTypeParameters.PageNumber,
-                paginateSearchAlbumTypesQuery.albumTypeParameters.PageSize
-            );
+            return PagedList<AlbumTypeDetailsDTO>
+                .ToPagedList(
+                    albumTypesToPaginate.OrderBy(at => at.Name),
+                    paginateSearchedAlbumTypesQuery.albumTypeParameters.PageNumber, 
+                    paginateSearchedAlbumTypesQuery.albumTypeParameters.PageSize
+                );
         }
 
         private void SearchByAlbumTypeName(

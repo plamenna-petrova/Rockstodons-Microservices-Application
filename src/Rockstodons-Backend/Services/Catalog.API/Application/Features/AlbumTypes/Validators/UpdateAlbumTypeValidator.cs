@@ -8,10 +8,16 @@ namespace Catalog.API.Application.Features.AlbumTypes.Validators
         public UpdateAlbumTypeValidator()
         {
             RuleFor(at => at.updateAlbumTypeDTO.Name)
-                .NotEmpty()
                 .NotNull()
-                .MinimumLength(3)
-                .MaximumLength(20);
+                .WithMessage("The album type's name is required");
+
+            RuleFor(at => at.updateAlbumTypeDTO.Name)
+                .NotEmpty()
+                .WithMessage("The album type's name must not be empty");
+
+            RuleFor(at => at.updateAlbumTypeDTO.Name)
+                .Length(2, 20)
+                .WithMessage("The album type's name must be between 2 and 20 symbols long");
         }
     }
 }

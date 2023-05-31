@@ -16,8 +16,8 @@ namespace Catalog.API.Application.Features.AlbumTypes.Validators
                 .WithMessage("The album type's name must not be empty");
 
             RuleFor(at => at.createAlbumTypeDTO.Name)
-                .Length(3, 20)
-                .WithMessage("The album type's name must be between 3 and 20 characters long");
+                .Length(2, 20)
+                .WithMessage("The album type's name must be between 2 and 20 characters long");
         }
     }
 }

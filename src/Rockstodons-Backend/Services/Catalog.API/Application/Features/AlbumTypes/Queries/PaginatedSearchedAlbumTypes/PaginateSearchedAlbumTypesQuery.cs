@@ -1,4 +1,4 @@
-﻿using Catalog.API.Application.Abstractions;
+﻿using Catalog.API.Application.Contracts;
 using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Utils;
 using Catalog.API.Utils.Parameters;
