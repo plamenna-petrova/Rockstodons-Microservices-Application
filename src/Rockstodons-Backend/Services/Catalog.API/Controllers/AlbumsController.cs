@@ -35,152 +35,81 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(List<AlbumDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<AlbumDTO>>> GetAllAlbums()
         {
-            try
+            var allAlbums = await _albumsService.GetAllAlbums();
+
+            if (allAlbums != null)
             {
-                var allAlbums = await _albumsService.GetAllAlbums();
-
-                if (allAlbums != null)
-                {
-                    return Ok(allAlbums);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+                return Ok(allAlbums);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesExceptionMessage, 
-                        AlbumsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
         }
 
         [HttpGet("all")]
         public async Task<ActionResult<List<Album>>> GetAlbumsWithDeletedRecords()
         {
-            try
+            var allAlbumsWithDeletedRecords = await _albumsService.GetAllAlbumsWithDeletedRecords();
+
+            if (allAlbumsWithDeletedRecords != null)
             {
-                var allAlbumsWithDeletedRecords = await _albumsService.GetAllAlbumsWithDeletedRecords();
-
-                if (allAlbumsWithDeletedRecords != null)
-                {
-                    return Ok(allAlbumsWithDeletedRecords);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+                return Ok(allAlbumsWithDeletedRecords);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        AlbumsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
         }
 
         [HttpGet("paginate")]
         public async Task<ActionResult<List<AlbumDTO>>> GetPaginatedAlbums(
             [FromQuery] AlbumParameters albumParameters)
         {
-            try
-            {
-                var paginatedAlbums = await _albumsService.GetPaginatedAlbums(albumParameters);
+            var paginatedAlbums = await _albumsService.GetPaginatedAlbums(albumParameters);
 
-                if (paginatedAlbums != null)
+            if (paginatedAlbums != null)
+            {
+                var paginatedAlbumsMetaData = new
                 {
-                    var paginatedAlbumsMetaData = new
-                    {
-                        paginatedAlbums.TotalItemsCount,
-                        paginatedAlbums.PageSize,
-                        paginatedAlbums.CurrentPage,
-                        paginatedAlbums.TotalPages,
-                        paginatedAlbums.HasNextPage,
-                        paginatedAlbums.HasPreviousPage
-                    };
+                    paginatedAlbums.TotalItemsCount,
+                    paginatedAlbums.PageSize,
+                    paginatedAlbums.CurrentPage,
+                    paginatedAlbums.TotalPages,
+                    paginatedAlbums.HasNextPage,
+                    paginatedAlbums.HasPreviousPage
+                };
 
-                    Response.Headers.Add(
-                        "X-Pagination", 
-                        JsonConvert.SerializeObject(paginatedAlbumsMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedAlbums.TotalItemsCount} " +
-                        $"{AlbumsName} from database");
-
-                    return Ok(paginatedAlbums);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        AlbumsName, 
-                        exception.Message
-                    )
+                Response.Headers.Add(
+                    "X-Pagination",
+                    JsonConvert.SerializeObject(paginatedAlbumsMetaData)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
+                _logger.LogInformation($"Returned {paginatedAlbums.TotalItemsCount} " +
+                    $"{AlbumsName} from database");
+
+                return Ok(paginatedAlbums);
             }
+
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
         }
 
         [HttpGet]
         [Route("search/{term}")]
         public async Task<ActionResult<AlbumDetailsDTO>> SearchForAlbums(string term)
         {
-            try
+            var foundAlbums = await _albumsService.SearchForAlbums(term);
+
+            if (foundAlbums != null)
             {
-                var foundAlbums = await _albumsService.SearchForAlbums(term);
-
-                if (foundAlbums != null)
-                {
-                    return Ok(foundAlbums);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+                return Ok(foundAlbums);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        AlbumsName, exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
         }
 
         [HttpGet]
@@ -188,92 +117,56 @@ namespace Catalog.API.Controllers
         public async Task<ActionResult<AlbumDetailsDTO>> PaginateSearchedAlbums(
             [FromQuery] AlbumParameters albumParameters)
         {
-            try
-            {
-                var paginatedSearchedAlbums = await _albumsService.PaginateSearchedAlbums(albumParameters);
+            var paginatedSearchedAlbums = await _albumsService.PaginateSearchedAlbums(albumParameters);
 
-                if (paginatedSearchedAlbums != null)
+            if (paginatedSearchedAlbums != null)
+            {
+                var paginatedAlbumsMetaData = new
                 {
-                    var paginatedAlbumsMetaData = new
-                    {
-                        paginatedSearchedAlbums.TotalItemsCount,
-                        paginatedSearchedAlbums.PageSize,
-                        paginatedSearchedAlbums.CurrentPage,
-                        paginatedSearchedAlbums.TotalPages,
-                        paginatedSearchedAlbums.HasNextPage,
-                        paginatedSearchedAlbums.HasPreviousPage
-                    };
+                    paginatedSearchedAlbums.TotalItemsCount,
+                    paginatedSearchedAlbums.PageSize,
+                    paginatedSearchedAlbums.CurrentPage,
+                    paginatedSearchedAlbums.TotalPages,
+                    paginatedSearchedAlbums.HasNextPage,
+                    paginatedSearchedAlbums.HasPreviousPage
+                };
 
-                    Response.Headers.Add(
-                        "X-Pagination", JsonConvert.SerializeObject(paginatedAlbumsMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedSearchedAlbums.TotalItemsCount} " +
-                        $"{AlbumsName} from database");
-
-                    return Ok(paginatedSearchedAlbums);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        AlbumsName, 
-                        exception.Message
-                    )
+                Response.Headers.Add(
+                    "X-Pagination", JsonConvert.SerializeObject(paginatedAlbumsMetaData)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
+                _logger.LogInformation($"Returned {paginatedSearchedAlbums.TotalItemsCount} " +
+                    $"{AlbumsName} from database");
+
+                return Ok(paginatedSearchedAlbums);
             }
+
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, AlbumsName));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Album>> GetAlbumById(string id)
         {
-            try
+            var albumById = await _albumsService.GetAlbumById(id);
+
+            if (albumById != null)
             {
-                var albumById = await _albumsService.GetAlbumById(id);
-
-                if (albumById != null)
-                {
-                    return Ok(albumById);
-                }
-
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id
-                    )
-                 );
-
-                return NotFound(
-                    string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id
-                    )
-                 );
+                return Ok(albumById);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetEntityByIdExceptionMessage, 
-                        id, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id
+                )
+             );
+
+            return NotFound(
+                string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SingleAlbumName, id
+                )
+             );
         }
 
         [HttpGet]
@@ -281,127 +174,73 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(AlbumDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<AlbumDetailsDTO>> GetAlbumDetails(string id)
         {
-            try
+            var albumDetails = await _albumsService.GetAlbumDetails(id);
+
+            if (albumDetails != null)
             {
-                var albumDetails = await _albumsService.GetAlbumDetails(id);
-
-                if (albumDetails != null)
-                {
-                    return Ok(albumDetails);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
+                return Ok(albumDetails);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetEntityDetailsExceptionMessage, 
-                        id, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
+
+            return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
         }
 
         [HttpPost]
         [Route("create")]
         public async Task<ActionResult> CreateAlbum([FromBody] CreateAlbumDTO createAlbumDTO)
         {
-            try
-            {
-                if (createAlbumDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityCreation, 
-                            SingleAlbumName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleAlbumName, "creation"
-                        )
-                    );
-                }
-
-                var createdAlbum = await _albumsService.CreateAlbum(createAlbumDTO);
-
-                return CreatedAtRoute(AlbumDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
-            }
-            catch (Exception exception)
+            if (createAlbumDTO == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityCreationExceptionMessage, 
-                        SingleAlbumName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityCreation,
+                        SingleAlbumName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleAlbumName, "creation"
+                    )
                 );
             }
+
+            var createdAlbum = await _albumsService.CreateAlbum(createAlbumDTO);
+
+            return CreatedAtRoute(AlbumDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
         }
 
         [HttpPut]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateAlbum(string id, [FromBody] UpdateAlbumDTO updateAlbumDTO)
         {
-            try
-            {
-                if (updateAlbumDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityUpdate, 
-                            SingleAlbumName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleAlbumName, "update"
-                        )
-                    );
-                }
-
-                var albumToUpdate = await _albumsService.GetAlbumById(id);
-
-                if (albumToUpdate == null)
-                {
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-                }
-
-                await _albumsService.UpdateAlbum(albumToUpdate, updateAlbumDTO);
-
-                return Ok(updateAlbumDTO);
-            }
-            catch (Exception exception)
+            if (updateAlbumDTO == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleAlbumName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityUpdate,
+                        SingleAlbumName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleAlbumName, "update"
+                    )
                 );
             }
+
+            var albumToUpdate = await _albumsService.GetAlbumById(id);
+
+            if (albumToUpdate == null)
+            {
+                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
+            }
+
+            await _albumsService.UpdateAlbum(albumToUpdate, updateAlbumDTO);
+
+            return Ok(updateAlbumDTO);
         }
 
         [HttpPatch]
@@ -409,165 +248,90 @@ namespace Catalog.API.Controllers
         public async Task<ActionResult> PartiallyUpdateAlbum(
             string id, [FromBody] JsonPatchDocument<UpdateAlbumDTO> albumJsonPatchDocument)
         {
-            try
-            {
-                if (albumJsonPatchDocument == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityPatch, 
-                            SingleAlbumName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleAlbumName, "patch"
-                        )
-                    );
-                }
-
-                var albumToPartiallyUpdate = await _albumsService.GetAlbumById(id);
-
-                if (albumToPartiallyUpdate == null)
-                {
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName)
-                    );
-                }
-
-                await _albumsService.PartiallyUpdateAlbum(albumToPartiallyUpdate, albumJsonPatchDocument);
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (albumJsonPatchDocument == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleAlbumName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityPatch,
+                        SingleAlbumName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleAlbumName, "patch"
+                    )
                 );
             }
+
+            var albumToPartiallyUpdate = await _albumsService.GetAlbumById(id);
+
+            if (albumToPartiallyUpdate == null)
+            {
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName)
+                );
+            }
+
+            await _albumsService.PartiallyUpdateAlbum(albumToPartiallyUpdate, albumJsonPatchDocument);
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteAlbum(string id)
         {
-            try
+            var albumToDelete = await _albumsService.GetAlbumById(id);
+
+            if (albumToDelete == null)
             {
-                var albumToDelete = await _albumsService.GetAlbumById(id);
+                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
 
-                if (albumToDelete == null)
-                {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-                }
-
-                await _albumsService.DeleteAlbum(albumToDelete);
-
-                return NoContent();
+                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityDeletionExceptionMessage, 
-                        SingleAlbumName, 
-                        id, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            await _albumsService.DeleteAlbum(albumToDelete);
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteAlbum(string id)
         {
-            try
+            var albumToHardDelete = await _albumsService.GetAlbumById(id);
+
+            if (albumToHardDelete == null)
             {
-                var albumToHardDelete = await _albumsService.GetAlbumById(id);
+                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
 
-                if (albumToHardDelete == null)
-                {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-                }
-
-                await _albumsService.HardDeleteAlbum(albumToHardDelete);
-
-                return NoContent();
+                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                   string.Format(
-                       GlobalConstants.EntityHardDeletionExceptionMessage, 
-                       SingleAlbumName, 
-                       id, 
-                       exception.Message
-                   )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            await _albumsService.HardDeleteAlbum(albumToHardDelete);
+
+            return NoContent();
         }
 
         [HttpPost]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreAlbum(string id)
         {
-            try
+            var albumToRestore = await _albumsService.GetAlbumById(id);
+
+            if (albumToRestore == null)
             {
-                var albumToRestore = await _albumsService.GetAlbumById(id);
+                _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
 
-                if (albumToRestore == null)
-                {
-                    _logger.LogError(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-
-                    return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
-                }
-
-                await _albumsService.RestoreAlbum(albumToRestore);
-
-                Uri uri = new Uri(Url.Link(AlbumDetailsRouteName, new { albumToRestore.Id }));
-
-                return Redirect(uri.ToString());
+                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumsName));
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                  string.Format(
-                      GlobalConstants.EntityRestoreExceptionMessage, 
-                      SingleAlbumName, 
-                      id, 
-                      exception.Message
-                  )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            await _albumsService.RestoreAlbum(albumToRestore);
+
+            Uri uri = new Uri(Url.Link(AlbumDetailsRouteName, new { albumToRestore.Id }));
+
+            return Redirect(uri.ToString());
         }
     }
 }

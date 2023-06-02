@@ -80,16 +80,14 @@ internal class Program
         services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IDbQueryRunner, DbQueryRunner>();
 
-        services.AddTransient<IGenresService, GenresService>();
-        services.AddTransient<IAlbumTypesService, AlbumTypesService>();
         services.AddTransient<IPerformersService, PerformersService>();
         services.AddTransient<IAlbumsService, AlbumsService>();
         services.AddTransient<ITracksService, TracksService>();
         services.AddTransient<IStreamsService, StreamsService>();
         services.AddTransient<ICommentsService, CommentsService>();
         services.AddTransient<ISubcommentsService, SubcommentsService>();
-        services.AddTransient<IEmailSender, SendGridEmailSender>();
         services.AddTransient<IFileStorageService, FileStorageService>();
+        services.AddTransient<IEmailSender, SendGridEmailSender>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Program).GetTypeInfo().Assembly));

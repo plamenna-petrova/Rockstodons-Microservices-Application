@@ -37,155 +37,83 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(List<SubcommentDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<SubcommentDTO>>> GetAllSubcomments()
         {
-            try
+            var allSubcomments = await _subcommentsService.GetAllSubcomments();
+
+            if (allSubcomments != null)
             {
-                var allSubcomments = await _subcommentsService.GetAllSubcomments();
-
-                if (allSubcomments != null)
-                {
-                    return Ok(allSubcomments);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+                return Ok(allSubcomments);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesExceptionMessage, 
-                        SubcommentsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
         }
 
         [HttpGet("all")]
         public async Task<ActionResult<List<Subcomment>>> GetSubcommentsWithDeletedRecords()
         {
-            try
+            var allSubcommentsWithDeletedRecords = await _subcommentsService
+                .GetAllSubcommentsWithDeletedRecords();
+
+            if (allSubcommentsWithDeletedRecords != null)
             {
-                var allSubcommentsWithDeletedRecords = await _subcommentsService
-                    .GetAllSubcommentsWithDeletedRecords();
-
-                if (allSubcommentsWithDeletedRecords != null)
-                {
-                    return Ok(allSubcommentsWithDeletedRecords);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+                return Ok(allSubcommentsWithDeletedRecords);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        SubcommentsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
         }
 
         [HttpGet("paginate")]
         public async Task<ActionResult<List<SubcommentDTO>>> GetPaginatedSubcomments(
             [FromQuery] SubcommentParameters subcommentParameters)
         {
-            try
+            var paginatedSubcomments = await _subcommentsService
+                .GetPaginatedSubcomments(subcommentParameters);
+
+            if (paginatedSubcomments != null)
             {
-                var paginatedSubcomments = await _subcommentsService
-                    .GetPaginatedSubcomments(subcommentParameters);
+                var paginatedSubcommentsMetaData = new
+                {
+                    paginatedSubcomments.TotalItemsCount,
+                    paginatedSubcomments.PageSize,
+                    paginatedSubcomments.CurrentPage,
+                    paginatedSubcomments.TotalPages,
+                    paginatedSubcomments.HasNextPage,
+                    paginatedSubcomments.HasPreviousPage
+                };
 
-                if (paginatedSubcomments != null)
-                { 
-                    var paginatedSubcommentsMetaData = new
-                    {
-                        paginatedSubcomments.TotalItemsCount,
-                        paginatedSubcomments.PageSize,
-                        paginatedSubcomments.CurrentPage,
-                        paginatedSubcomments.TotalPages,
-                        paginatedSubcomments.HasNextPage,
-                        paginatedSubcomments.HasPreviousPage
-                    };
-
-                    Response.Headers.Add(
-                        "X-Pagination", 
-                        JsonConvert.SerializeObject(paginatedSubcommentsMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedSubcomments.TotalItemsCount} " +
-                        $"{SubcommentsName} from database");
-
-                    return Ok(paginatedSubcomments);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                  string.Format(
-                      GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                      SubcommentsName, 
-                      exception.Message
-                  )
+                Response.Headers.Add(
+                    "X-Pagination",
+                    JsonConvert.SerializeObject(paginatedSubcommentsMetaData)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
+                _logger.LogInformation($"Returned {paginatedSubcomments.TotalItemsCount} " +
+                    $"{SubcommentsName} from database");
+
+                return Ok(paginatedSubcomments);
             }
+
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
         }
 
         [HttpGet]
         [Route("search/{term}")]
         public async Task<ActionResult<SubcommentDetailsDTO>> SearchForSubcomments(string term)
         {
-            try
+            var foundSubcomments = await _subcommentsService.SearchForSubcomments(term);
+
+            if (foundSubcomments != null)
             {
-                var foundSubcomments = await _subcommentsService.SearchForSubcomments(term);
-
-                if (foundSubcomments != null)
-                {
-                    return Ok(foundSubcomments);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+                return Ok(foundSubcomments);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        SubcommentsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
         }
 
         [HttpGet]
@@ -193,86 +121,54 @@ namespace Catalog.API.Controllers
         public async Task<ActionResult<SubcommentDetailsDTO>> PaginateSearchedSubcomments(
             [FromQuery] SubcommentParameters subcommentParameters)
         {
-            try
-            {
-                var paginatedSearchedSubcomments = await _subcommentsService
-                    .PaginateSearchedSubcomments(subcommentParameters);
+            var paginatedSearchedSubcomments = await _subcommentsService
+                .PaginateSearchedSubcomments(subcommentParameters);
 
-                if (paginatedSearchedSubcomments != null)
+            if (paginatedSearchedSubcomments != null)
+            {
+                var paginatedSubcommentsMetaData = new
                 {
-                    var paginatedSubcommentsMetaData = new
-                    {
-                        paginatedSearchedSubcomments.TotalItemsCount,
-                        paginatedSearchedSubcomments.PageSize,
-                        paginatedSearchedSubcomments.CurrentPage,
-                        paginatedSearchedSubcomments.TotalPages,
-                        paginatedSearchedSubcomments.HasNextPage,
-                        paginatedSearchedSubcomments.HasPreviousPage
-                    };
+                    paginatedSearchedSubcomments.TotalItemsCount,
+                    paginatedSearchedSubcomments.PageSize,
+                    paginatedSearchedSubcomments.CurrentPage,
+                    paginatedSearchedSubcomments.TotalPages,
+                    paginatedSearchedSubcomments.HasNextPage,
+                    paginatedSearchedSubcomments.HasPreviousPage
+                };
 
-                    Response.Headers.Add(
-                        "X-Pagination", 
-                        JsonConvert.SerializeObject(paginatedSubcommentsMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedSearchedSubcomments.TotalItemsCount} " +
-                        $"{SubcommentsName} from database");
-
-                    return Ok(paginatedSearchedSubcomments);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        SubcommentsName, 
-                        exception.Message
-                    )
+                Response.Headers.Add(
+                    "X-Pagination",
+                    JsonConvert.SerializeObject(paginatedSubcommentsMetaData)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
+                _logger.LogInformation($"Returned {paginatedSearchedSubcomments.TotalItemsCount} " +
+                    $"{SubcommentsName} from database");
+
+                return Ok(paginatedSearchedSubcomments);
             }
+
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, SubcommentsName));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Subcomment>> GetSubcommentById(string id)
         {
-            try
+            var subcommentById = await _subcommentsService.GetSubcommentById(id);
+
+            if (subcommentById != null)
             {
-                var subcommentById = await _subcommentsService.GetSubcommentById(id);
-
-                if (subcommentById != null)
-                {
-                    return Ok(subcommentById);
-                }
-
-                _logger.LogError(string.Format(
-                    GlobalConstants.EntityByIdNotFoundResult, SingleSubcommentName, id)
-                );
-
-                return NotFound(string.Format(
-                    GlobalConstants.EntityByIdNotFoundResult, SingleSubcommentName, id)
-                );
+                return Ok(subcommentById);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(string.Format(
-                    GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message)
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(
+                GlobalConstants.EntityByIdNotFoundResult, SingleSubcommentName, id)
+            );
+
+            return NotFound(string.Format(
+                GlobalConstants.EntityByIdNotFoundResult, SingleSubcommentName, id)
+            );
         }
 
         [HttpGet]
@@ -280,76 +176,40 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(SubcommentDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<SubcommentDetailsDTO>> GetSubcommentDetails(string id)
         {
-            try
+            var subcommentDetails = await _subcommentsService.GetSubcommentDetails(id);
+
+            if (subcommentDetails != null)
             {
-                var subcommentDetails = await _subcommentsService.GetSubcommentDetails(id);
-
-                if (subcommentDetails != null)
-                {
-                    return Ok(subcommentDetails);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                );
+                return Ok(subcommentDetails);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetEntityDetailsExceptionMessage, 
-                        id, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
+            );
         }
 
         [HttpPost]
         [Route("create")]
         public async Task<ActionResult> CreateSubcomment([FromBody] CreateSubcommentDTO createSubcommentDTO)
         {
-            try
-            {
-                if (createSubcommentDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleSubcommentName)
-                    );
-
-                    return BadRequest(
-                        string.Format(GlobalConstants.BadRequestMessage, SingleSubcommentName, "creation")
-                    );
-                }
-
-                var createdAlbum = await _subcommentsService.CreateSubcomment(createSubcommentDTO);
-
-                return CreatedAtRoute(SubcommentDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
-            }
-            catch (Exception exception)
+            if (createSubcommentDTO == null)
             {
                 _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityCreationExceptionMessage, 
-                        SingleSubcommentName, 
-                        exception.Message
-                    )
+                    string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleSubcommentName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(GlobalConstants.BadRequestMessage, SingleSubcommentName, "creation")
                 );
             }
+
+            var createdAlbum = await _subcommentsService.CreateSubcomment(createSubcommentDTO);
+
+            return CreatedAtRoute(SubcommentDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
         }
 
         [HttpPut]
@@ -357,50 +217,32 @@ namespace Catalog.API.Controllers
         public async Task<ActionResult> UpdateSubcomment(
             string id, [FromBody] UpdateSubcommentDTO updateSubcommentDTO)
         {
-            try
-            {
-                if (updateSubcommentDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityUpdate, 
-                            SingleSubcommentName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(GlobalConstants.BadRequestMessage, SingleSubcommentName, "update")
-                    );
-                }
-
-                var subcommentToUpdate = await _subcommentsService.GetSubcommentById(id);
-
-                if (subcommentToUpdate == null)
-                {
-                    return NotFound(string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-                }
-
-                await _subcommentsService.UpdateSubcomment(subcommentToUpdate, updateSubcommentDTO);
-
-                return Ok(updateSubcommentDTO);
-            }
-            catch (Exception exception)
+            if (updateSubcommentDTO == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleSubcommentName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityUpdate,
+                        SingleSubcommentName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(GlobalConstants.BadRequestMessage, SingleSubcommentName, "update")
                 );
             }
+
+            var subcommentToUpdate = await _subcommentsService.GetSubcommentById(id);
+
+            if (subcommentToUpdate == null)
+            {
+                return NotFound(string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
+                );
+            }
+
+            await _subcommentsService.UpdateSubcomment(subcommentToUpdate, updateSubcommentDTO);
+
+            return Ok(updateSubcommentDTO);
         }
 
         [HttpPatch]
@@ -408,174 +250,99 @@ namespace Catalog.API.Controllers
         public async Task<ActionResult> PartiallyUpdateSubcomment(
             string id, [FromBody] JsonPatchDocument<UpdateSubcommentDTO> subcommentJsonPatchDocument)
         {
-            try
-            {
-                if (subcommentJsonPatchDocument == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleSubcommentName)
-                    );
-
-                    return BadRequest(
-                        string.Format(GlobalConstants.BadRequestMessage, SingleSubcommentName, "patch")
-                    );
-                }
-
-                var subcommentToPartiallyUpdate = await _subcommentsService.GetSubcommentById(id);
-
-                if (subcommentToPartiallyUpdate == null)
-                {
-                    return NotFound(string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-                }
-
-                await _subcommentsService.PartiallyUpdateSubcomment(
-                    subcommentToPartiallyUpdate, subcommentJsonPatchDocument
-                );
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (subcommentJsonPatchDocument == null)
             {
                 _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleSubcommentName, 
-                        exception.Message
-                    )
+                    string.Format(GlobalConstants.InvalidObjectForEntityPatch, SingleSubcommentName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(GlobalConstants.BadRequestMessage, SingleSubcommentName, "patch")
                 );
             }
+
+            var subcommentToPartiallyUpdate = await _subcommentsService.GetSubcommentById(id);
+
+            if (subcommentToPartiallyUpdate == null)
+            {
+                return NotFound(string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
+                );
+            }
+
+            await _subcommentsService.PartiallyUpdateSubcomment(
+                subcommentToPartiallyUpdate, subcommentJsonPatchDocument
+            );
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteSubcomment(string id)
         {
-            try
+            var subcommentToDelete = await _subcommentsService.GetSubcommentById(id);
+
+            if (subcommentToDelete == null)
             {
-                var subcommentToDelete = await _subcommentsService.GetSubcommentById(id);
-
-                if (subcommentToDelete == null)
-                {
-                    _logger.LogError(string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-
-                    return NotFound(string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-                }
-
-                await _subcommentsService.DeleteSubcomment(subcommentToDelete);
-
-                return NoContent();
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityDeletionExceptionMessage, 
-                        SingleSubcommentName, 
-                        id, 
-                        exception.Message
-                    )
+                _logger.LogError(string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
                 );
             }
+
+            await _subcommentsService.DeleteSubcomment(subcommentToDelete);
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteSubcomment(string id)
         {
-            try
+            var subcommentToHardDelete = await _subcommentsService.GetSubcommentById(id);
+
+            if (subcommentToHardDelete == null)
             {
-                var subcommentToHardDelete = await _subcommentsService.GetSubcommentById(id);
-
-                if (subcommentToHardDelete == null)
-                {
-                    _logger.LogError(string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-                }
-
-                await _subcommentsService.HardDeleteSubcomment(subcommentToHardDelete);
-
-                return NoContent();
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                   string.Format(
-                       GlobalConstants.EntityHardDeletionExceptionMessage, 
-                       SingleSubcommentName, 
-                       id, 
-                       exception.Message
-                   )
+                _logger.LogError(string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
                 );
             }
+
+            await _subcommentsService.HardDeleteSubcomment(subcommentToHardDelete);
+
+            return NoContent();
         }
 
         [HttpPost]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreSubcomment(string id)
         {
-            try
+            var subcommentToRestore = await _subcommentsService.GetSubcommentById(id);
+
+            if (subcommentToRestore == null)
             {
-                var subcommentToRestore = await _subcommentsService.GetSubcommentById(id);
-
-                if (subcommentToRestore == null)
-                {
-                    _logger.LogError(string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-
-                    return NotFound(string.Format(
-                        GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
-                    );
-                }
-
-                await _subcommentsService.RestoreSubcomment(subcommentToRestore);
-
-                Uri uri = new Uri(Url.Link(SubcommentDetailsRouteName, new { subcommentToRestore.Id }));
-
-                return Redirect(uri.ToString());
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                      string.Format(
-                          GlobalConstants.EntityRestoreExceptionMessage, 
-                          SingleSubcommentName, 
-                          id, 
-                          exception.Message
-                      )
+                _logger.LogError(string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(string.Format(
+                    GlobalConstants.EntityByIdNotFoundResult, SubcommentsName)
                 );
             }
+
+            await _subcommentsService.RestoreSubcomment(subcommentToRestore);
+
+            Uri uri = new Uri(Url.Link(SubcommentDetailsRouteName, new { subcommentToRestore.Id }));
+
+            return Redirect(uri.ToString());
         }
     }
 }

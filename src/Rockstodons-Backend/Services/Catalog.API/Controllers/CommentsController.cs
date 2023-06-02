@@ -35,69 +35,35 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(List<CommentDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<CommentDTO>>> GetAllComments()
         {
-            try
+            var allComments = await _commentsService.GetAllComments();
+
+            if (allComments != null)
             {
-                var allComments = await _commentsService.GetAllComments();
-
-                if (allComments != null)
-                {
-                    return Ok(allComments);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+                return Ok(allComments);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesExceptionMessage, CommentsName, exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
         }
 
         [HttpGet("all")]
         public async Task<ActionResult<List<Comment>>> GetCommentsWithDeletedRecords()
         {
-            try
+            var allCommentsWithDeletedRecords = await _commentsService.GetAllCommentsWithDeletedRecords();
+
+            if (allCommentsWithDeletedRecords != null)
             {
-                var allCommentsWithDeletedRecords = await _commentsService.GetAllCommentsWithDeletedRecords();
-
-                if (allCommentsWithDeletedRecords != null)
-                {
-                    return Ok(allCommentsWithDeletedRecords);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
-                );
+                return Ok(allCommentsWithDeletedRecords);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        CommentsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+            );
         }
 
         [HttpGet("paginate")]
@@ -105,90 +71,54 @@ namespace Catalog.API.Controllers
             [FromQuery] CommentParameters commentParameters
         )
         {
-            try
-            {
-                var paginatedComments = await _commentsService.GetPaginatedComments(commentParameters);
+            var paginatedComments = await _commentsService.GetPaginatedComments(commentParameters);
 
-                if (paginatedComments != null)
+            if (paginatedComments != null)
+            {
+                var paginatedCommentsMetaData = new
                 {
-                    var paginatedCommentsMetaData = new
-                    {
-                        paginatedComments.TotalItemsCount,
-                        paginatedComments.PageSize,
-                        paginatedComments.CurrentPage,
-                        paginatedComments.TotalPages,
-                        paginatedComments.HasNextPage,
-                        paginatedComments.HasPreviousPage
-                    };
+                    paginatedComments.TotalItemsCount,
+                    paginatedComments.PageSize,
+                    paginatedComments.CurrentPage,
+                    paginatedComments.TotalPages,
+                    paginatedComments.HasNextPage,
+                    paginatedComments.HasPreviousPage
+                };
 
-                    Response.Headers.Add(
-                        "X-Pagination", 
-                        JsonConvert.SerializeObject(paginatedCommentsMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedComments.TotalItemsCount} " +
-                        $"{CommentsName} from database");
-
-                    return Ok(paginatedComments);
-                }
-
-                _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
-
-                return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        CommentsName, 
-                        exception.Message
-                    )
+                Response.Headers.Add(
+                    "X-Pagination",
+                    JsonConvert.SerializeObject(paginatedCommentsMetaData)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
+                _logger.LogInformation($"Returned {paginatedComments.TotalItemsCount} " +
+                    $"{CommentsName} from database");
+
+                return Ok(paginatedComments);
             }
+
+            _logger.LogError(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
+
+            return NotFound(string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName));
         }
 
         [HttpGet]
         [Route("search/{term}")]
         public async Task<ActionResult<CommentDetailsDTO>> SearchForComments(string term)
         {
-            try
+            var foundComments = await _commentsService.SearchForComments(term);
+
+            if (foundComments != null)
             {
-                var foundComments = await _commentsService.SearchForComments(term);
-
-                if (foundComments != null)
-                {
-                    return Ok(foundComments);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
-                );
+                return Ok(foundComments);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        CommentsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+            );
         }
 
         [HttpGet]
@@ -197,92 +127,58 @@ namespace Catalog.API.Controllers
             [FromQuery] CommentParameters commentParameters
         )
         {
-            try
-            {
-                var paginatedSearchedComments = await _commentsService
-                    .PaginateSearchedComments(commentParameters);
+            var paginatedSearchedComments = await _commentsService
+                .PaginateSearchedComments(commentParameters);
 
-                if (paginatedSearchedComments != null)
+            if (paginatedSearchedComments != null)
+            {
+                var paginatedCommentsMetaData = new
                 {
-                    var paginatedCommentsMetaData = new
-                    {
-                        paginatedSearchedComments.TotalItemsCount,
-                        paginatedSearchedComments.PageSize,
-                        paginatedSearchedComments.CurrentPage,
-                        paginatedSearchedComments.TotalPages,
-                        paginatedSearchedComments.HasNextPage,
-                        paginatedSearchedComments.HasPreviousPage
-                    };
+                    paginatedSearchedComments.TotalItemsCount,
+                    paginatedSearchedComments.PageSize,
+                    paginatedSearchedComments.CurrentPage,
+                    paginatedSearchedComments.TotalPages,
+                    paginatedSearchedComments.HasNextPage,
+                    paginatedSearchedComments.HasPreviousPage
+                };
 
-                    Response.Headers.Add(
-                        "X-Pagination", 
-                        JsonConvert.SerializeObject(paginatedCommentsMetaData)
-                    );
-
-                    _logger.LogInformation($"Returned {paginatedSearchedComments.TotalItemsCount} " +
-                        $"{CommentsName} from database");
-
-                    return Ok(paginatedSearchedComments);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+                Response.Headers.Add(
+                    "X-Pagination",
+                    JsonConvert.SerializeObject(paginatedCommentsMetaData)
                 );
 
-                return NotFound(
-                    string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
-                );
+                _logger.LogInformation($"Returned {paginatedSearchedComments.TotalItemsCount} " +
+                    $"{CommentsName} from database");
+
+                return Ok(paginatedSearchedComments);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetAllEntitiesWithDeletedRecordsExceptionMessage, 
-                        CommentsName, 
-                        exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntitiesNotFoundResult, CommentsName)
+            );
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetCommentById(string id)
         {
-            try
+            var commentById = await _commentsService.GetCommentById(id);
+
+            if (commentById != null)
             {
-                var commentById = await _commentsService.GetCommentById(id);
-
-                if (commentById != null)
-                {
-                    return Ok(commentById);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id)
-                );
+                return Ok(commentById);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetEntityByIdExceptionMessage, id, exception.Message
-                    )
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntityByIdNotFoundResult, SingleCommentName, id)
+            );
         }
 
         [HttpGet]
@@ -290,126 +186,75 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(CommentDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<CommentDetailsDTO>> GetCommentDetails(string id)
         {
-            try
+            var commentDetails = await _commentsService.GetCommentDetails(id);
+
+            if (commentDetails != null)
             {
-                var commentDetails = await _commentsService.GetCommentDetails(id);
-
-                if (commentDetails != null)
-                {
-                    return Ok(commentDetails);
-                }
-
-                _logger.LogError(
-                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                );
-
-                return NotFound(
-                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                );
+                return Ok(commentDetails);
             }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    string.Format(
-                        GlobalConstants.GetEntityDetailsExceptionMessage, id, exception.Message)
-                );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
-                );
-            }
+            _logger.LogError(
+                string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+            );
+
+            return NotFound(
+                string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+            );
         }
 
         [HttpPost]
         [Route("create")]
         public async Task<ActionResult> CreateComment([FromBody] CreateCommentDTO createCommentDTO)
         {
-            try
-            {
-                if (createCommentDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleCommentName)
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleCommentName, "creation"
-                        )
-                    );
-                }
-
-                var createdAlbum = await _commentsService.CreateComment(createCommentDTO);
-
-                return CreatedAtRoute(CommentDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
-            }
-            catch (Exception exception)
+            if (createCommentDTO == null)
             {
                 _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityCreationExceptionMessage, 
-                        SingleCommentName, 
-                        exception.Message
-                    )
+                    string.Format(GlobalConstants.InvalidObjectForEntityCreation, SingleCommentName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleCommentName, "creation"
+                    )
                 );
             }
+
+            var createdAlbum = await _commentsService.CreateComment(createCommentDTO);
+
+            return CreatedAtRoute(CommentDetailsRouteName, new { createdAlbum.Id }, createdAlbum);
         }
 
         [HttpPut]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateComment(string id, [FromBody] UpdateCommentDTO updateCommentDTO)
         {
-            try
-            {
-                if (updateCommentDTO == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityUpdate, SingleCommentName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(
-                            GlobalConstants.BadRequestMessage, SingleCommentName, "update"
-                        )
-                    );
-                }
-
-                var commentToUpdate = await _commentsService.GetCommentById(id);
-
-                if (commentToUpdate == null)
-                {
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-                }
-
-                await _commentsService.UpdateComment(commentToUpdate, updateCommentDTO);
-
-                return Ok(updateCommentDTO);
-            }
-            catch (Exception exception)
+            if (updateCommentDTO == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleCommentName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityUpdate, SingleCommentName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(
+                        GlobalConstants.BadRequestMessage, SingleCommentName, "update"
+                    )
                 );
             }
+
+            var commentToUpdate = await _commentsService.GetCommentById(id);
+
+            if (commentToUpdate == null)
+            {
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                );
+            }
+
+            await _commentsService.UpdateComment(commentToUpdate, updateCommentDTO);
+
+            return Ok(updateCommentDTO);
         }
 
         [HttpPatch]
@@ -418,175 +263,100 @@ namespace Catalog.API.Controllers
             string id, [FromBody] JsonPatchDocument<UpdateCommentDTO> commentJsonPatchDocument
         )
         {
-            try
-            {
-                if (commentJsonPatchDocument == null)
-                {
-                    _logger.LogError(
-                        string.Format(
-                            GlobalConstants.InvalidObjectForEntityPatch, SingleCommentName
-                        )
-                    );
-
-                    return BadRequest(
-                        string.Format(GlobalConstants.BadRequestMessage, SingleCommentName, "patch")
-                    );
-                }
-
-                var commentToPartiallyUpdate = await _commentsService.GetCommentById(id);
-
-                if (commentToPartiallyUpdate == null)
-                {
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-                }
-
-                await _commentsService
-                    .PartiallyUpdateComment(commentToPartiallyUpdate, commentJsonPatchDocument);
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (commentJsonPatchDocument == null)
             {
                 _logger.LogError(
                     string.Format(
-                        GlobalConstants.EntityUpdateExceptionMessage, 
-                        SingleCommentName, 
-                        exception.Message
+                        GlobalConstants.InvalidObjectForEntityPatch, SingleCommentName
                     )
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return BadRequest(
+                    string.Format(GlobalConstants.BadRequestMessage, SingleCommentName, "patch")
                 );
             }
+
+            var commentToPartiallyUpdate = await _commentsService.GetCommentById(id);
+
+            if (commentToPartiallyUpdate == null)
+            {
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
+                );
+            }
+
+            await _commentsService
+                .PartiallyUpdateComment(commentToPartiallyUpdate, commentJsonPatchDocument);
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteComment(string id)
         {
-            try
-            {
-                var commentToDelete = await _commentsService.GetCommentById(id);
+            var commentToDelete = await _commentsService.GetCommentById(id);
 
-                if (commentToDelete == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-                }
-
-                await _commentsService.DeleteComment(commentToDelete);
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (commentToDelete == null)
             {
                 _logger.LogError(
-                    string.Format(
-                        GlobalConstants.EntityDeletionExceptionMessage, 
-                        SingleCommentName, 
-                        id, 
-                        exception.Message
-                    )
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
                 );
             }
+
+            await _commentsService.DeleteComment(commentToDelete);
+
+            return NoContent();
         }
 
         [HttpDelete]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteComment(string id)
         {
-            try
-            {
-                var commentToHardDelete = await _commentsService.GetCommentById(id);
+            var commentToHardDelete = await _commentsService.GetCommentById(id);
 
-                if (commentToHardDelete == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-                }
-
-                await _commentsService.HardDeleteComment(commentToHardDelete);
-
-                return NoContent();
-            }
-            catch (Exception exception)
+            if (commentToHardDelete == null)
             {
                 _logger.LogError(
-                   string.Format(
-                       GlobalConstants.EntityHardDeletionExceptionMessage, 
-                       SingleCommentName, 
-                       id, 
-                       exception.Message
-                   )
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
                 );
             }
+
+            await _commentsService.HardDeleteComment(commentToHardDelete);
+
+            return NoContent();
         }
 
         [HttpPost]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreComment(string id)
         {
-            try
-            {
-                var commentToRestore = await _commentsService.GetCommentById(id);
+            var commentToRestore = await _commentsService.GetCommentById(id);
 
-                if (commentToRestore == null)
-                {
-                    _logger.LogError(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-
-                    return NotFound(
-                        string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
-                    );
-                }
-
-                await _commentsService.RestoreComment(commentToRestore);
-
-                Uri uri = new Uri(Url.Link(CommentDetailsRouteName, new { commentToRestore.Id }));
-
-                return Redirect(uri.ToString());
-            }
-            catch (Exception exception)
+            if (commentToRestore == null)
             {
                 _logger.LogError(
-                  string.Format(
-                      GlobalConstants.EntityRestoreExceptionMessage, 
-                      SingleCommentName, 
-                      id, 
-                      exception.Message
-                  )
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
                 );
 
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError, 
-                    GlobalConstants.InternalServerErrorMessage
+                return NotFound(
+                    string.Format(GlobalConstants.EntityByIdNotFoundResult, CommentsName)
                 );
             }
+
+            await _commentsService.RestoreComment(commentToRestore);
+
+            Uri uri = new Uri(Url.Link(CommentDetailsRouteName, new { commentToRestore.Id }));
+
+            return Redirect(uri.ToString());
         }
     }
 }
