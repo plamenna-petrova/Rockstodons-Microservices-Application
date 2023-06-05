@@ -17,6 +17,7 @@ using Catalog.API.DTOs.AlbumTypes;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -42,6 +43,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(List<AlbumTypeDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<AlbumTypeDTO>>> GetAllAlbumTypes()
         {
@@ -62,6 +64,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<AlbumType>>> GetAlbumTypesWithDeletedRecords()
         {
             var allAlbumTypesWithDeletedRecords = await _mediator.Send(
@@ -83,6 +86,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Genre>>> GetPaginatedAlbumTypes(
             [FromQuery] AlbumTypeParameters albumTypeParameters)
         {
@@ -119,6 +123,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search/{term}")]
         public async Task<ActionResult<AlbumTypeDetailsDTO>> SearchForAlbumTypes(string term)
         {
@@ -135,6 +140,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search")]
         public async Task<ActionResult<AlbumTypeDetailsDTO>> PaginateSearchedAlbumTypes(
             [FromQuery] AlbumTypeParameters albumTypeParameters)
@@ -172,6 +178,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("{id}")]
         public async Task<ActionResult<AlbumType>> GetAlbumTypeById(string id)
         {
@@ -192,6 +199,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("details/{id}", Name = AlbumTypeDetailsRouteName)]
         [ProducesResponseType(typeof(AlbumTypeDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<AlbumTypeDetailsDTO>> GetAlbumTypeDetails(string id)
@@ -209,8 +217,14 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("create")]
-        public async Task<ActionResult> CreateAlbumType([FromBody] CreateAlbumTypeDTO createAlbumTypeDTO)
+        public async Task<ActionResult> CreateAlbumType(
+            [FromBody] CreateAlbumTypeDTO createAlbumTypeDTO)
         {
             if (createAlbumTypeDTO == null)
             {
@@ -238,6 +252,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateAlbumType(
             string id, [FromBody] UpdateAlbumTypeDTO updateAlbumTypeDTO)
@@ -261,15 +280,26 @@ namespace Catalog.API.Controllers
 
             if (albumTypeToUpdate == null)
             {
-                return NotFound(string.Format(GlobalConstants.EntityByIdNotFoundResult, AlbumTypesName));
+                return NotFound(
+                    string.Format(
+                        GlobalConstants.EntityByIdNotFoundResult, AlbumTypesName
+                    )
+                );
             }
 
-            await _mediator.Send(new UpdateAlbumTypeCommand(albumTypeToUpdate, updateAlbumTypeDTO));
+            await _mediator.Send(
+                new UpdateAlbumTypeCommand(albumTypeToUpdate, updateAlbumTypeDTO)
+            );
 
             return Ok(albumTypeToUpdate);
         }
 
         [HttpPatch]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateGenre(
             string id, [FromBody] JsonPatchDocument<UpdateAlbumTypeDTO> albumTypeJsonPatchDocument)
@@ -309,6 +339,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteAlbumType(string id)
         {
@@ -331,6 +366,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteAlbumType(string id)
         {
@@ -353,6 +389,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreAlbumType(string id)
         {

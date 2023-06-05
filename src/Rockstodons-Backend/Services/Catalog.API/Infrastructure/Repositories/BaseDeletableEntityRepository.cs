@@ -13,13 +13,17 @@ namespace Catalog.API.Infrastructure.Repositories
             
         }
 
-        public override IQueryable<TEntity> GetAll() => base.GetAll().Where(x => !x.IsDeleted);
+        public override IQueryable<TEntity> GetAll() 
+            => base.GetAll().Where(x => !x.IsDeleted);
 
-        public override IQueryable<TEntity> GetAllAsNoTracking() => base.GetAllAsNoTracking().Where(x => !x.IsDeleted);
+        public override IQueryable<TEntity> GetAllAsNoTracking() 
+            => base.GetAllAsNoTracking().Where(x => !x.IsDeleted);
 
-        public IQueryable<TEntity> GetAllWithDeletedRecords() => base.GetAll().IgnoreQueryFilters();
+        public IQueryable<TEntity> GetAllWithDeletedRecords() 
+            => base.GetAll().IgnoreQueryFilters();
 
-        public IQueryable<TEntity> GetAllAsNoTrackingWithDeletedRecords() => base.GetAllAsNoTracking().IgnoreQueryFilters();
+        public IQueryable<TEntity> GetAllAsNoTrackingWithDeletedRecords() 
+            => base.GetAllAsNoTracking().IgnoreQueryFilters();
 
         public void HardDelete(TEntity entity) => base.Delete(entity);
 
@@ -27,14 +31,14 @@ namespace Catalog.API.Infrastructure.Repositories
         {
             entity.IsDeleted = false;
             entity.DeletedOn = null;
-            this.Update(entity);
+            Update(entity);
         }
 
         public override void Delete(TEntity entity)
         {
             entity.IsDeleted = true;
             entity.DeletedOn = DateTime.Now;
-            this.Update(entity);
+            Update(entity);
         }
     }
 }

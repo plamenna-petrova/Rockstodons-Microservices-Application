@@ -1,17 +1,12 @@
 ﻿using Catalog.API.Common;
-using Catalog.API.Data.Data.Models;
-using Catalog.API.DTOs.Performers;
 using Catalog.API.DTOs.Streams;
-using Catalog.API.DTOs.Tracks;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
-using System.Text.Encodings.Web;
 using Stream = Catalog.API.Data.Data.Models.Stream;
 
 namespace Catalog.API.Controllers
@@ -34,6 +29,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(List<StreamDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<StreamDTO>>> GetAllStreams()
         {
@@ -54,6 +50,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Stream>>> GetStreamsWithDeletedRecords()
         {
             var allStreamsWithDeletedRecords = await _streamsService.GetAllStreamsWithDeletedRecords();
@@ -77,6 +74,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Stream>>> GetPaginatedStreams(
             [FromQuery] StreamParameters streamParameters)
         {
@@ -111,6 +109,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search/{term}")]
         public async Task<ActionResult<StreamDetailsDTO>> SearchForStreams(string term)
         {
@@ -131,6 +130,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search")]
         public async Task<ActionResult<StreamDetailsDTO>> PaginateSearchedStreams(
             [FromQuery] StreamParameters streamParameters)
@@ -171,6 +171,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]    
         public async Task<ActionResult<Stream>> GetStreamById(string id)
         {
             var streamById = await _streamsService.GetStreamById(id);
@@ -194,6 +195,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("details/{id}", Name = StreamDetailsRouteName)]
         [ProducesResponseType(typeof(StreamDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<StreamDetailsDTO>> GetStreamDetails(string id)
@@ -215,7 +217,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("create")]
         public async Task<ActionResult> CreateStream([FromBody] CreateStreamDTO createStreamDTO)
         {
@@ -240,6 +246,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateStream(string id, [FromBody] UpdateStreamDTO updateStreamDTO)
         {
@@ -273,6 +284,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateTrack(
             string id, [FromBody] JsonPatchDocument<UpdateStreamDTO> streamJsonPatchDocument)
@@ -308,6 +324,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteStream(string id)
         {
@@ -330,6 +351,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteStream(string id)
         {
@@ -352,6 +374,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreStream(string id)
         {

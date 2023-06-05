@@ -16,7 +16,9 @@ namespace Catalog.API.Application.Behaviors
             _validators = validators;
         }
 
-        public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public Task<TResponse> Handle(
+            TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken
+        )
         {
             var context = new ValidationContext<TRequest>(request);
 

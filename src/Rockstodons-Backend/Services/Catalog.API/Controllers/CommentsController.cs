@@ -5,6 +5,7 @@ using Catalog.API.DTOs.Albums;
 using Catalog.API.DTOs.Comments;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [ProducesResponseType(typeof(List<CommentDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<CommentDTO>>> GetAllComments()
         {
@@ -48,6 +54,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<ActionResult<List<Comment>>> GetCommentsWithDeletedRecords()
         {
             var allCommentsWithDeletedRecords = await _commentsService.GetAllCommentsWithDeletedRecords();
@@ -67,6 +78,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<ActionResult<List<CommentDTO>>> GetPaginatedComments(
             [FromQuery] CommentParameters commentParameters
         )
@@ -102,6 +118,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("search/{term}")]
         public async Task<ActionResult<CommentDetailsDTO>> SearchForComments(string term)
         {
@@ -122,6 +143,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("search")]
         public async Task<ActionResult<CommentDetailsDTO>> PaginateSearchedComments(
             [FromQuery] CommentParameters commentParameters
@@ -163,6 +189,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Comment>> GetCommentById(string id)
         {
             var commentById = await _commentsService.GetCommentById(id);
@@ -182,6 +209,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]    
         [Route("details/{id}", Name = CommentDetailsRouteName)]
         [ProducesResponseType(typeof(CommentDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<CommentDetailsDTO>> GetCommentDetails(string id)
@@ -203,6 +231,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("create")]
         public async Task<ActionResult> CreateComment([FromBody] CreateCommentDTO createCommentDTO)
         {
@@ -225,6 +254,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateComment(string id, [FromBody] UpdateCommentDTO updateCommentDTO)
         {
@@ -258,6 +292,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateComment(
             string id, [FromBody] JsonPatchDocument<UpdateCommentDTO> commentJsonPatchDocument
@@ -292,6 +331,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteComment(string id)
         {
@@ -314,6 +358,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteComment(string id)
         {
@@ -336,6 +381,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreComment(string id)
         {

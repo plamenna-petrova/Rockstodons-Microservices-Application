@@ -11,6 +11,9 @@ import { PerformersDetailsComponent } from './pages/catalogue/details/performers
 import { StreamsCatalogueComponent } from './pages/catalogue/streams-catalogue/streams-catalogue.component';
 import { StreamDetailsComponent } from './pages/catalogue/details/stream-details/stream-details.component';
 import { TermsAndConditionsComponent } from './content/terms-and-conditions/terms-and-conditions.component';
+import { AuthGuardWithForcedLogin } from './core/utils/auth-guard-with-forced-login.service';
+import { RoleGuard } from './core/utils/role-guard.service';
+import { AuthGuard } from './core/utils/auth-guard.service';
 
 const routes: Routes = [
   {
@@ -39,11 +42,13 @@ const routes: Routes = [
   },
   {
     path: 'streams',
-    component: StreamsCatalogueComponent
+    component: StreamsCatalogueComponent,
+    canActivate: [AuthGuardWithForcedLogin]
   },
   {
     path: 'stream-details/:id',
-    component: StreamDetailsComponent
+    component: StreamDetailsComponent,
+    canActivate: [AuthGuardWithForcedLogin]
   },
   {
     path: 'should-login',
@@ -60,7 +65,11 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      roles: ['STSAdminRole', 'Editor']
+    }
   }
 ];
 

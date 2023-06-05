@@ -1,15 +1,14 @@
 ﻿using Catalog.API.Common;
 using Catalog.API.Data.Data.Models;
-using Catalog.API.DTOs.Comments;
 using Catalog.API.DTOs.Subcomments;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Data;
 using System.Net;
-using System.Text.Encodings.Web;
 
 namespace Catalog.API.Controllers
 {
@@ -34,6 +33,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [ProducesResponseType(typeof(List<SubcommentDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<SubcommentDTO>>> GetAllSubcomments()
         {
@@ -50,6 +54,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<ActionResult<List<Subcomment>>> GetSubcommentsWithDeletedRecords()
         {
             var allSubcommentsWithDeletedRecords = await _subcommentsService
@@ -66,6 +75,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<ActionResult<List<SubcommentDTO>>> GetPaginatedSubcomments(
             [FromQuery] SubcommentParameters subcommentParameters)
         {
@@ -101,6 +115,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("search/{term}")]
         public async Task<ActionResult<SubcommentDetailsDTO>> SearchForSubcomments(string term)
         {
@@ -117,6 +136,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("search")]
         public async Task<ActionResult<SubcommentDetailsDTO>> PaginateSearchedSubcomments(
             [FromQuery] SubcommentParameters subcommentParameters)
@@ -153,6 +177,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Subcomment>> GetSubcommentById(string id)
         {
             var subcommentById = await _subcommentsService.GetSubcommentById(id);
@@ -172,6 +197,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("details/{id}", Name = SubcommentDetailsRouteName)]
         [ProducesResponseType(typeof(SubcommentDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<SubcommentDetailsDTO>> GetSubcommentDetails(string id)
@@ -193,6 +219,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]    
         [Route("create")]
         public async Task<ActionResult> CreateSubcomment([FromBody] CreateSubcommentDTO createSubcommentDTO)
         {
@@ -213,6 +240,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateSubcomment(
             string id, [FromBody] UpdateSubcommentDTO updateSubcommentDTO)
@@ -246,6 +278,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateSubcomment(
             string id, [FromBody] JsonPatchDocument<UpdateSubcommentDTO> subcommentJsonPatchDocument)
@@ -278,6 +315,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteSubcomment(string id)
         {
@@ -300,6 +342,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteSubcomment(string id)
         {
@@ -322,6 +365,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreSubcomment(string id)
         {

@@ -11,6 +11,7 @@ export class RoleGuard implements CanActivate {
 
   constructor(
     private oauth2Service: OAuth2Service,
+    private router: Router,
     private nzNotificationService: NzNotificationService
   ) {
 
@@ -20,17 +21,22 @@ export class RoleGuard implements CanActivate {
       map((canActivateProtectedRoutes: boolean) => {
         if (canActivateProtectedRoutes) {
 
-          if (!!route.data['role']) {
-            const routeRoles = route.data['role'];
+          if (!!route.data['roles']) {
+            const routeRoles = route.data['roles'];
 
             this.userProfile = this.oauth2Service.identityClaims;
             if (!!this.userProfile.role) {
-              const userRoles = this.userProfile.role;
+              const userRole = this.userProfile.role;
 
-              if (userRoles.includes(routeRoles)) {
+              if (routeRoles.includes(userRole)) {
                 return true;
               } else {
-                this.nzNotificationService.info('Access denied', 'You do not have role ' + routeRoles);
+                this.nzNotificationService.info(
+                  'Access denied',
+                  'You do not have role enough rights to proceed to this route'
+                );
+
+                this.router.navigate(['/home']);
               }
             }
           }

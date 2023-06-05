@@ -1,6 +1,9 @@
-﻿using Catalog.API.DTOs.Blob;
+﻿using Catalog.API.Common;
+using Catalog.API.DTOs.Blob;
 using Catalog.API.Services.Data.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Catalog.API.Controllers
 {
@@ -28,6 +31,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("files/albums")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> GetAlbumsImagesFromAzureContainer()
         {
             List<BlobDTO> retrievedFiles = await _fileStorageService
@@ -37,6 +45,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost("upload/album-image")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> UploadAlbumImage(IFormFile imageToUpload)
         {
             BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
@@ -54,6 +67,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("albums-images/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DownloadAlbumImage(string filename)
         {
             BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
@@ -71,6 +89,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete("albums-images/delete/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DeleteAlbumImage(string filename)
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
@@ -88,6 +111,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("files/performers")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> GetPerformersImagesFromAzureContainer()
         {
             List<BlobDTO> retrievedFiles = await _fileStorageService
@@ -97,6 +125,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost("upload/performer-image")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> UploadPerformerImage(IFormFile imageToUpload)
         {
             BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
@@ -114,6 +147,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("performers-images/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DownloadPerformerImage(string filename)
         {
             BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
@@ -131,6 +169,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete("performers-images/delete/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DeletePerformerImage(string filename)
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
@@ -148,6 +191,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("files/genres")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> GetGenresImagesFromAzureContainer()
         {
             List<BlobDTO> retrievedFiles = await _fileStorageService
@@ -157,6 +205,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost("upload/genre-image")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> UploadGenreImage(IFormFile imageToUpload)
         {
             BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
@@ -174,6 +227,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("genres-images/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DownloadGenreImage(string filename)
         {
             BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
@@ -191,6 +249,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete("genres-images/delete/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DeleteGenreImage(string filename)
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
@@ -208,6 +271,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("files/tracks")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> GetTracksMP3FilesFromAzureContainer()
         {
             List<BlobDTO> retrievedFiles = await _fileStorageService
@@ -217,6 +285,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost("upload/track-mp3-file")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> UploadTracksMP3File(IFormFile mp3FileToUpload)
         {
             BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadMP3FileAsync(
@@ -234,6 +307,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("tracks-mp3-files/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DownloadTrackMP3(string filename)
         {
             BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
@@ -251,6 +329,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete("tracks-mp3-files/delete/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DeleteTracksMP3File(string filename)
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(
@@ -268,6 +351,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("files/streams")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> GetStreamsImagesFromAzureContainer()
         {
             List<BlobDTO> retrievedFiles = await _fileStorageService
@@ -277,6 +365,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost("upload/stream-image")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> UploadStreamImage(IFormFile imageToUpload)
         {
             BlobResponseDTO? blobResponseDTO = await _fileStorageService.UploadImageAsync(
@@ -294,6 +387,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("streams-images/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DownloadStreamImage(string filename)
         {
             BlobDTO? blobDTO = await _fileStorageService.DownloadAsync(
@@ -311,6 +409,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete("streams-images/delete/{filename}")]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         public async Task<IActionResult> DeleteStreamImage(string filename)
         {
             BlobResponseDTO blobResponseDTO = await _fileStorageService.DeleteAsync(

@@ -17,6 +17,7 @@ using Catalog.API.DTOs.Genres;
 using Catalog.API.Services.Data.Interfaces;
 using Catalog.API.Utils.Parameters;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -43,6 +44,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(List<GenreDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<GenreDTO>>> GetAllGenres()
         {
@@ -63,6 +65,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Genre>>> GetGenresWithDeletedRecords()
         {
             var allGenresWithDeletedRecords = await _mediator.Send(new GetAllGenresWithDeletedRecordsQuery());
@@ -82,6 +85,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Genre>>> GetPaginatedGenres(
             [FromQuery] GenreParameters genreParameters)
         {
@@ -120,6 +124,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search/{term}")]
         public async Task<ActionResult<GenreDetailsDTO>> SearchForGenres(string term)
         {
@@ -140,11 +145,13 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search")]
         public async Task<ActionResult<GenreDetailsDTO>> PaginateSearchedGenres(
             [FromQuery] GenreParameters genreParameters)
         {
-            var paginatedSearchedGenres = await _mediator.Send(new PaginateSearchedGenresQuery(genreParameters));
+            var paginatedSearchedGenres = await _mediator.Send(
+                new PaginateSearchedGenresQuery(genreParameters));
 
             if (paginatedSearchedGenres != null)
             {
@@ -175,6 +182,7 @@ namespace Catalog.API.Controllers
         }
  
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Genre>> GetGenreById(string id)
         {
             var genreById = await _mediator.Send(new GetGenreByIdQuery(id));
@@ -198,6 +206,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("details/{id}", Name = GenreDetailsRouteName)]
         [ProducesResponseType(typeof(GenreDetailsDTO), (int) HttpStatusCode.OK)]
         public async Task<ActionResult<GenreDetailsDTO>> GetGenreDetails(string id)
@@ -215,6 +224,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("create")]
         public async Task<ActionResult> CreateGenre([FromBody] CreateGenreDTO createGenreDTO)
         {
@@ -239,8 +253,14 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("update/{id}")]
-        public async Task<ActionResult> UpdateGenre(string id, [FromBody] UpdateGenreDTO updateGenreDTO)
+        public async Task<ActionResult> UpdateGenre(
+            string id, [FromBody] UpdateGenreDTO updateGenreDTO)
         {
             if (updateGenreDTO == null)
             {
@@ -274,6 +294,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateGenre(
             string id, [FromBody] JsonPatchDocument<UpdateGenreDTO> genreJsonPatchDocument)
@@ -310,6 +335,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteGenre(string id)
         {
@@ -332,6 +362,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteGenre(string id)
         {
@@ -354,6 +385,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreGenre(string id)
         {

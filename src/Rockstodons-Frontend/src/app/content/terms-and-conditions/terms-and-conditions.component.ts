@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./terms-and-conditions.component.scss']
 })
 export class TermsAndConditionsComponent {
-  panels = [
+  termsAndConditionsPanels = [
     {
       active: true,
       name: '1. General',

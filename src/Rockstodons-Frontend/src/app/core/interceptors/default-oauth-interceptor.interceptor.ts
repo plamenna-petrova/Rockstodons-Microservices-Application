@@ -9,10 +9,8 @@ import {
 import { Observable, catchError, throwError } from 'rxjs';
 import {
   OAuthModuleConfig,
-  OAuthResourceServerErrorHandler,
   OAuthStorage,
 } from 'angular-oauth2-oidc';
-import { OAuth2Service } from '../services/oauth2.service';
 
 @Injectable()
 export class DefaultOauthInterceptorInterceptor implements HttpInterceptor {

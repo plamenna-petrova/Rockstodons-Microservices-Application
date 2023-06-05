@@ -33,6 +33,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(List<TrackDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<List<TrackDTO>>> GetAllTracks()
         {
@@ -53,6 +54,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("all")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Track>>> GetTracksWithDeletedRecords()
         {
                 var allTracksWithDeletedRecords = await _tracksService.GetAllTracksWithDeletedRecords();
@@ -72,6 +74,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("paginate")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Track>>> GetPaginatedTracks(
             [FromQuery] TrackParameters trackParameters)
         {
@@ -110,6 +113,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search/{term}")]
         public async Task<ActionResult<TrackDetailsDTO>> SearchForTracks(string term)
         {
@@ -129,8 +133,10 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("search")]
-        public async Task<ActionResult<TrackDetailsDTO>> PaginateSearchedTracks([FromQuery] TrackParameters trackParameters)
+        public async Task<ActionResult<TrackDetailsDTO>> PaginateSearchedTracks(
+            [FromQuery] TrackParameters trackParameters)
         {
             var paginatedSearchedTracks = await _tracksService.PaginateSearchedTracks(trackParameters);
 
@@ -165,6 +171,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Track>> GetTrackById(string id)
         {
             var trackById = await _tracksService.GetTrackById(id);
@@ -188,6 +195,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("details/{id}", Name = TrackDetailsRouteName)]
         [ProducesResponseType(typeof(TrackDetailsDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<TrackDetailsDTO>> GetTrackDetails(string id)
@@ -209,7 +217,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("create")]
         public async Task<ActionResult> CreateTrack([FromBody] CreateTrackDTO createTrackDTO)
         {
@@ -234,6 +246,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("update/{id}")]
         public async Task<ActionResult> UpdateTrack(string id, [FromBody] UpdateTrackDTO updateTrackDTO)
         {
@@ -267,6 +284,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPatch]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("patch/{id}")]
         public async Task<ActionResult> PartiallyUpdateTrack(
             string id, [FromBody] JsonPatchDocument<UpdateTrackDTO> trackJsonPatchDocument)
@@ -303,6 +325,11 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(
+            Roles = GlobalConstants.AdministratorRoleName +
+            GlobalConstants.RolesDelimeter +
+            GlobalConstants.EditorRoleName
+        )]
         [Route("delete/{id}")]
         public async Task<ActionResult> DeleteTrack(string id)
         {
@@ -325,6 +352,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("confirm-deletion/{id}")]
         public async Task<ActionResult> HardDeleteTrack(string id)
         {
@@ -347,6 +375,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
         [Route("restore/{id}")]
         public async Task<ActionResult> RestoreTrack(string id)
         {

@@ -49,5 +49,7 @@
         public const string EditorRoleName = "Editor";
 
         public const string NormalUserRoleName = "User";
+
+        public const string RolesDelimeter = ",";
     }
 }

@@ -86,7 +86,9 @@ export class RecycleBinComponent {
     private fileStorageService: FileStorageService,
     private nzModalService: NzModalService,
     private nzNotificationService: NzNotificationService
-  ) {}
+  ) {
+
+  }
 
   deleteRecycledItemPermanently(item: any, group: string): void {
     switch (group) {
