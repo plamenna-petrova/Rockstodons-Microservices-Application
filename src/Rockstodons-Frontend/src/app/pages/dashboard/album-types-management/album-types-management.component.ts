@@ -43,7 +43,7 @@ export class AlbumTypesManagementComponent {
       albumTypeName: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
-          Validators.minLength(3),
+          Validators.minLength(2),
           Validators.maxLength(20),
         ]),
         nonNullable: true,
@@ -53,7 +53,7 @@ export class AlbumTypesManagementComponent {
       albumTypeName: new FormControl('', {
         validators: Validators.compose([
           Validators.required,
-          Validators.minLength(3),
+          Validators.minLength(2),
           Validators.maxLength(20),
         ]),
         nonNullable: true,
@@ -192,7 +192,7 @@ export class AlbumTypesManagementComponent {
               nzPauseOnHover: true
             }
           );
-          
+
           this.retrieveAlbumTypesData();
         });
     } else {

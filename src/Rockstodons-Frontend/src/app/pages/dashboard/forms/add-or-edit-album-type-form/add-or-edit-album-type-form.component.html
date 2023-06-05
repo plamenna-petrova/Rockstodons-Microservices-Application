@@ -2,11 +2,11 @@
     <nz-form-item>
         <nz-form-label [nzSpan]="5">Name</nz-form-label>
         <nz-form-control nzHasFeedback [nzSpan]="12" [nzErrorTip]="combineAlbumTypeNameValidationTemplate">
-            <input nz-input formControlName="albumTypeName" minlength="3" maxlength="20" required />
+            <input nz-input formControlName="albumTypeName" minlength="2" maxlength="20" required />
             <ng-template #combineAlbumTypeNameValidationTemplate let-control>
                 <ng-container *ngIf="control.hasError('maxlength')">The album type name cannot be longer than 20 characters
                 </ng-container>
-                <ng-container *ngIf="control.hasError('minlength')">The album type name must be at least 3 character long
+                <ng-container *ngIf="control.hasError('minlength')">The album type name must be at least 2 character long
                 </ng-container>
                 <ng-container *ngIf="control.hasError('required')">The album type name is required</ng-container>
             </ng-template>
