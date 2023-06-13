@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OAuth2Service } from 'src/app/core/services/oauth2.service';
 
@@ -8,10 +7,10 @@ import { OAuth2Service } from 'src/app/core/services/oauth2.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isAuthenticated: Observable<boolean>;
 
-  constructor(private oauth2Service: OAuth2Service, private router: Router) {
+  constructor(private oauth2Service: OAuth2Service) {
     this.isAuthenticated = oauth2Service.isAuthenticated$;
   }
 

@@ -7,7 +7,6 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   isCollapsed = false;
-  currentYear = new Date().getFullYear();
 
   constructor() {
 

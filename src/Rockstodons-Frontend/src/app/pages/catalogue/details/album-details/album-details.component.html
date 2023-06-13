@@ -42,7 +42,7 @@
                             <nz-comment-content>
                                 <p>{{ comment.content }}</p>
                             </nz-comment-content>
-                            <button *ngIf="comment.albumId" nz-button nzType="link" (click)="showSubcommentCreationModal()">Reply to</button>
+                            <button *ngIf="(isAuthenticated | async) === true && comment.albumId" nz-button nzType="link" (click)="showSubcommentCreationModal()">Reply to</button>
                             <ng-container *ngIf="comment.subcomments && comment.subcomments.length">
                                 <ng-template ngFor let-child [ngForOf]="comment.subcomments">
                                     <ng-template [ngTemplateOutlet]="commentTemplateRef" [ngTemplateOutletContext]="{ comment: child }"></ng-template>

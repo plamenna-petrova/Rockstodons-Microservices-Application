@@ -28,9 +28,6 @@ export class DefaultOauthInterceptorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     let url = request.url.toLocaleLowerCase();
 
-    console.log('url for intercepting');
-    console.log(url);
-
     if (!this.moduleConfig) {
       return next.handle(request);
     }
@@ -51,10 +48,7 @@ export class DefaultOauthInterceptorInterceptor implements HttpInterceptor {
 
     if (sendAccessToken) {
       let token = this.authStorage.getItem('access_token');
-      console.log('token to insert');
-      console.log(token);
       let header = `Bearer ${token}`;
-
       let headers = request.headers.set('Authorization', header);
 
       request = request.clone({ headers });
